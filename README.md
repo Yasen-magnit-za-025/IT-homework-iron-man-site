@@ -1,6 +1,6 @@
 # Iron Man site for IT homework
 
-A cinematic, scroll-driven fan site about Iron Man (2008), built with plain HTML, CSS and JavaScript (no libraries, no build step).
+A cinematic, scroll-driven fan site about Iron Man (2008), built with plain HTML, CSS and JavaScript (no libraries, no build step). It is made for desktop screens with a mouse; there is no phone layout.
 
 ## Run it
 
@@ -14,14 +14,14 @@ then visit http://localhost:5510/sait.html.
 
 | File | Lines | What it does |
 |---|---|---|
-| `sait.html` | 883 | Page structure and content |
-| `sait.css` | 1,818 | Look, layout, responsive rules and animation |
-| `sait.js` | 1,476 | Interactions and scroll scenes |
+| `sait.html` | 789 | Page structure and content |
+| `sait.css` | 1,488 | Look, layout and animation |
+| `sait.js` | 1,224 | Interactions and scroll scenes |
 | `fonts/` | | The Stark typeface |
 
 ## Presentation
 
-A 44-slide walkthrough that explains every line of the three files.
+A 44-slide walkthrough that explains every line of the three files. It describes the earlier, fully commented version of the site from the first commit, so its line numbers match that version.
 
 - `presentation/bulgarian.html`: Bulgarian version
 - `presentation/english.html`: English version

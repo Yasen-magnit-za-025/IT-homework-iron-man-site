@@ -1,20 +1,12 @@
-/* =========================================================
-   IRON MAN — interactions
-   Vanilla JS, no dependencies. Every feature is a small
-   init function; all scroll work shares one rAF loop.
-   ========================================================= */
 (() => {
   'use strict';
-
   const root = document.documentElement;
   const $ = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
   const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  let heroThrust = 0; // 0 to 2: how hard the hero's boot thrusters are firing (set by initHero)
-
-  /* ---------- Data: the armory ---------- */
+  let heroThrust = 0;
   const WIKI = 'https://static.wikia.nocookie.net/marvelcinematicuniverse/images/';
   const ARMORS = [
     {
@@ -110,9 +102,6 @@
     }
   ];
   const armorSrc = (a) => WIKI + a.img;
-
-  /* Real 3D models, embedded from Sketchfab. Each one is a fan-made model
-     credited to its creator; "kind" is set when only part of the suit exists. */
   const MODELS = {
     I:     { uid: '57b18282c1a84c5899fcc7f67762a386', title: 'Iron Man - Mark 1', author: 'Nathang30' },
     II:    { uid: 'f14ceb54e3ef4fff9b50b4da4bfc5d96', title: 'Iron Man Mark 2 (Iron Man 2 - PS3)', author: 'uzzi47' },
@@ -129,8 +118,6 @@
     LXXXV: { uid: 'dde1085c464d4f8da259fe6669ae4dd2', title: 'Iron-Man Mark 85 | Rigged', author: 'Nihar-9Afilms' }
   };
   ARMORS.forEach((a) => { a.model = MODELS[a.mark] || null; });
-
-  /* ---------- Boot & hero entrance ---------- */
   function initBoot() {
     const hero = $('.hero');
     const heroImgs = $$('.hero img');
@@ -138,31 +125,14 @@
     if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
     const timeout = new Promise((r) => setTimeout(r, 1800));
     const minimum = new Promise((r) => setTimeout(r, reduceMotion ? 0 : 900));
-
     Promise.all([Promise.race([Promise.all(waits), timeout]), minimum]).then(() => {
       root.classList.remove('is-booting');
       setTimeout(() => hero && hero.classList.add('is-ready'), reduceMotion ? 0 : 180);
     });
   }
-
-  /* ---------- Navigation ---------- */
   function initNav() {
     const nav = $('#nav');
-    const toggle = $('.nav__toggle', nav);
     const links = $$('.nav__links a', nav);
-
-    const setOpen = (open) => {
-      nav.classList.toggle('is-open', open);
-      toggle.setAttribute('aria-expanded', String(open));
-      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      root.classList.toggle('is-locked', open);
-    };
-    toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
-    links.forEach((a) => a.addEventListener('click', () => setOpen(false)));
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('is-open')) { setOpen(false); toggle.focus(); } });
-    window.addEventListener('resize', () => { if (window.innerWidth > 960 && nav.classList.contains('is-open')) setOpen(false); });
-
-    // Scroll-spy: highlight the link of the section in the middle of the screen
     const sections = links.map((a) => $(a.getAttribute('href'))).filter(Boolean);
     const spy = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -175,10 +145,8 @@
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
     sections.forEach((s) => spy.observe(s));
-    // Clear the highlight while the hero is on screen
     const hero = $('.hero');
     new IntersectionObserver(([e]) => { if (e.isIntersecting) links.forEach((a) => { a.classList.remove('is-active'); a.removeAttribute('aria-current'); }); }, { rootMargin: '-45% 0px -50% 0px' }).observe(hero);
-
     let lastY = window.scrollY;
     return function update(y) {
       nav.classList.toggle('is-scrolled', y > 40);
@@ -193,16 +161,12 @@
       nav.style.setProperty('--p', max > 0 ? (y / max).toFixed(4) : 0);
     };
   }
-
-  /* ---------- Reveal on scroll ---------- */
   function initReveal() {
     $$('[data-reveal-group]').forEach((group) => {
       $$('[data-reveal]', group).forEach((el, i) => el.style.setProperty('--d', (i * 0.1).toFixed(2) + 's'));
     });
     const els = $$('[data-reveal]');
     if (!('IntersectionObserver' in window) || reduceMotion) { els.forEach((el) => el.classList.add('is-in')); return; }
-    // A fully clipped element (the "wipe" reveal) never reports as visible,
-    // so those are watched through their parent instead.
     const targets = new Map();
     els.forEach((el) => {
       const watched = el.dataset.reveal === 'wipe' ? el.parentElement : el;
@@ -218,8 +182,6 @@
     }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
     targets.forEach((_, watched) => io.observe(watched));
   }
-
-  /* ---------- Count-up statistics ---------- */
   function initCounters() {
     const els = $$('[data-count]');
     const render = (el, v) => { el.textContent = (el.dataset.prefix || '') + Math.round(v) + (el.dataset.suffix || ''); };
@@ -240,8 +202,6 @@
     }, { threshold: 0.6 });
     els.forEach((el) => { render(el, 0); io.observe(el); });
   }
-
-  /* ---------- Production notes accordion ---------- */
   function initNotes() {
     const notes = $$('.note');
     notes.forEach((note) => {
@@ -254,13 +214,6 @@
       });
     });
   }
-
-  /* ---------- Hero: pointer depth + scroll-driven take-off ----------
-     The hero is taller than the screen and its frame stays pinned, so
-     scrolling through it plays a sequence (p goes 0 to 1):
-       0.04-0.28  boot thrusters ignite, the suit crouches, the camera shakes
-       0.20-0.95  lift-off: the suit accelerates up and out of frame
-       0.15-0.75  "IRON" and "MAN" split apart and fade                      */
   function initHero() {
     const hero = $('.hero');
     const pin = $('.hero__pin', hero);
@@ -273,7 +226,6 @@
     const target = { x: 0, y: 0 };
     const pos = { x: 0, y: 0 };
     let running = false;
-
     const tick = () => {
       pos.x += (target.x - pos.x) * 0.08;
       pos.y += (target.y - pos.y) * 0.08;
@@ -291,33 +243,23 @@
       });
       pin.addEventListener('pointerleave', () => { target.x = 0; target.y = 0; if (!running) { running = true; requestAnimationFrame(tick); } });
     }
-
-    // 0 before a, 1 after b, smooth in between
     const phase = (p, a, b) => { const t = clamp((p - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-
     return function update(y) {
       if (reduceMotion) return;
       const vh = window.innerHeight;
       const travel = hero.offsetHeight - pin.offsetHeight;
-      if (y > travel + vh) return;                       // hero is long gone
+      if (y > travel + vh) return;
       const p = travel > 0 ? clamp(y / travel, 0, 1) : 0;
-
       const ignite = phase(p, 0.04, 0.28);
       const rise = phase(p, 0.2, 0.95);
-      const lift = Math.pow(rise, 2.2);                   // slow start, then it rockets
+      const lift = Math.pow(rise, 2.2);
       const split = phase(p, 0.15, 0.75);
-
-      // suit: crouch while the thrusters spool up, then launch
       const crouch = ignite * (1 - rise) * 16;
       const suitY = crouch - lift * vh * 1.3;
       suit.style.transform = `translate3d(0, ${suitY.toFixed(1)}px, 0) scale(${(1 + lift * 0.2).toFixed(3)}) rotate(${(-lift * 4).toFixed(2)}deg)`;
       suit.style.setProperty('--flame', (ignite * (0.65 + rise * 0.7)).toFixed(3));
-
-      // ground blast fades as he climbs away from it
       ground.style.setProperty('--ground', (ignite * (1 - rise * 0.9)).toFixed(3));
       ground.style.transform = `scale(${(0.7 + ignite * 0.5).toFixed(3)})`;
-
-      // the title splits apart; cast names, year and the bottom copy fade first
       const spread = split * 34;
       words[0].style.transform = `translate3d(${-spread}vw, 0, 0)`;
       words[1].style.transform = `translate3d(${spread}vw, 0, 0)`;
@@ -326,37 +268,15 @@
       cast.style.opacity = early;
       year.style.opacity = early;
       hero.style.setProperty('--title-o', early);
-
-      // the reactor ring swells behind him
       reactor.style.transform = `scale(${(1 + ignite * 0.15 + lift * 0.9).toFixed(3)})`;
       reactor.style.opacity = (0.5 + ignite * 0.35 - lift * 0.6).toFixed(3);
-
-      // camera shake while the thrusters fight gravity
       const shake = 6 * ignite * (1 - rise);
       pin.style.transform = shake > 0.2
         ? `translate3d(${((Math.random() - 0.5) * shake).toFixed(1)}px, ${((Math.random() - 0.5) * shake).toFixed(1)}px, 0)`
         : '';
-
-      heroThrust = ignite + rise;                        // embers react too
+      heroThrust = ignite + rise;
     };
   }
-
-  /* ---------- Parallax backgrounds ---------- */
-  function initParallax() {
-    const items = $$('[data-parallax]');
-    return function update() {
-      if (reduceMotion) return;
-      const vh = window.innerHeight;
-      items.forEach((el) => {
-        const r = el.parentElement.getBoundingClientRect();
-        if (r.bottom < -100 || r.top > vh + 100) return;
-        const offset = (r.top + r.height / 2 - vh / 2) * -Number(el.dataset.parallax);
-        el.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
-      });
-    };
-  }
-
-  /* ---------- Story timeline progress ---------- */
   function initTimeline() {
     const timeline = $('#timeline');
     const fill = $('.timeline__fill', timeline);
@@ -373,8 +293,6 @@
       });
     };
   }
-
-  /* ---------- Armory gallery + dossier modal ---------- */
   function initArmory() {
     const hall = $('#hall');
     const prev = $('#hall-prev');
@@ -382,7 +300,6 @@
     const current = $('#hall-current');
     const bar = $('#hall-bar');
     $('#hall-total').textContent = String(ARMORS.length).padStart(2, '0');
-
     hall.innerHTML = ARMORS.map((a, i) => `
       <button type="button" class="suit${a.wide ? ' suit--wide' : ''}" style="--tone:${a.tone}" data-index="${i}"
               aria-label="${a.name}${a.nick ? ', ' + a.nick : ''} — open armor file">
@@ -395,7 +312,6 @@
         <span class="suit__film">${a.film} · ${a.year}</span>
       </button>`).join('');
     const suits = $$('.suit', hall);
-
     const update = () => {
       const max = hall.scrollWidth - hall.clientWidth;
       const p = max > 0 ? hall.scrollLeft / max : 0;
@@ -404,7 +320,6 @@
       next.disabled = hall.scrollLeft > max - 4;
       const padLeft = parseFloat(getComputedStyle(hall).paddingLeft);
       const left = hall.getBoundingClientRect().left + padLeft;
-      // during the desktop scroll ride the featured suit is the centred one
       const riding = $('#armory').classList.contains('is-riding');
       const mid = window.innerWidth / 2;
       let best = 0, bestDist = Infinity;
@@ -419,12 +334,9 @@
     hall.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
     window.addEventListener('resize', update);
     update();
-
     const page = (dir) => hall.scrollBy({ left: dir * hall.clientWidth * 0.75, behavior: reduceMotion ? 'auto' : 'smooth' });
     prev.addEventListener('click', () => page(-1));
     next.addEventListener('click', () => page(1));
-
-    // Drag to scroll (mouse only; touch already scrolls natively)
     let drag = null;
     let suppressClick = false;
     hall.addEventListener('pointerdown', (e) => {
@@ -443,15 +355,12 @@
         suppressClick = true;
         setTimeout(() => { suppressClick = false; }, 0);
         hall.classList.remove('is-dragging');
-        // settle onto the nearest card
         const target = suits[Number(current.textContent) - 1];
         if (target) hall.scrollTo({ left: target.offsetLeft - parseFloat(getComputedStyle(hall).paddingLeft), behavior: 'smooth' });
       }
       drag = null;
     });
     hall.addEventListener('click', (e) => { if (suppressClick) { e.preventDefault(); e.stopPropagation(); } }, true);
-
-    // Vertical wheel over the gallery scrolls it sideways until an edge is reached
     hall.addEventListener('wheel', (e) => {
       if ($('#armory').classList.contains('is-riding')) return;
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
@@ -462,8 +371,6 @@
       e.preventDefault();
       hall.scrollLeft += e.deltaY;
     }, { passive: false });
-
-    /* dossier */
     const dialog = $('#dossier');
     const el = {
       img: $('#dossier-img'), numeral: $('#dossier-numeral'), count: $('#dossier-count'),
@@ -473,7 +380,6 @@
     let index = 0;
     let opener = null;
     const viewer3d = initViewer(dialog);
-
     const fill = (i) => {
       index = (i + ARMORS.length) % ARMORS.length;
       const a = ARMORS[index];
@@ -493,14 +399,12 @@
     };
     const open = (i, trigger) => {
       opener = trigger || null;
-      // open first: the 3D viewer only starts inside a visible dialog
       if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
       fill(i);
       root.classList.add('is-locked');
       $('#dossier-close').focus();
     };
     const close = () => { if (dialog.open) dialog.close(); };
-
     hall.addEventListener('click', (e) => {
       const card = e.target.closest('.suit');
       if (card) open(Number(card.dataset.index), card);
@@ -510,7 +414,7 @@
     $('#dossier-next').addEventListener('click', () => fill(index + 1));
     dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
     dialog.addEventListener('keydown', (e) => {
-      if (e.target.matches('input')) return; // arrow keys on the rotation slider turn the suit
+      if (e.target.matches('input')) return;
       if (e.key === 'ArrowRight') fill(index + 1);
       if (e.key === 'ArrowLeft') fill(index - 1);
     });
@@ -520,11 +424,6 @@
       if (opener) opener.focus({ preventScroll: true });
     });
   }
-
-  /* ---------- 3D viewer inside the armor file ----------
-     Each suit loads a real 3D model from Sketchfab in an embedded viewer
-     (drag to orbit, scroll or pinch to zoom). Only one model is loaded
-     at a time, and it is unloaded when the file closes. */
   function initViewer(dialog) {
     const viewer = $('#viewer');
     const frame = $('#viewer-frame');
@@ -542,12 +441,7 @@
     let model = null;
     let mode = '3d';
     let loadToken = 0;
-
     const showLoaded = (token) => { if (token === loadToken) viewer.classList.add('is-loaded'); };
-
-    /* With Sketchfab's viewer API (loaded in sait.html) every model is
-       re-framed so the whole suit is in view, whatever camera its creator
-       saved. Without it, the plain embed still works. */
     const loadModel = (uid) => {
       const token = ++loadToken;
       viewer.classList.remove('is-loaded');
@@ -562,16 +456,14 @@
       client.init(uid, {
         ...options,
         success(api) {
-          setTimeout(() => showLoaded(token), 9000); // slow connection: show the viewer's own progress
+          setTimeout(() => showLoaded(token), 9000);
           api.addEventListener('viewerready', () => {
             if (token !== loadToken) return;
             const frameIt = typeof api.focusOnVisibleGeometries === 'function'
               ? (cb) => api.focusOnVisibleGeometries(cb)
               : (cb) => api.recenterCamera(cb);
             frameIt(() => {
-              // the fitted view leaves a wide margin; move the camera closer
-              // (less on narrow phone screens, so the helmet is not cut off)
-              const closer = frame.clientWidth < 520 ? 0.95 : 0.8;
+              const closer = 0.8;
               api.getCameraLookAt((err, cam) => {
                 if (!err && cam) {
                   const pos = cam.position.map((p, i) => cam.target[i] + (p - cam.target[i]) * closer);
@@ -580,25 +472,22 @@
                 setTimeout(() => showLoaded(token), 300);
               });
             });
-            setTimeout(() => showLoaded(token), 2500); // never leave the spinner up
+            setTimeout(() => showLoaded(token), 2500);
           });
         },
         error() { showLoaded(token); }
       });
     };
-
     const setMode = (next) => {
       mode = model ? next : 'photo';
       viewer.classList.toggle('is-3d', mode === '3d');
       viewer.classList.toggle('is-photo', mode === 'photo');
       btn3d.setAttribute('aria-pressed', String(mode === '3d'));
       btnPhoto.setAttribute('aria-pressed', String(mode === 'photo'));
-      // only start downloading the model once the 3D view is actually shown
       if (mode === '3d' && model && frame.dataset.uid !== model.uid) loadModel(model.uid);
     };
     btn3d.addEventListener('click', () => setMode('3d'));
     btnPhoto.addEventListener('click', () => setMode('photo'));
-
     return {
       load(armor) {
         model = armor.model || null;
@@ -612,7 +501,6 @@
         setMode(model ? '3d' : 'photo');
       },
       stop() {
-        // unload the WebGL viewer so it stops using the graphics card
         loadToken++;
         frame.onload = null;
         frame.removeAttribute('src');
@@ -621,8 +509,6 @@
       }
     };
   }
-
-  /* ---------- Cast gallery ---------- */
   function initCast() {
     const players = $$('.player');
     const activate = (p) => players.forEach((x) => x.classList.toggle('is-active', x === p));
@@ -633,8 +519,6 @@
       p.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(p); } });
     });
   }
-
-  /* ---------- Accessible tabs (villains + tech) ---------- */
   function initTabs(tablist, onChange) {
     const tabs = $$('[role="tab"]', tablist);
     const select = (tab, focus) => {
@@ -663,15 +547,11 @@
       });
     });
   }
-
-  /* Start loading a section's lazy images well before it scrolls into view,
-     for sections where hidden or stacked images would otherwise pop in late. */
   function preloadNear(section, images) {
     new IntersectionObserver(([e], obs) => {
       if (e.isIntersecting) { images.forEach((img) => { img.loading = 'eager'; }); obs.disconnect(); }
     }, { rootMargin: '900px 0px' }).observe(section);
   }
-
   function initVillains() {
     const images = $$('.rogues__media img');
     const list = $('.rogues__index');
@@ -681,11 +561,6 @@
     });
     preloadNear($('#villains'), images);
   }
-
-  /* ---------- Technology: holographic schematic ----------
-     The seven system callouts are tabs around the reactor. Each system's
-     control drives the reactor on the stage through CSS variables:
-     --arc-p (core output), --charge (repulsor) and --spin (ring speed). */
   function initTech() {
     const stage = $('#schematic');
     const svg = $('.schematic__lines', stage);
@@ -693,10 +568,7 @@
     const coreLabel = $('#core-label');
     const coreValue = $('#core-value');
     let typingToken = 0;
-
     const setCore = (label, value) => { coreLabel.textContent = label; coreValue.textContent = value; };
-
-    // light lines from the core to each callout (recomputed on resize)
     const drawLines = () => {
       const s = stage.getBoundingClientRect();
       if (!s.width) return;
@@ -711,18 +583,14 @@
     if (document.fonts) document.fonts.ready.then(drawLines);
     new IntersectionObserver(([e]) => { if (e.isIntersecting) drawLines(); }).observe(stage);
     drawLines();
-
     initTabs($('.schematic__nodes'), (tab) => {
       typingToken++;
       $$('line', svg).forEach((l) => l.classList.toggle('is-active', l.dataset.for === tab.id));
-      // put the core readout back to what this system controls
       if (tab.id === 'tab-arc') setArc();
       else if (tab.id === 'tab-flight') setThrottle();
       else if (tab.id === 'tab-repulsor') setCore('Repulsor charge', '0%');
       else setCore('Core output', (arcSlider.value / 100 * 3).toFixed(1));
     });
-
-    // Arc reactor: the slider sets the core's brightness
     const arcSlider = $('#arc-power');
     const setArc = () => {
       const p = arcSlider.value / 100;
@@ -731,8 +599,6 @@
       setCore('Core output · GJ/s', (p * 3).toFixed(1));
     };
     arcSlider.addEventListener('input', setArc);
-
-    // AI assistants type their replies into the panel
     const SCRIPTS = {
       jarvis: {
         idle: ['J.A.R.V.I.S. online. How can I help, sir?'],
@@ -776,8 +642,6 @@
       $('.ai__log', box).appendChild(p);
     });
     $$('[data-ai-target]').forEach((btn) => btn.addEventListener('click', () => speak(btn.dataset.aiTarget, btn.dataset.cmd)));
-
-    // Repulsor: hold to charge the core, release to fire a shockwave
     const fireBtn = $('#repulsor-fire');
     let charge = 0, charging = false, raf = 0, last = 0;
     const paint = () => {
@@ -818,8 +682,6 @@
     fireBtn.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); start(); } });
     fireBtn.addEventListener('keyup', (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); release(); } });
     fireBtn.addEventListener('contextmenu', (e) => e.preventDefault());
-
-    // HUD: a radar sweep pings each system on the schematic
     const scanBtn = $('#hud-scan');
     scanBtn.addEventListener('click', () => {
       stage.classList.remove('is-scanning');
@@ -828,8 +690,6 @@
       setCore('Targets', 'Scanning');
       setTimeout(() => { stage.classList.remove('is-scanning'); setCore('Targets locked', '7 / 7'); }, 3300);
     });
-
-    // Workshop stations
     const STATIONS = {
       holo: 'A table-sized holographic workspace. Tony pulls designs apart with his hands, tries a part on for size and throws what he doesn’t like in a virtual bin.',
       bots: 'DUM-E and U: two robotic arms with good intentions and a fire extinguisher each. They hold the camera, fetch tools and occasionally save the day.',
@@ -844,8 +704,6 @@
         stationText.textContent = STATIONS[btn.dataset.station];
       });
     });
-
-    // Flight: the throttle spins the rings up
     const throttle = $('#flight-throttle');
     const warn = $('#flight-warning');
     const setThrottle = () => {
@@ -857,11 +715,8 @@
     };
     throttle.addEventListener('input', setThrottle);
     throttle.style.setProperty('--v', throttle.value + '%');
-
     setArc();
   }
-
-  /* ---------- Trilogy posters: tilt on hover ---------- */
   function initTilt() {
     if (!canHover || reduceMotion) return;
     $$('[data-tilt]').forEach((card) => {
@@ -877,14 +732,10 @@
       card.addEventListener('pointerleave', () => { card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg'); });
     });
   }
-
-  /* ---------- Back to top ---------- */
   function initToTop() {
     const btn = $('.totop');
     return (y) => btn.classList.toggle('is-visible', y > window.innerHeight * 1.2);
   }
-
-  /* ---------- Shared scroll loop ---------- */
   function initScrollLoop(updaters) {
     let ticking = false;
     const run = () => {
@@ -897,14 +748,7 @@
     window.addEventListener('resize', request);
     run();
   }
-
-  /* =========================================================
-     Extra motion. Everything below is skipped for visitors who ask
-     for reduced motion, and pointer effects only run with a mouse.
-     ========================================================= */
   const fancyPointer = canHover && !reduceMotion;
-
-  /* ---------- Arc-reactor cursor + repulsor click burst ---------- */
   function initCursor() {
     if (!fancyPointer) return;
     const ring = document.createElement('div');
@@ -916,7 +760,6 @@
     const target = { x: -100, y: -100 };
     const pos = { x: -100, y: -100 };
     let scale = 1, scaleTarget = 1;
-
     const interactive = 'a, button, input, label, [role="tab"], .suit, .player, .movie__poster, .node';
     window.addEventListener('pointermove', (e) => {
       if (e.pointerType !== 'mouse') return;
@@ -936,28 +779,23 @@
       shock.addEventListener('animationend', () => shock.remove(), { once: true });
     });
     window.addEventListener('pointerup', () => { scaleTarget = 1; });
-
     const tick = () => {
       pos.x += (target.x - pos.x) * 0.18;
       pos.y += (target.y - pos.y) * 0.18;
       scale += (scaleTarget - scale) * 0.25;
       ring.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0) scale(${scale.toFixed(3)})`;
       dot.style.transform = `translate3d(${(target.x - pos.x).toFixed(1)}px, ${(target.y - pos.y).toFixed(1)}px, 0)`;
-      // the armor file sits in the browser's top layer, above the cursor, so hide it there
       ring.classList.toggle('is-off', !!document.querySelector('dialog[open]'));
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
   }
-
-  /* ---------- Hero embers: sparks drifting up from the workshop floor ---------- */
   function initEmbers() {
     const canvas = $('.hero__embers');
     if (!canvas || reduceMotion) return;
     const ctx = canvas.getContext('2d');
     const hero = $('.hero');
     let w = 0, h = 0, dpr = 1, sparks = [], visible = true, raf = 0;
-
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = hero.clientWidth; h = hero.clientHeight;
@@ -973,7 +811,7 @@
       vy: -(0.25 + Math.random() * 0.9),
       vx: (Math.random() - 0.5) * 0.3,
       sway: Math.random() * Math.PI * 2,
-      hue: 18 + Math.random() * 30,          // orange to gold
+      hue: 18 + Math.random() * 30,
       life: 0.4 + Math.random() * 0.6
     });
     const draw = () => {
@@ -981,10 +819,10 @@
       ctx.globalCompositeOperation = 'lighter';
       for (const s of sparks) {
         s.sway += 0.02;
-        const boost = 1 + heroThrust * 1.6;             // the thrusters kick sparks up faster
+        const boost = 1 + heroThrust * 1.6;
         s.x += s.vx * boost + Math.sin(s.sway) * 0.25;
         s.y += s.vy * boost;
-        const fade = clamp(s.y / h, 0, 1) * s.life * Math.min(1.6, 1 + heroThrust * 0.4); // dim as they rise
+        const fade = clamp(s.y / h, 0, 1) * s.life * Math.min(1.6, 1 + heroThrust * 0.4);
         if (s.y < -10 || fade <= 0.02) Object.assign(s, spawn(false));
         ctx.fillStyle = `hsla(${s.hue}, 100%, 60%, ${fade * 0.18})`;
         ctx.beginPath(); ctx.arc(s.x, s.y, s.r * 3.2, 0, Math.PI * 2); ctx.fill();
@@ -1000,8 +838,6 @@
     window.addEventListener('resize', resize);
     resize();
   }
-
-  /* ---------- HUD "decoding" text on small labels ---------- */
   function initScramble() {
     if (reduceMotion) return;
     const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*/<>';
@@ -1030,8 +866,6 @@
     }, { threshold: 0.6 });
     targets.forEach((el) => io.observe(el));
   }
-
-  /* ---------- Armor cards: 3D tilt with a moving light glare ---------- */
   function initSuitTilt() {
     if (!fancyPointer) return;
     const hall = $('#hall');
@@ -1051,8 +885,6 @@
     });
     hall.addEventListener('pointerleave', () => { reset(current); current = null; });
   }
-
-  /* ---------- Magnetic buttons ---------- */
   function initMagnetic() {
     if (!fancyPointer) return;
     $$('.btn, .round-btn, .explore__ring, .totop, .nav__cta').forEach((el) => {
@@ -1065,8 +897,6 @@
       el.addEventListener('pointerleave', () => { el.style.translate = ''; });
     });
   }
-
-  /* ---------- Ticker reacts to scroll speed (and reverses when scrolling up) ---------- */
   function initTickerSpeed() {
     const ticker = $('.ticker');
     const track = $('.ticker__track');
@@ -1086,26 +916,11 @@
       if (!raf) raf = requestAnimationFrame(settle);
     };
   }
-
-  /* =========================================================
-     Scroll scenes: more pinned, scroll-driven sequences in the
-     style of the hero take-off. Each init returns an update(y)
-     that the shared scroll loop calls.
-     ========================================================= */
-
-  // 0 before a, 1 after b, smooth in between
   const phase = (p, a, b) => { const t = clamp((p - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-  // progress through a pinned section: 0 when it pins, 1 when it lets go
   const pinProgress = (section, pin) => {
     const travel = section.offsetHeight - pin.offsetHeight;
     return travel > 0 ? clamp(-section.getBoundingClientRect().top / travel, 0, 1) : 0;
   };
-
-  /* ---------- Interlude: charge both palm repulsors, then fire ----------
-       0.05-0.55  charge builds: palms glow, rings converge, HUD locks on, zoom in
-       0.35-0.58  the frame shakes harder and harder
-       0.56-0.80  BLAST: white-out from the palm and two shockwave rings
-       0.64-0.80  "Perfected in a workshop" slams in                       */
   function initBlast() {
     const band = $('.band');
     const pin = $('.band__pin', band);
@@ -1114,32 +929,26 @@
     const flash = $('.band__flash', band);
     const pct = $('#blast-pct');
     if (reduceMotion) return () => {};
-
     return function update() {
       const r = band.getBoundingClientRect();
       if (r.bottom < -100 || r.top > window.innerHeight + 100) return;
       const p = pinProgress(band, pin);
-
       const fired = phase(p, 0.58, 0.66);
       const c = phase(p, 0.05, 0.55) * (1 - fired);
       const hud = phase(p, 0.05, 0.2) * (1 - phase(p, 0.56, 0.62));
       const flashO = phase(p, 0.55, 0.59) * (1 - phase(p, 0.62, 0.82));
       const ring = phase(p, 0.57, 0.8);
       const slam = phase(p, 0.64, 0.8);
-
       pin.style.setProperty('--c', c.toFixed(3));
       pin.style.setProperty('--hud', hud.toFixed(3));
       pin.style.setProperty('--flash', flashO.toFixed(3));
       pin.style.setProperty('--ring', ring.toFixed(3));
       pin.style.setProperty('--slam', slam.toFixed(3));
       pin.style.setProperty('--zoom', (1 + c * 0.14 - ring * 0.04).toFixed(3));
-
-      // aim the blast at wherever the palm is on screen
       const pr = palm.getBoundingClientRect();
       const pinR = pin.getBoundingClientRect();
       flash.style.setProperty('--fx', (pr.left + pr.width / 2 - pinR.left).toFixed(0) + 'px');
       flash.style.setProperty('--fy', (pr.top + pr.height / 2 - pinR.top).toFixed(0) + 'px');
-
       const shake = 9 * phase(p, 0.3, 0.57) * (1 - fired) + 14 * flashO;
       media.style.transform = shake > 0.3
         ? `translate3d(${((Math.random() - 0.5) * shake).toFixed(1)}px, ${((Math.random() - 0.5) * shake).toFixed(1)}px, 0)`
@@ -1147,41 +956,22 @@
       pct.textContent = Math.round(phase(p, 0.05, 0.55) * 100);
     };
   }
-
-  /* ---------- Armory: pinned sideways ride through the suits (desktop) ----------
-     The section stays pinned while vertical scrolling slides the gallery
-     sideways; the suit nearest the centre steps forward. Phones keep the
-     normal swipeable gallery. */
   function initArmoryRide() {
     const section = $('#armory');
     const hall = $('#hall');
-    const mq = window.matchMedia('(min-width: 961px) and (hover: hover) and (pointer: fine)');
-    if (reduceMotion) return () => {};
-
-    // wrap the section's content in a pinned frame
+    if (reduceMotion || !canHover) return () => {};
     const pin = document.createElement('div');
     pin.className = 'armory__pin';
     while (section.firstChild) pin.appendChild(section.firstChild);
     section.appendChild(pin);
-
-    let active = false;
     const suits = () => $$('.suit', hall);
+    section.classList.add('is-riding');
     const layout = () => {
-      active = mq.matches;
-      section.classList.toggle('is-riding', active);
       section.style.height = '';
-      if (active) {
-        const extra = hall.scrollWidth - hall.clientWidth;
-        section.style.height = (pin.offsetHeight + extra) + 'px';
-      } else {
-        suits().forEach((s) => { s.style.removeProperty('--cf-s'); s.style.removeProperty('--cf-r'); s.style.removeProperty('--cf-o'); });
-      }
+      section.style.height = (pin.offsetHeight + hall.scrollWidth - hall.clientWidth) + 'px';
     };
     window.addEventListener('resize', layout);
-    mq.addEventListener('change', layout);
     layout();
-
-    // the arrows move the page so the ride stays in sync
     const step = (dir) => {
       const extra = hall.scrollWidth - hall.clientWidth;
       const card = suits()[0];
@@ -1192,21 +982,16 @@
     };
     ['#hall-prev', '#hall-next'].forEach((sel, i) => {
       $(sel).addEventListener('click', (e) => {
-        if (!active) return;
         e.stopImmediatePropagation();
         step(i ? 1 : -1);
       }, true);
     });
-
     return function update() {
-      if (!active) return;
       const r = section.getBoundingClientRect();
       if (r.bottom < -200 || r.top > window.innerHeight + 200) return;
       const extra = hall.scrollWidth - hall.clientWidth;
       const p = pinProgress(section, pin);
       hall.scrollLeft = p * extra;
-
-      // cover-flow: the card nearest the centre is full size, others recede
       const mid = window.innerWidth / 2;
       suits().forEach((s) => {
         const b = s.getBoundingClientRect();
@@ -1217,22 +1002,20 @@
       });
     };
   }
-
-  /* ---------- Trilogy: posters swing in from three directions ---------- */
   function initPosterDeal() {
     const posters = $$('.movie__poster');
     if (reduceMotion) return () => {};
     const from = [
-      { rx: 8, ry: 55, x: -18 },   // left poster swings in from the left
-      { rx: 60, ry: 0, x: 0 },     // middle one tips up from below
-      { rx: 8, ry: -55, x: 18 }    // right one from the right
+      { rx: 8, ry: 55, x: -18 },
+      { rx: 60, ry: 0, x: 0 },
+      { rx: 8, ry: -55, x: 18 }
     ];
     return function update() {
       const vh = window.innerHeight;
       posters.forEach((el, i) => {
         const r = el.getBoundingClientRect();
         if (r.bottom < -50 || r.top > vh + 50) return;
-        const t = 1 - phase(clamp((vh - r.top) / (vh * 0.75), 0, 1), 0, 1);  // 1 = still far, 0 = landed
+        const t = 1 - phase(clamp((vh - r.top) / (vh * 0.75), 0, 1), 0, 1);
         const f = from[i % 3];
         el.style.setProperty('--deal-rx', (f.rx * t).toFixed(2) + 'deg');
         el.style.setProperty('--deal-ry', (f.ry * t).toFixed(2) + 'deg');
@@ -1241,8 +1024,6 @@
       });
     };
   }
-
-  /* ---------- Footer: the giant IRON MAN charges up as you arrive ---------- */
   function initFooterCharge() {
     const footer = $('.footer');
     const word = $('.footer__word');
@@ -1256,17 +1037,10 @@
       footer.classList.toggle('is-charged', t >= 0.999);
     };
   }
-
-  /* ---------- HUD text: headings decode, paragraphs print ----------
-     Headings are split into letters that cycle through cyan glyphs and lock
-     in one by one, left to right. Paragraphs are revealed by a glowing scan
-     line. The original text stays available to screen readers. */
   function initHudText() {
     if (reduceMotion) return;
     const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*/<>[]=+';
     const pick = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
-
-    // split every text node into word spans of letter spans (keeps <em>, <small> etc.)
     const split = (root) => {
       const label = root.textContent.replace(/\s+/g, ' ').trim();
       const owner = root.matches('h1, h2, h3, h4, p') ? root : root.closest('h1, h2, h3, h4, p') || root;
@@ -1274,7 +1048,6 @@
       if (/^H\d$/.test(owner.tagName)) {
         owner.setAttribute('aria-label', owner.textContent.replace(/\s+/g, ' ').trim() || label);
       } else {
-        // aria-label is ignored on plain text elements, so keep a hidden readable copy
         copy = document.createElement('span');
         copy.className = 'sr-only';
         copy.textContent = label;
@@ -1304,13 +1077,12 @@
       if (copy) root.appendChild(copy);
       return $$('.hud-ch', root);
     };
-
     const decode = (root) => {
       if (root._hudRaf) cancelAnimationFrame(root._hudRaf);
       const chars = root._hudChars || (root._hudChars = split(root));
       chars.forEach((c) => { c.dataset.s = 'off'; c.removeAttribute('data-g'); });
-      const STEP = Math.max(14, Math.min(34, 900 / chars.length)); // ms between letters starting
-      const SCRAMBLE = 280;                                         // ms each letter scrambles
+      const STEP = Math.max(14, Math.min(34, 900 / chars.length));
+      const SCRAMBLE = 280;
       const start = performance.now();
       let lastSwap = 0;
       const frame = (now) => {
@@ -1334,19 +1106,15 @@
       };
       root._hudRaf = requestAnimationFrame(frame);
     };
-
     const headings = $$([
       '.section-head .display > span', '.film__line > span', '.chapter h3',
       '.movie h3', '.notes__title', '.footer__closing', '.player__name'
     ].join(', ')).filter((el) => !el.closest('.hero'));
     headings.forEach((el) => { el._hudChars = split(el); });
-
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) { decode(e.target); io.unobserve(e.target); } });
     }, { threshold: 0.4 });
     headings.forEach((el) => io.observe(el));
-
-    // tab panels (villains, tech) re-decode their heading each time they are shown
     const panelHeads = $$('.file h3, .sys h3');
     panelHeads.forEach((h) => { h._hudChars = split(h); });
     const mo = new MutationObserver((records) => {
@@ -1361,15 +1129,12 @@
       entries.forEach((e) => { if (e.isIntersecting) { decode(e.target); io2.unobserve(e.target); } });
     }, { threshold: 0.4 });
     firstVisible.forEach((h) => io2.observe(h));
-
-    // paragraphs: a cyan scan line prints them in
     const paras = $$([
       '.section-head__sub', '.film__lede', '.film__copy > p', '.chapter__copy > p:last-child',
       '.file > p', '.file__link p', '.sys > p:not(.sys__code):not(.sys__station):not(.sys__warning)', '.movie__body > p:last-child',
       '.player__desc', '.footer__brand p', '.note__body > p'
     ].join(', '));
     paras.forEach((p) => p.classList.add('hud-print'));
-    // a fully clipped paragraph never counts as visible, so watch its container
     const byParent = new Map();
     paras.forEach((p) => {
       const parent = p.parentElement;
@@ -1385,11 +1150,6 @@
     }, { threshold: 0.2 });
     byParent.forEach((_, parent) => io3.observe(parent));
   }
-
-  /* ---------- Motion polish ---------- */
-
-  /* Depth parallax: images drift slightly against the scroll. Uses the
-     `translate` property so it never fights reveal or hover transforms. */
   function initDepth() {
     if (reduceMotion) return () => {};
     const layers = [
@@ -1407,9 +1167,6 @@
       });
     };
   }
-
-  /* Nav: a single glowing indicator glides between links, follows hover,
-     and returns to the section you are in. Desktop menu only. */
   function initNavIndicator() {
     const links = $('#nav-links');
     const items = $$('a', links);
@@ -1417,30 +1174,23 @@
     bar.className = 'nav__indicator';
     bar.setAttribute('aria-hidden', 'true');
     links.appendChild(bar);
-    const mq = window.matchMedia('(min-width: 961px)');
     let hovered = null;
-
     const moveTo = (a) => {
-      if (!a || !mq.matches) { bar.style.opacity = '0'; return; }
+      if (!a) { bar.style.opacity = '0'; return; }
       bar.style.opacity = '1';
       bar.style.transform = `translateX(${a.offsetLeft}px) scaleX(${a.offsetWidth})`;
     };
     const place = () => moveTo(hovered || items.find((a) => a.classList.contains('is-active')));
-    const sync = () => links.classList.toggle('has-indicator', mq.matches);
-
+    links.classList.add('has-indicator');
     items.forEach((a) => {
       a.addEventListener('pointerenter', () => { hovered = a; place(); });
       a.addEventListener('pointerleave', () => { hovered = null; place(); });
     });
-    // follow the scroll-spy (it toggles .is-active on the links)
     new MutationObserver(place).observe(links, { subtree: true, attributes: true, attributeFilter: ['class'] });
-    window.addEventListener('resize', () => { sync(); place(); });
-    mq.addEventListener('change', () => { sync(); place(); });
+    window.addEventListener('resize', place);
     if (document.fonts) document.fonts.ready.then(place);
-    sync(); place();
+    place();
   }
-
-  /* Section transition: as Story slides up over Film, Film dims and recedes */
   function initFilmCover() {
     const film = $('.film');
     const story = $('#story');
@@ -1453,8 +1203,6 @@
       film.style.setProperty('--cover', cover.toFixed(3));
     };
   }
-
-  /* ---------- Start ---------- */
   initBoot();
   initReveal();
   initCounters();
@@ -1471,6 +1219,6 @@
   initMagnetic();
   initHudText();
   initNavIndicator();
-  initScrollLoop([initNav(), initHero(), initParallax(), initTimeline(), initToTop(), initTickerSpeed(),
+  initScrollLoop([initNav(), initHero(), initTimeline(), initToTop(), initTickerSpeed(),
     initBlast(), initArmoryRide(), initPosterDeal(), initFooterCharge(), initDepth(), initFilmCover()]);
 })();
