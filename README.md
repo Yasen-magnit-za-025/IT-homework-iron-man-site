@@ -1,4 +1,4 @@
-# Iron Man fan site
+# Iron Man site for IT homework
 
 A cinematic, scroll-driven fan site about Iron Man (2008), built with plain HTML, CSS and JavaScript (no libraries, no build step).
 
