@@ -1,0 +1,13 @@
+<section id="c-extra-motion">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1514–1654 · EXTRA MOTION AND HUD TEXT</p></div>
+<h2 class="title">Cursor, embers and decoding letters</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.cursor.is-hover</span> {<br>&#160;&#160;width: 66px; border-color: rgba(196,22,28,.9);<br>}<br><span class="k">.hud-ch[data-s="scan"]::before</span> {<br>&#160;&#160;content: attr(data-g);<br>&#160;&#160;color: var(--arc);<br>}<br><span class="k">.hud-print:not(.is-printed)</span> {<br>&#160;&#160;clip-path: inset(0 100% 0 0);<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Custom cursor</h3><p>A glowing reactor ring follows the mouse and turns red over anything clickable; clicks fire a shockwave.</p></div>
+<div class="pt" style="--i:1"><h3>Letters from data</h3><p>While a letter scrambles, ::before shows its data-g attribute (a random glyph) in cyan instead of the real letter.</p></div>
+<div class="pt" style="--i:2"><h3>Printed paragraphs</h3><p>A paragraph starts clipped to nothing and is revealed left to right while a glowing bar runs along the edge.</p></div>
+</div>
+</div>
+<aside>Part 17 holds the extra motion. The .cursor is a fixed ring with a dashed inner ring and a dot; is-hover makes it bigger and red. .shock is the expanding ring that appears on each click. The hero embers canvas sits over the background with screen blending. A one-time cyan scan line sweeps down the hero when it powers on, and the title flickers on with a stepped animation. Armor cards get a glare that follows the mouse, and the ticker words lean with --skew. Part 18 is the HUD text. Each heading letter is a .hud-ch span with a data-s state: "off" is invisible, "scan" hides the real letter and shows a random cyan glyph from data-g through ::before, and "lock" plays a quick glow flash. Paragraphs with .hud-print start fully clipped; .is-printed animates the clip open and moves a glowing scan bar across in sync, while the text cools from cyan.</aside>
+</section>

@@ -1,0 +1,13 @@
+<section id="j-scenes">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1104–1259 · THE SCROLL SCENES</p></div>
+<h2 class="title">Blast, armory ride, posters, footer charge</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> pinProgress = (section, pin) =&gt; {<br>&#160;&#160;<span class="k">const</span> travel =<br>&#160;&#160;&#160;&#160;section.offsetHeight - pin.offsetHeight;<br>&#160;&#160;<span class="k">return</span> clamp(-section.getBoundingClientRect()<br>&#160;&#160;&#160;&#160;.top / travel, 0, 1);<br>};<br><span class="k">const</span> fired = phase(p, 0.58, 0.66);<br><span class="k">const</span> c = phase(p, 0.05, 0.55) * (1 - fired);<br>pin.style.setProperty(<span class="s">'--c'</span>, c);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>The same recipe</h3><p>Progress through a pinned section, cut into phase() windows, written as CSS variables. Like the hero.</p></div>
+<div class="pt" style="--i:1"><h3>The repulsor blast</h3><p>Charge builds, the shake grows, the palm fires a white flash and rings, then the line slams in.</p></div>
+<div class="pt" style="--i:2"><h3>Ride, deal, charge</h3><p>Scroll drives the armory sideways on desktop, swings the posters in and fills the footer word.</p></div>
+</div>
+</div>
+<aside>phase and pinProgress are shared helpers: pinProgress returns how far you are through a pinned section, from 0 to 1. initBlast cuts that progress into windows: charge from 5% to 55%, HUD on screen, a shake that grows from 30% to 57%, the flash from 55% to 82%, rings expanding from 57%, and the text slamming in from 64% to 80%. It aims the flash at the palm’s real position on screen. initArmoryRide (desktop with a mouse only) wraps the armory in a pinned frame, sets the section’s height to one screen plus the gallery’s overflow, then maps progress to hall.scrollLeft and scales and rotates each card by its distance from the centre (cover flow). Its arrow buttons scroll the page instead. initPosterDeal rotates each poster in from its own direction based on how far it has entered the screen. initFooterCharge sets --charge from 0 to 1 as the footer word arrives and adds is-charged at the end.</aside>
+</section>

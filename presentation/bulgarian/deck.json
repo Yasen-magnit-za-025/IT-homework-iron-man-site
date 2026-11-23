@@ -1,0 +1,27 @@
+{
+  "v": 5,
+  "createdOnFiles": { "v": 1, "at": "2026-11-19T20:20:00Z" },
+  "lists": "css",
+  "format": { "v": 1, "shared": ["project/deck.css"] },
+  "title": "Как работи сайтът за Железния човек",
+  "cover": "cover",
+  "order": [
+    "cover", "files", "graph",
+    "d-html", "h-head", "h-boot-nav", "h-hero", "h-film", "h-story", "h-armory-cast", "h-villains", "h-tech", "h-trilogy-footer", "h-dialog",
+    "d-css", "c-tokens", "c-shared", "c-reactor-boot", "c-nav", "c-hero", "c-film", "c-story-band", "c-armory-cast", "c-villains-tech", "c-trilogy-footer", "c-responsive", "c-extra-motion", "c-polish-colour",
+    "d-js", "j-structure", "j-boot-nav-reveal", "j-hero", "j-parallax-timeline", "j-armory", "j-viewer", "j-cast-tabs", "j-tech", "j-loop", "j-cursor-embers", "j-tilt-ticker", "j-scenes", "j-hud-text", "j-polish-start",
+    "recap"
+  ],
+  "sections": {
+    "overview": { "description": "От какво е направен сайтът: три файла, 4177 реда.", "start": "cover" },
+    "html": { "description": "sait.html отгоре надолу: структурата и съдържанието на страницата.", "start": "d-html" },
+    "css": { "description": "sait.css отгоре надолу: как всичко изглежда и се движи.", "start": "d-css" },
+    "js": { "description": "sait.js отгоре надолу: всяко взаимодействие и сцена при скрол.", "start": "d-js" },
+    "recap": { "description": "Идеите, които държат целия сайт заедно.", "start": "recap" }
+  },
+  "faces": {
+    "manrope": { "family": "Manrope", "href": "https://fonts.googleapis.com/css2?family=Manrope:wght@400..700&display=swap" },
+    "jetbrains-mono": { "family": "JetBrains Mono", "href": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400..600&display=swap" }
+  },
+  "designSystems": []
+}

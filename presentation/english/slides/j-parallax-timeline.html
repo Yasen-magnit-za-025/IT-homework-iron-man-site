@@ -1,0 +1,13 @@
+<section id="j-parallax-timeline">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 344–376 · PARALLAX AND THE TIMELINE</p></div>
+<h2 class="title">Small functions the scroll loop calls</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">return function</span> update() {<br>&#160;&#160;<span class="k">const</span> vh = window.innerHeight;<br>&#160;&#160;<span class="k">const</span> r = timeline.getBoundingClientRect();<br>&#160;&#160;<span class="k">const</span> line = vh * 0.6;<br>&#160;&#160;fill.style.setProperty(<span class="s">'--fill'</span>,<br>&#160;&#160;&#160;&#160;clamp((line - r.top) / r.height, 0, 1));<br>&#160;&#160;chapters.forEach((ch) =&gt;<br>&#160;&#160;&#160;&#160;ch.classList.toggle(<span class="s">'is-lit'</span>, …));<br>};</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Returning update()</h3><p>Init functions return an update function. They don’t listen to scrolling themselves; the shared loop calls them.</p></div>
+<div class="pt" style="--i:1"><h3>A line at 60%</h3><p>The rail fills up to an imaginary line 60% down the screen, and each chapter dot lights up as it crosses it.</p></div>
+<div class="pt" style="--i:2"><h3>Skip what’s off screen</h3><p>Each update checks the element’s position first and returns early when it’s far away, saving work.</p></div>
+</div>
+</div>
+<aside>initParallax finds every element with data-parallax and, on each scroll frame, moves it by the distance between its centre and the screen’s centre times the factor. It skips anything more than 100px off screen. (Nothing currently uses data-parallax since the interlude became a pinned scene, so it is a harmless leftover.) initTimeline measures the timeline’s box with getBoundingClientRect, works out how much of it has passed an imaginary line 60% down the viewport, and writes that as --fill (0 to 1), which the CSS uses to scale the gold rail. It also adds is-lit to each chapter whose dot has crossed the line. Both return their update function instead of adding their own scroll listener, so all scroll work happens together once per frame.</aside>
+</section>

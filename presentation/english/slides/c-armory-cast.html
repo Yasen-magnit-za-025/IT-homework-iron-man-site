@@ -1,0 +1,13 @@
+<section id="c-armory-cast">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 816–956 · ARMORY AND CAST</p></div>
+<h2 class="title">Scrolling cards and growing panels</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.hall</span> {<br>&#160;&#160;display: flex; overflow-x: auto;<br>&#160;&#160;scroll-snap-type: x mandatory;<br>}<br><span class="k">.suit</span> { --tone: 196, 22, 28; }<br><span class="k">.player</span> { flex: 1 1 0; }<br><span class="k">.player.is-active</span> { flex-grow: 4.2; }<br><span class="k">.player__photo</span> {<br>&#160;&#160;transition: filter .8s, width .8s;<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>A snapping gallery</h3><p>The hall is a sideways‑scrolling flex row; scroll‑snap makes each card stop neatly at the edge.</p></div>
+<div class="pt" style="--i:1"><h3>One colour per suit</h3><p>Each card sets --tone as an RGB triplet, so its glow, border and stripe all use that suit’s colour.</p></div>
+<div class="pt" style="--i:2"><h3>Flex‑grow panels</h3><p>All cast panels share the space equally; the active one grows to 4.2 shares and the photo slides to half width.</p></div>
+</div>
+</div>
+<aside>The Armory part styles the hall as a horizontally scrolling flex row with scroll snapping and a hidden scrollbar; while dragging, snapping turns off. Each .suit card has a --tone variable written as "R, G, B", so rgba(var(--tone), .3) can give any transparency of that suit’s colour. The card shows a big outlined Roman numeral, the suit image, a 3D badge and the labels, with a bottom stripe that grows on hover. The progress bar under the hall is scaled by --hp. The Cast part is a flex row of five panels, each flex: 1, with the active one at flex-grow 4.2, so it widens smoothly. Inactive photos are filtered (now a red duotone). The vertical name tab is rotated text. The body with the still, role, name and description fades in only on the active panel. Under 960px the row becomes a column of short bars, with the active one tall.</aside>
+</section>

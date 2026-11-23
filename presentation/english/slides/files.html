@@ -1,0 +1,11 @@
+<section id="files">
+<p class="eyebrow">OVERVIEW</p>
+<h2 class="title">Three files, three jobs</h2>
+<p class="lede">The browser loads sait.html, which pulls in the other two. HTML says what is on the page, CSS says how it looks and moves, JS makes it react.</p>
+<div class="stats">
+<div class="stat" style="--i:0"><p class="tag tag-html" style="align-self:flex-start;">sait.html</p><p class="num" style="margin-top:24px;">883</p><p class="lbl">lines of structure</p><p class="what">Ten sections, the nav, the footer and one dialog</p></div>
+<div class="stat" style="--i:1"><p class="tag tag-css" style="align-self:flex-start;">sait.css</p><p class="num" style="margin-top:24px;">1,818</p><p class="lbl">lines of style</p><p class="what">Twenty numbered parts, from tokens to reduced motion</p></div>
+<div class="stat" style="--i:2"><p class="tag tag-js" style="align-self:flex-start;">sait.js</p><p class="num" style="margin-top:24px;">1,476</p><p class="lbl">lines of behaviour</p><p class="what">About 45 small init functions and one scroll loop</p></div>
+</div>
+<aside>The three files sit in the same folder and depend on each other. sait.html is the entry point: its head links sait.css with a link tag and loads sait.js with a deferred script tag, plus a fonts folder for the Stark typeface. CSS is the biggest file because every section has its own look, a responsive version and motion rules. JavaScript is written as many small functions that each own one feature, so any one of them can be read on its own.</aside>
+</section>

@@ -1,0 +1,13 @@
+<section id="c-story-band">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 648–815 · STORY AND THE BLAST</p></div>
+<h2 class="title">A filling rail and a repulsor blast</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.timeline__fill</span> {<br>&#160;&#160;transform: scaleY(var(--fill, 0));<br>&#160;&#160;transform-origin: top;<br>}<br><span class="k">.charge</span> {<br>&#160;&#160;transform: translate(-50%,-50%)<br>&#160;&#160;&#160;&#160;scale(calc(.25 + var(--c) * 1.25));<br>&#160;&#160;opacity: var(--c);<br>}<br><span class="k">.band__flash::before</span> { opacity: var(--flash); }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Alternating chapters</h3><p>Each chapter is a two‑column grid; every other one swaps image and text so the timeline zig‑zags.</p></div>
+<div class="pt" style="--i:1"><h3>A rail that fills</h3><p>The gold line grows with scaleY(var(--fill)), so scrolling only updates one variable.</p></div>
+<div class="pt" style="--i:2"><h3>Everything from variables</h3><p>Charge glow, HUD, flash, rings and the slam‑in text all read --c, --hud, --flash, --ring and --slam.</p></div>
+</div>
+</div>
+<aside>The Story part styles the timeline: a centred vertical rail with a gradient fill scaled by --fill, and chapters as two-column grids where odd chapters put the image on the right. Chapter images start zoomed and settle when revealed. The node dot lights up gold when JavaScript adds is-lit. Big outlined numbers sit behind each chapter’s text. The band (interlude) is 240vh tall with a sticky pin. band__frame keeps the photo at its true shape so the palm glows line up, and zooms toward the right palm with --zoom. .charge is a radial-gradient glow whose size and opacity come from --c, with two rings converging inward on a loop. The HUD lock circle shrinks as --c rises. The flash is a radial gradient centred on --fx and --fy, the palm’s position, with two shockwave rings scaled by --ring. The line "Perfected in a workshop" scales down, sharpens from a blur and fades in with --slam.</aside>
+</section>

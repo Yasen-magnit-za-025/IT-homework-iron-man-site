@@ -1,0 +1,634 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the Iron Man site works</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400..600&amp;display=swap">
+<style>
+/* Iron Man code walkthrough: dark, flat backgrounds; Geist for text, Geist Mono for code */
+body { font-family: 'Geist', Arial, sans-serif; color: #EDEAE3; }
+
+section {
+  background: #181818;
+  padding: 128px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* type scale: 96 / 64 / 36 / 28 / 24 */
+.eyebrow { font-family: 'Geist Mono', 'Courier New', monospace; font-size: 24px; font-weight: 500; letter-spacing: 2px; color: #D7A84A; }
+.title { font-size: 64px; font-weight: 600; line-height: 1.1; color: #F2EFE8; margin-top: 16px; }
+.lede { font-size: 28px; line-height: 1.45; color: #B9B4AA; margin-top: 24px; width: 1100px; }
+
+/* code slides: code on the left, three points on the right */
+.split { display: grid; grid-template-columns: 920px 1fr; gap: 64px; margin-top: 48px; align-items: start; }
+.code { background: #1F1F1F; border: 1px solid #313131; border-radius: 16px; padding: 32px; }
+.code .src { font-family: 'Geist Mono', 'Courier New', monospace; font-size: 24px; line-height: 1.5; color: #D8D4CB; }
+.code .k { color: #9BE8FF; }
+.code .s { color: #F0D08A; }
+.code .c { color: #8C887F; }
+.code .t { color: #F08A6E; }
+.points { display: flex; flex-direction: column; gap: 32px; }
+.pt { border-left: 3px solid #C4161C; padding-left: 24px; animation: rise .6s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--i, 0) * 120ms); }
+.pt h3 { font-size: 36px; font-weight: 600; line-height: 1.15; color: #F2EFE8; }
+.pt p { font-size: 28px; line-height: 1.4; color: #B9B4AA; margin-top: 8px; }
+
+/* file tag next to the eyebrow */
+.tagrow { display: flex; gap: 16px; align-items: center; }
+.tag { font-family: 'Geist Mono', 'Courier New', monospace; font-size: 24px; font-weight: 600; padding: 4px 16px; border-radius: 8px; }
+.tag-html { background: #3A2A12; color: #F0D08A; }
+.tag-css { background: #12303A; color: #9BE8FF; }
+.tag-js { background: #3A1416; color: #F3B4A6; }
+
+/* chapter dividers: the one red statement slide per file */
+section.divider { background: #8F1015; justify-content: center; }
+.divider .big { font-family: 'Geist Mono', 'Courier New', monospace; font-size: 96px; font-weight: 600; color: #FBF6EE; line-height: 1.05; }
+.divider .sub { font-size: 36px; line-height: 1.35; color: #F6DCD4; margin-top: 32px; width: 1300px; }
+.divider .meta { font-family: 'Geist Mono', 'Courier New', monospace; font-size: 28px; color: #FBF6EE; margin-top: 48px; }
+
+/* cover and summary slides */
+section.cover { background: #131313; justify-content: center; }
+.cover .big { font-size: 96px; font-weight: 600; line-height: 1.05; color: #F2EFE8; width: 1100px; }
+.cover .lede { width: 980px; }
+.chips { display: flex; gap: 16px; margin-top: 48px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 56px; }
+.stat { background: #1F1F1F; border: 1px solid #313131; border-radius: 16px; padding: 32px; animation: rise .6s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--i, 0) * 120ms); }
+.stat .num { font-family: 'Geist Mono', 'Courier New', monospace; font-size: 96px; font-weight: 600; color: #F2EFE8; line-height: 1; }
+.stat .lbl { font-size: 28px; color: #B9B4AA; margin-top: 16px; }
+.stat .what { font-size: 24px; color: #8C887F; margin-top: 8px; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+
+html { background: #0E0E0E; }
+body { margin: 0 auto; padding: 16px; max-width: 1920px; }
+h1, h2, h3, p { margin: 0; }
+.frame { height: calc(1080px * var(--k, .5)); overflow: hidden; border-radius: 8px; }
+.stage { width: 1920px; height: 1080px; transform: scale(var(--k, .5)); transform-origin: 0 0; }
+.stage > section { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+details { color: #B9B4AA; font-size: 16px; line-height: 1.5; margin: 8px 0 32px; }
+details p { margin-top: 8px; max-width: 900px; }
+summary { cursor: pointer; color: #8C887F; }
+</style></head><body>
+<div class="frame"><div class="stage"><section id="cover" class="cover">
+<svg aria-label="A glowing arc reactor ring" width="420" height="420" viewBox="0 0 420 420" style="position:absolute; left:1372px; top:330px; width:420px; height:420px;"><circle cx="210" cy="210" r="200" fill="none" stroke="#9BE8FF" stroke-opacity="0.25" stroke-width="2"/><circle cx="210" cy="210" r="160" fill="none" stroke="#9BE8FF" stroke-width="18" stroke-dasharray="26 10" stroke-opacity="0.75"/><circle cx="210" cy="210" r="104" fill="none" stroke="#C4161C" stroke-width="3" stroke-opacity="0.8"/><circle cx="210" cy="210" r="62" fill="#EAFCFF"/><circle cx="210" cy="210" r="90" fill="#9BE8FF" fill-opacity="0.18"/></svg>
+<p class="eyebrow">CODE WALKTHROUGH · SAIT.HTML · SAIT.CSS · SAIT.JS</p>
+<h1 class="big" style="margin-top:24px;">How the Iron Man site works</h1>
+<p class="lede">Every part of the three files explained, top to bottom: what each block of lines does and why it is there.</p>
+<div class="chips">
+<p class="tag tag-html">HTML · 883 lines</p>
+<p class="tag tag-css">CSS · 1,818 lines</p>
+<p class="tag tag-js">JS · 1,476 lines</p>
+</div>
+
+</section>
+</div></div><details><summary>1 / 44</summary><p>This deck walks through the whole Iron Man fan site file by file. Each content slide names the exact line range it covers, so together the slides cover every line of all three files: 883 lines of HTML, 1,818 of CSS and 1,476 of JavaScript. The code on each slide is a short excerpt from that range; the points beside it explain what the lines do and why they are written that way.</p></details><div class="frame"><div class="stage"><section id="files">
+<p class="eyebrow">OVERVIEW</p>
+<h2 class="title">Three files, three jobs</h2>
+<p class="lede">The browser loads sait.html, which pulls in the other two. HTML says what is on the page, CSS says how it looks and moves, JS makes it react.</p>
+<div class="stats">
+<div class="stat" style="--i:0"><p class="tag tag-html" style="align-self:flex-start;">sait.html</p><p class="num" style="margin-top:24px;">883</p><p class="lbl">lines of structure</p><p class="what">Ten sections, the nav, the footer and one dialog</p></div>
+<div class="stat" style="--i:1"><p class="tag tag-css" style="align-self:flex-start;">sait.css</p><p class="num" style="margin-top:24px;">1,818</p><p class="lbl">lines of style</p><p class="what">Twenty numbered parts, from tokens to reduced motion</p></div>
+<div class="stat" style="--i:2"><p class="tag tag-js" style="align-self:flex-start;">sait.js</p><p class="num" style="margin-top:24px;">1,476</p><p class="lbl">lines of behaviour</p><p class="what">About 45 small init functions and one scroll loop</p></div>
+</div>
+
+</section>
+</div></div><details><summary>2 / 44</summary><p>The three files sit in the same folder and depend on each other. sait.html is the entry point: its head links sait.css with a link tag and loads sait.js with a deferred script tag, plus a fonts folder for the Stark typeface. CSS is the biggest file because every section has its own look, a responsive version and motion rules. JavaScript is written as many small functions that each own one feature, so any one of them can be read on its own.</p></details><div class="frame"><div class="stage"><section id="graph">
+<p class="eyebrow">SIZE OF THE CODE</p>
+<h2 class="title">Lines of code, file by file</h2>
+<div style="display:flex; gap:64px; margin-top:48px; align-items:flex-start;">
+<div style="position:relative; width:1100px; height:560px;">
+<svg aria-label="Line chart: the running total of lines grows from 0 to 883 with HTML, 2,701 with CSS and 4,177 with JavaScript" width="1100" height="560" viewBox="0 0 1100 560" style="position:absolute; left:0; top:0; width:1100px; height:560px;">
+<line x1="0" y1="480" x2="1100" y2="480" stroke="#313131" stroke-width="2"/>
+<line x1="0" y1="40" x2="1100" y2="40" stroke="#272727" stroke-width="2" stroke-dasharray="6 8"/>
+<path d="M0 480 L366 387 L733 196 L1080 40" fill="none" stroke="#9BE8FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1200" stroke-dashoffset="0"><animate attributeName="stroke-dashoffset" from="1200" to="0" dur="1.6s" begin="0s"/></path>
+<circle cx="366" cy="387" r="10" fill="#F0D08A"/>
+<circle cx="733" cy="196" r="10" fill="#9BE8FF"/>
+<circle cx="1080" cy="40" r="12" fill="#F3B4A6"/>
+</svg>
+<p style="position:absolute; left:0; top:500px; width:200px; font-size:24px; color:#8C887F;">Start · 0</p>
+<p style="position:absolute; left:246px; top:410px; width:240px; font-size:24px; color:#F0D08A;">HTML · 883</p>
+<p style="position:absolute; left:600px; top:216px; width:300px; font-size:24px; color:#9BE8FF;">+ CSS · 2,701</p>
+<p style="position:absolute; left:820px; top:64px; width:260px; font-size:24px; color:#F3B4A6; text-align:right;">+ JS · 4,177</p>
+</div>
+<div style="display:flex; flex-direction:column; width:500px;">
+<p style="font-family:'Geist Mono','Courier New',monospace; font-size:96px; font-weight:600; color:#F2EFE8; line-height:1;">4,177</p>
+<p style="font-size:28px; color:#B9B4AA; margin-top:16px;">lines in total</p>
+<p style="font-size:28px; line-height:1.4; color:#B9B4AA; margin-top:40px;">CSS is the steepest climb: every section carries its own layout, a phone version and motion rules.</p>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>3 / 44</summary><p>The line is the running total of lines as you add each file: 883 lines of HTML, then 1,818 lines of CSS bring the total to 2,701, then 1,476 lines of JavaScript bring it to 4,177. These are the real line counts of the files as they are now. I meant this to be a video made with the graph animation skill, but its renderer needs Chrome or Edge, which this computer does not have, so the chart is drawn directly on the slide instead.</p></details><div class="frame"><div class="stage"><section id="d-html" class="divider">
+<p class="big">sait.html</p>
+<p class="sub">The page’s structure: what exists, in what order, and what it means. No styling, no behaviour, just content and labels.</p>
+<p class="meta">883 lines · 10 slides · read top to bottom</p>
+
+</section>
+</div></div><details><summary>4 / 44</summary><p>Part one covers the HTML file in order, from the head at line 1 to the armor dialog at the end. Every slide names its line range. A useful way to read HTML is to ask, for each tag: what is this, and who is it for? Some tags are for visitors (headings, images), some for screen readers (aria labels), and some are hooks for the CSS and JavaScript (classes, ids and data attributes).</p></details><div class="frame"><div class="stage"><section id="h-head">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 1–20 · THE HEAD</p></div>
+<h2 class="title">The head: setup the visitor never sees</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;html</span> lang=<span class="s">"en"</span> class=<span class="s">"no-js"</span><span class="t">&gt;</span><br><span class="t">&lt;meta</span> name=<span class="s">"viewport"</span> content=<span class="s">"width=device-width…"</span><span class="t">&gt;</span><br><span class="t">&lt;meta</span> name=<span class="s">"referrer"</span> content=<span class="s">"no-referrer"</span><span class="t">&gt;</span><br><span class="t">&lt;title&gt;</span>Iron Man — Enter the World…<span class="t">&lt;/title&gt;</span><br><span class="t">&lt;link</span> rel=<span class="s">"stylesheet"</span> href=<span class="s">"sait.css"</span><span class="t">&gt;</span><br><span class="t">&lt;script&gt;</span><br>&#160;&#160;document.documentElement.className =<br>&#160;&#160;&#160;&#160;<span class="s">'js is-booting'</span>;<br><span class="t">&lt;/script&gt;</span><br><span class="t">&lt;script</span> src=<span class="s">"sait.js"</span> <span class="k">defer</span><span class="t">&gt;&lt;/script&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Viewport and title</h3><p>Lines 4–10 set the character set, phone scaling, the tab title, a description and an arc‑reactor favicon drawn as inline SVG.</p></div>
+<div class="pt" style="--i:1"><h3>No referrer</h3><p>The wiki that hosts the images blocks requests from other sites, so line 7 tells the browser to send no referrer at all.</p></div>
+<div class="pt" style="--i:2"><h3>Linking the files</h3><p>Lines 11–20 preload fonts, link sait.css, flag that JS is running, then load sait.js with defer so it runs after the page is built.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>5 / 44</summary><p>Line 1 declares a modern HTML document. Line 2 opens the html element with the English language and a no-js class. Lines 4 and 5 set UTF-8 text and make phones use their real width instead of zooming out. Line 7 is the no-referrer rule: the image host refuses requests that say which site they came from. Lines 8 to 10 are the description, the browser bar colour and the page title. Line 11 is the favicon, an SVG drawing of the arc reactor written straight into the link. Lines 12 to 14 open early connections to Google Fonts and the image host so they load faster. Line 15 loads the Exo 2 font. Line 16 links the stylesheet. Line 17 is a one-line script that swaps no-js for "js is-booting": CSS uses that to hide things only when JavaScript is available, and to show the boot screen. Line 19 loads Sketchfab’s viewer API for the 3D models, and line 20 loads sait.js with defer, so the script waits until all the HTML is parsed.</p></details><div class="frame"><div class="stage"><section id="h-boot-nav">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 21–56 · BOOT SCREEN AND NAVIGATION</p></div>
+<h2 class="title">Skip link, boot screen and the menu</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;a</span> class=<span class="s">"skip-link"</span> href=<span class="s">"#film"</span><span class="t">&gt;</span>Skip to content<span class="t">&lt;/a&gt;</span><br><span class="t">&lt;div</span> class=<span class="s">"boot"</span> aria-hidden=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"reactor boot__reactor"</span><span class="t">&gt;</span>…<br><span class="t">&lt;/div&gt;</span><br><span class="t">&lt;header</span> class=<span class="s">"nav"</span> id=<span class="s">"nav"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;nav</span> class=<span class="s">"nav__links"</span> id=<span class="s">"nav-links"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;a</span> href=<span class="s">"#film"</span><span class="t">&gt;</span>Film<span class="t">&lt;/a&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;a</span> href=<span class="s">"#story"</span><span class="t">&gt;</span>Story<span class="t">&lt;/a&gt;</span> …<br>&#160;&#160;<span class="t">&lt;button</span> class=<span class="s">"nav__toggle"</span><br>&#160;&#160;&#160;&#160;aria-expanded=<span class="s">"false"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Skip link</h3><p>Keyboard users can jump past the menu straight to the first section. It only shows when focused.</p></div>
+<div class="pt" style="--i:1"><h3>Boot screen</h3><p>A spinning reactor and “initializing” text cover the page while fonts and the hero image load.</p></div>
+<div class="pt" style="--i:2"><h3>Menu</h3><p>Links point at section ids (#film, #story…). The toggle button opens the phone menu and reports its state with aria‑expanded.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>6 / 44</summary><p>Line 23 is the skip link, a standard accessibility feature for keyboard users. Lines 25 to 30 are the boot screen: an arc reactor, the text "Stark Industries // initializing" and a loading bar. It is hidden from screen readers with aria-hidden because it is only decoration. Lines 32 to 56 are the navigation. The brand link goes back to the top (#top). The nav element holds seven links, one per section, each using a hash link so the browser scrolls to the matching id. The "Suit up" button links to the armory. The toggle button is the hamburger for phones: aria-expanded tells screen readers whether the menu is open, and aria-controls names the menu it opens. The last span is the thin progress bar under the nav that fills as you scroll.</p></details><div class="frame"><div class="stage"><section id="h-hero">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 57–135 · THE HERO</p></div>
+<h2 class="title">The hero is built in layers</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;section</span> class=<span class="s">"hero"</span> id=<span class="s">"top"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"hero__pin"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"hero__bg"</span><span class="t">&gt;</span>…<span class="t">&lt;/div&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;canvas</span> class=<span class="s">"hero__embers"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"hero__layer--title"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="t">&lt;h1&gt;</span>Iron Man<span class="t">&lt;/h1&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"hero__suit"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="t">&lt;span</span> class=<span class="s">"thruster"</span><span class="t">&gt;</span> ×2<br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"hero__figure"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>A pinned frame</h3><p>The section is taller than the screen; hero__pin stays stuck in place while scrolling plays the take‑off.</p></div>
+<div class="pt" style="--i:1"><h3>Stacked layers</h3><p>Background photo, a dark scrim, an ember canvas, the reactor ring, the title and the suit sit on top of each other.</p></div>
+<div class="pt" style="--i:2"><h3>Suit and thrusters</h3><p>The two thruster spans live inside the suit’s wrapper, so the flames move with him when he lifts off.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>7 / 44</summary><p>Lines 57 to 135 build the opening screen. The section has id "top" so the brand link can scroll back to it. hero__pin is the frame that stays fixed while you scroll (CSS makes it sticky). Inside it: hero__bg holds the darkened workshop photo; hero__scrim is a gradient that keeps text readable; the canvas is where JavaScript draws the rising embers. hero__stage holds four layers that move at different speeds: the reactor ring, the ground glow, the title (cast names, the h1 "Iron Man" split into two words, and the vertical [2008]) and the suit. hero__suit wraps the Mark III image and the two thruster spans, positioned under each boot. Below the stage, hero__foot holds the tagline, a short intro, three round fact chips and the "Explore the universe" link. Elements with data-in fade in one after another when the page is ready, using the --i number on each.</p></details><div class="frame"><div class="stage"><section id="h-film">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 136–217 · THE FILM</p></div>
+<h2 class="title">An editorial page about the 2008 film</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;section</span> class=<span class="s">"film"</span> id=<span class="s">"film"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h2</span> class=<span class="s">"film__title"</span><span class="t">&gt;</span>Directed by…<br>&#160;&#160;<span class="t">&lt;figure</span> class=<span class="s">"film__poster"</span> <span class="k">data-reveal</span>=<span class="s">"left"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;dl</span> class=<span class="s">"film__facts"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;dt&gt;</span>Release date<span class="t">&lt;/dt&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;dd&gt;</span>May 2, 2008<span class="t">&lt;/dd&gt;</span><br>&#160;&#160;<span class="t">&lt;span</span> <span class="k">data-count</span>=<span class="s">"585"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> aria-expanded=<span class="s">"true"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Definition lists</h3><p>Facts and cast use dl, dt and dd: the correct tags for a label paired with a value.</p></div>
+<div class="pt" style="--i:1"><h3>data‑ hooks</h3><p>data-reveal tells CSS how something enters; data-count gives JavaScript the number to count up to.</p></div>
+<div class="pt" style="--i:2"><h3>Accordion notes</h3><p>Five production notes are buttons with aria-expanded, so screen readers know which note is open.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>8 / 44</summary><p>The Film section (id "film") is the light, paper-coloured section. It opens with an eyebrow label and the big "Directed by Jon Favreau" heading split into two lines, each wrapped in a span so it can slide up. The grid has three parts: the poster in a figure with a caption, the synopsis and cast list, and a facts list. Facts and cast use dl (description list) with dt for the label and dd for the value. The stats row has four numbers; data-count, data-prefix and data-suffix tell the JavaScript what to count up to and how to format it. The production notes are an accordion: each title is a button with aria-expanded and aria-controls pointing at its paragraph, so assistive tech knows what each button opens.</p></details><div class="frame"><div class="stage"><section id="h-story">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 218–343 · THE STORY AND THE INTERLUDE</p></div>
+<h2 class="title">A six‑chapter timeline and the blast scene</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;ol</span> class=<span class="s">"timeline"</span> id=<span class="s">"timeline"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;li</span> class=<span class="s">"chapter"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;figure</span> <span class="k">data-reveal</span>=<span class="s">"wipe"</span><span class="t">&gt;</span>…<br>&#160;&#160;&#160;&#160;<span class="t">&lt;h3&gt;</span>The merchant of death<span class="t">&lt;/h3&gt;</span><br><span class="t">&lt;section</span> class=<span class="s">"band"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"band__pin"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;span</span> class=<span class="s">"charge charge--right"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"band__flash"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>An ordered list</h3><p>The story is an ol because the chapters happen in order. Each li is one chapter: image, place, title, text.</p></div>
+<div class="pt" style="--i:1"><h3>Wipe reveal</h3><p>data-reveal="wipe" makes each still image uncover itself from the top as it scrolls into view.</p></div>
+<div class="pt" style="--i:2"><h3>The blast interlude</h3><p>A pinned frame holds the photo, three glow spans on the palms and chest, a HUD lock‑on and a flash layer.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>9 / 44</summary><p>The Story section (id "story") has a heading and an ordered list. The first li is the rail, a vertical line that fills as you scroll. The other six li elements are the chapters: a figure with a film still, a node dot on the rail, and the text block with a big outlined number, the place, an h3 title and a short paragraph. Every image has alt text describing what it shows. Lines about 318 to 343 are the interlude section ("band"): it is taller than the screen with a pinned frame inside. band__frame keeps the image at its own shape so the three "charge" glows can be placed exactly on the palms and chest with percentages. band__hud has the lock-on ring and the charge readout, band__flash is the white-out and shockwave rings, and band__copy holds the "Built in a cave / Perfected in a workshop" text.</p></details><div class="frame"><div class="stage"><section id="h-armory-cast">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 344–472 · ARMORY AND CAST</p></div>
+<h2 class="title">An empty gallery and five cast panels</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"hall"</span> id=<span class="s">"hall"</span> role=<span class="s">"group"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;noscript&gt;</span>…needs JavaScript<br><span class="t">&lt;/div&gt;</span><br><br><span class="t">&lt;article</span> class=<span class="s">"player is-active"</span><br>&#160;&#160;tabindex=<span class="s">"0"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"player__photo"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h3</span> class=<span class="s">"player__name"</span><span class="t">&gt;</span>…</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Filled by JavaScript</h3><p>The armory gallery starts empty: the 13 suit cards are built from a data list in sait.js, so the HTML stays short.</p></div>
+<div class="pt" style="--i:1"><h3>A noscript fallback</h3><p>If JavaScript is off, a message explains why the gallery is missing instead of leaving a blank gap.</p></div>
+<div class="pt" style="--i:2"><h3>Focusable panels</h3><p>Each cast article has tabindex="0", so keyboard users can tab to it and open it like a mouse user hovering.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>10 / 44</summary><p>The Armory section has its heading, the counter (01 / 13) and two arrow buttons with aria-labels, since they only show an icon. The gallery itself, div id "hall", is empty in the HTML: JavaScript builds the thirteen suit cards from the ARMORS data, which avoids repeating thirteen nearly identical blocks of markup. A noscript message covers visitors without JavaScript. Under it are the progress bar and a hint line. The Cast section has five article elements, one per actor. Each holds the actor’s portrait, a number, a vertical name tab, and a body with a film still, the role, the actor’s name as an h3 and a short description. The first one starts with the is-active class. tabindex="0" makes each panel reachable by keyboard, and aria-label gives each panel a clear name.</p></details><div class="frame"><div class="stage"><section id="h-villains">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 473–566 · THE VILLAINS</p></div>
+<h2 class="title">Tabs, built the accessible way</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"rogues__index"</span> role=<span class="s">"tablist"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> role=<span class="s">"tab"</span><br>&#160;&#160;&#160;&#160;aria-controls=<span class="s">"rogue-stane"</span><br>&#160;&#160;&#160;&#160;aria-selected=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> role=<span class="s">"tab"</span> tabindex=<span class="s">"-1"</span><span class="t">&gt;</span>…<br><span class="t">&lt;article</span> role=<span class="s">"tabpanel"</span><br>&#160;&#160;id=<span class="s">"rogue-raza"</span> <span class="k">hidden</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>ARIA roles</h3><p>role="tablist", "tab" and "tabpanel" tell screen readers this is a tab set, not just a pile of buttons.</p></div>
+<div class="pt" style="--i:1"><h3>One tab in the order</h3><p>Only the selected tab has tabindex="0"; the rest are −1, so Tab skips them and the arrow keys move between them.</p></div>
+<div class="pt" style="--i:2"><h3>hidden panels</h3><p>Every file but the first has the hidden attribute. JavaScript removes it from the panel whose tab is chosen.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>11 / 44</summary><p>The Villains section has six background images stacked at the top, one per villain, each tagged with data-rogue so JavaScript can fade in the right one. The index is a tablist of six buttons. Each button says which panel it controls (aria-controls) and whether it is selected (aria-selected). Only the selected one is in the tab order; the arrow keys move between the others, which is how proper tab widgets behave. The panels are article elements with role="tabpanel", aria-labelledby pointing back at their tab, and the hidden attribute on all but the first. Each panel has a meta line (file number, film, actor), the villain’s name as an h3 with the alias in small, a description, and a "Connection to Tony Stark" box.</p></details><div class="frame"><div class="stage"><section id="h-tech">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 567–711 · STARK TECH</p></div>
+<h2 class="title">A schematic around the arc reactor</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"schematic__stage"</span> id=<span class="s">"schematic"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;svg</span> class=<span class="s">"schematic__lines"</span><span class="t">&gt;&lt;/svg&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"reactor schematic__core"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> class=<span class="s">"node"</span> role=<span class="s">"tab"</span><br>&#160;&#160;&#160;&#160;style=<span class="s">"--i:0"</span><span class="t">&gt;</span>Arc Reactor<br><span class="t">&lt;article</span> class=<span class="s">"sys"</span> role=<span class="s">"tabpanel"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;input</span> type=<span class="s">"range"</span> id=<span class="s">"arc-power"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>The stage</h3><p>An empty SVG for the light lines, three rings, a sweep, a shockwave and the reactor core all sit in one square.</p></div>
+<div class="pt" style="--i:1"><h3>Seven nodes</h3><p>Each system is a tab button with --i from 0 to 6. CSS uses that number to place it around the circle.</p></div>
+<div class="pt" style="--i:2"><h3>Real controls</h3><p>Sliders are input type="range" with a label, and buttons are real buttons, so they work with a keyboard too.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>12 / 44</summary><p>The Tech section is a holographic schematic. schematic__stage is a square holding: an empty svg where JavaScript draws the connector lines, three spinning rings, a radar sweep, a shockwave ring, the arc reactor core and a readout. The seven system buttons are tabs; each has a style="--i:N" number that the CSS uses with cos() and sin() to place it around the circle. The seven panels are articles with role="tabpanel", each with a code label, a heading, a description and a specs list. Each panel has its own control: the arc reactor slider, two AI chat boxes with command buttons, the repulsor hold button, the HUD scan button, workshop station buttons and the flight throttle slider. Every slider has a label element, so its purpose is announced.</p></details><div class="frame"><div class="stage"><section id="h-trilogy-footer">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 712–822 · TRILOGY, FOOTER, BACK TO TOP</p></div>
+<h2 class="title">Three films, then the closing credits</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;article</span> class=<span class="s">"movie"</span> <span class="k">data-reveal</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;figure</span> class=<span class="s">"movie__poster"</span> <span class="k">data-tilt</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;dl&gt;</span>Released · Director · Runtime<br><span class="t">&lt;footer</span> class=<span class="s">"footer"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;p</span> class=<span class="s">"footer__word"</span><span class="t">&gt;</span>Iron Man<br>&#160;&#160;<span class="t">&lt;nav</span> class=<span class="s">"footer__nav"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"footer__legal"</span><span class="t">&gt;</span><br><span class="t">&lt;a</span> class=<span class="s">"totop"</span> href=<span class="s">"#top"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Three movie cards</h3><p>Each film is an article with a poster, a dl of facts and a sentence. data-tilt marks the poster for the 3D tilt.</p></div>
+<div class="pt" style="--i:1"><h3>The footer</h3><p>A closing line, the giant “Iron Man” word, a second menu and the copyright and credits text.</p></div>
+<div class="pt" style="--i:2"><h3>Credits matter</h3><p>The legal block says it is an unofficial fan project and credits every photographer, the 3D artists and the font.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>13 / 44</summary><p>The Trilogy section has three article cards, one per film. Each has a big outlined year, the poster in a figure marked data-tilt, a part label, the title, a definition list of release date, director and runtime, and one sentence. The footer starts with a background image, the closing line "Heroes aren’t born. They’re built.", and the giant Iron Man word that charges up as you scroll. The footer grid holds the brand, a navigation list with one link per section, and the legal text: that the site is an unofficial fan project, that Marvel owns the characters and images, and credits for the actor photos, the 3D models and the Stark font. The last line has a back-to-top link, and outside the footer is the floating red back-to-top button with an aria-label because it is only an arrow icon.</p></details><div class="frame"><div class="stage"><section id="h-dialog">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 823–883 · THE ARMOR FILE</p></div>
+<h2 class="title">One dialog, reused for all 13 suits</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;dialog</span> class=<span class="s">"dossier"</span> id=<span class="s">"dossier"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"viewer is-3d"</span> id=<span class="s">"viewer"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;iframe</span> id=<span class="s">"viewer-frame"</span><br>&#160;&#160;&#160;&#160;&#160;&#160;referrerpolicy=<span class="s">"origin"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"viewer__photo"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> id=<span class="s">"mode-3d"</span> aria-pressed=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h3</span> id=<span class="s">"dossier-name"</span><span class="t">&gt;&lt;/h3&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Native dialog</h3><p>The dialog tag gives a real modal for free: focus stays inside, Esc closes it, and the page behind is blocked.</p></div>
+<div class="pt" style="--i:1"><h3>Empty slots</h3><p>Name, film, year and features are empty elements with ids. JavaScript fills them for whichever suit you click.</p></div>
+<div class="pt" style="--i:2"><h3>3D or photo</h3><p>An iframe holds the Sketchfab model; two toggle buttons switch to the photo, with aria-pressed showing which is on.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>14 / 44</summary><p>The armor file is a single dialog element at the end of the body. Instead of thirteen pop-ups, there is one, and JavaScript fills it with the clicked suit’s data. Inside: a close button with an aria-label; the visual side with the big Roman numeral, a ring, the 3D viewer (a loading spinner, the iframe that shows the Sketchfab model, and the suit photo as a second view), a hint, the 3D/Photo toggle and a credit line for the model’s creator. The iframe’s referrerpolicy="origin" overrides the page’s no-referrer rule, because the 3D viewer needs to know which site embedded it before it will talk to sait.js. The other side has empty slots for the name, nickname, film, debut year, power source, description and feature list, plus previous and next buttons.</p></details><div class="frame"><div class="stage"><section id="d-css" class="divider">
+<p class="big">sait.css</p>
+<p class="sub">How everything looks and moves: colours, fonts, layout, the phone version and every animation. Twenty numbered parts.</p>
+<p class="meta">1,818 lines · 13 slides · read top to bottom</p>
+
+</section>
+</div></div><details><summary>15 / 44</summary><p>Part two covers the stylesheet in order. It is split into numbered parts with comment headers, from 1 (tokens and base) to 20 (colour), plus the reduced-motion block at the very end. A good way to read CSS: find the selector (what it styles), then the property (what it changes). Many rules start with .js, which means "only when JavaScript is running", so the page never ends up hidden if a script fails.</p></details><div class="frame"><div class="stage"><section id="c-tokens">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1–99 · TOKENS AND BASE</p></div>
+<h2 class="title">Design tokens: decide once, use everywhere</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">@font-face</span> { font-family: <span class="s">"Stark"</span>;<br>&#160;&#160;src: url(<span class="s">"fonts/stark-bold.otf"</span>); }<br><span class="k">:root</span> {<br>&#160;&#160;--bg: #050506;<br>&#160;&#160;--red: #c4161c;<br>&#160;&#160;--gold: #d7a84a;<br>&#160;&#160;--arc: #9be8ff;<br>&#160;&#160;--f-display: <span class="s">"Stark"</span>, sans-serif;<br>&#160;&#160;--ease-out: cubic-bezier(.16,1,.3,1);<br>}<br><span class="c">/* used as */</span> color: var(--gold);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Fonts first</h3><p>Three @font-face rules load the Stark font files from the fonts folder: regular, bold and hollow.</p></div>
+<div class="pt" style="--i:1"><h3>Variables on :root</h3><p>Every colour, font and easing curve is a --variable. Changing --red once updates every red on the site.</p></div>
+<div class="pt" style="--i:2"><h3>A clean base</h3><p>Box‑sizing, no default margins, smooth scrolling, a grain texture and a gold focus ring for keyboard users.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>16 / 44</summary><p>Line 10 paints the page background near-black before anything else loads, so there is no white flash. Lines 12 to 15 load the three Stark font files with @font-face. Lines 17 to 47 are the design tokens on :root: background shades, ink colours at different opacities, red, gold and arc-cyan, the four font stacks, two easing curves, the page gutter, the max width and the nav height. Everything else in the file refers to these with var(). The rest of part 1 is the base: box-sizing border-box on everything, smooth scrolling with room for the nav, body font and colour, a fixed SVG noise texture for film grain, the selection colour, resetting margins and list styles, and a visible gold focus outline. It also defines .sr-only for screen-reader-only text, the skip link that slides in on focus, and the .wrap and .section helpers that every section uses for width and spacing.</p></details><div class="frame"><div class="stage"><section id="c-shared">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 100–188 · SHARED PARTS AND THE REVEAL SYSTEM</p></div>
+<h2 class="title">Pieces reused everywhere</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.js [data-reveal]</span> {<br>&#160;&#160;opacity: 0;<br>&#160;&#160;transform: translateY(32px);<br>&#160;&#160;filter: blur(8px);<br>&#160;&#160;transition: opacity 1s, transform 1.1s;<br>&#160;&#160;transition-delay: var(--d, 0s);<br>}<br><span class="k">.js [data-reveal].is-in</span> {<br>&#160;&#160;opacity: 1; transform: none;<br>&#160;&#160;filter: none;<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Reusable classes</h3><p>.eyebrow, .display, .btn, .round-btn and .chip are styled once here and used in every section.</p></div>
+<div class="pt" style="--i:1"><h3>Hidden only with JS</h3><p>Reveal rules start with .js, so if the script never runs, nothing is left invisible.</p></div>
+<div class="pt" style="--i:2"><h3>The .is-in switch</h3><p>Elements start faded, lowered and blurred. JavaScript adds .is-in when they scroll into view and CSS animates them in.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>17 / 44</summary><p>Part 2 defines the pieces every section shares. .eyebrow is the small label with a boxed number. .display is the huge section heading, and .display em is the outlined second word, done with a transparent fill and -webkit-text-stroke. .section-head lays out a heading block. .btn is the cut-corner button made with clip-path, with hover and pressed states; .round-btn is the circular arrow button; .chips and .chip are the round fact badges in the hero. Then comes the reveal system: anything with data-reveal starts hidden, shifted down and blurred, but only when the html element has the js class. Variants: "left" and "right" slide in sideways, "wipe" uncovers with clip-path, and "mask" slides text up from behind an overflow:hidden edge. When JavaScript adds is-in, every variant transitions to its final, normal state. --d is a delay set by JavaScript to stagger groups.</p></details><div class="frame"><div class="stage"><section id="c-reactor-boot">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 189–249 · THE ARC REACTOR AND THE BOOT SCREEN</p></div>
+<h2 class="title">An arc reactor drawn with pure CSS</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.reactor</span> {<br>&#160;&#160;--s: 64px;<br>&#160;&#160;width: var(--s); border-radius: 50%;<br>&#160;&#160;background: radial-gradient(…);<br>}<br><span class="k">.reactor::before</span> {<br>&#160;&#160;background: repeating-conic-gradient(…);<br>&#160;&#160;animation: spin 24s linear infinite;<br>}<br><span class="k">.reactor::after</span> { animation: core 3.2s… }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>One element, four layers</h3><p>The circle, the copper coil ring (::before), the pulsing core (::after) and a dashed inner ring (the i tag).</p></div>
+<div class="pt" style="--i:1"><h3>Sized by one variable</h3><p>--s sets the size, and the glow and borders scale from it. The same reactor is the logo, the boot screen and the tech core.</p></div>
+<div class="pt" style="--i:2"><h3>A boot failsafe</h3><p>The boot screen hides itself after 4 seconds with a CSS animation, even if the script never finishes.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>18 / 44</summary><p>Part 3 builds the arc reactor from a single element and no images. The element is a circle with a radial gradient for the glowing centre and a box-shadow for the outer glow. ::before is the ring of copper coil segments: a repeating-conic-gradient masked into a ring and spun slowly. ::after is the bright core, pulsing with the "core" keyframes. The i element inside is the dashed inner ring, spinning the other way. Every size is calculated from --s, so the same class works at 26px in the nav, 74px on the boot screen and over 200px in the tech section. The boot screen is a full-screen overlay with the reactor, text and a loading bar. It disappears when JavaScript removes is-booting from the html element, and as a safety net an animation hides it after 4 seconds no matter what.</p></details><div class="frame"><div class="stage"><section id="c-nav">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 250–315 · NAVIGATION</p></div>
+<h2 class="title">A nav bar that reacts to scrolling</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.nav</span> {<br>&#160;&#160;position: fixed; top: 0;<br>&#160;&#160;transition: height .4s, background .4s;<br>}<br><span class="k">.nav.is-scrolled</span> {<br>&#160;&#160;background: rgba(5,5,6,.78);<br>&#160;&#160;backdrop-filter: blur(14px);<br>}<br><span class="k">.nav.is-hidden</span> { transform: translateY(-100%); }<br><span class="k">.nav__progress</span> {<br>&#160;&#160;transform: scaleX(var(--p, 0));<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Three states</h3><p>Transparent at the top, frosted glass once you scroll (.is-scrolled), and tucked away while scrolling down (.is-hidden).</p></div>
+<div class="pt" style="--i:1"><h3>A progress bar</h3><p>JavaScript sets --p from 0 to 1 as you scroll; the bar under the nav grows with scaleX.</p></div>
+<div class="pt" style="--i:2"><h3>The back‑to‑top button</h3><p>A red circle in the corner that fades in after one screen of scrolling.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>19 / 44</summary><p>The nav is position: fixed so it stays at the top. Its height and background transition smoothly. When JavaScript adds is-scrolled it gets a dark translucent background with a blur behind it, the frosted-glass look. is-hidden slides it up out of view while you scroll down, and it comes back when you scroll up. The brand is the small reactor plus "Iron Man" with "Man" in red. Links are small Stark-font labels that turn bright on hover or when active. The progress bar is a gradient line scaled horizontally by --p. The toggle (hamburger) is hidden on desktop; its two lines rotate into an X when aria-expanded is true. The back-to-top button is fixed bottom-right, invisible until JavaScript adds is-visible, and turns gold on hover.</p></details><div class="frame"><div class="stage"><section id="c-hero">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 316–533 · THE HERO</p></div>
+<h2 class="title">Sticky pinning and flame thrusters</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.hero</span> { height: 260vh; }<br><span class="k">.hero__pin</span> {<br>&#160;&#160;position: sticky; top: 0;<br>&#160;&#160;height: 100svh; overflow: hidden;<br>}<br><span class="k">.thruster</span> {<br>&#160;&#160;top: 97.5%; left: 32.5%;<br>&#160;&#160;transform: translateX(-50%)<br>&#160;&#160;&#160;&#160;scaleY(var(--flame));<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Why 260vh</h3><p>The section is 2.6 screens tall, but its sticky frame only 1. The extra 1.6 screens of scrolling play the take‑off.</p></div>
+<div class="pt" style="--i:1"><h3>Layers that move</h3><p>Each layer’s transform reads --mx, --my and --depth, so the mouse moves near layers more than far ones.</p></div>
+<div class="pt" style="--i:2"><h3>Flames from a variable</h3><p>The thrusters stretch with scaleY(var(--flame)). JavaScript only changes one number from 0 to 1.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>20 / 44</summary><p>Part 5 styles the hero. .hero is 260vh tall; .hero__pin is sticky with top 0 and exactly one screen tall, so it stays put while the extra height scrolls past. It clips its contents with overflow hidden and isolates its stacking. The background image is darkened and starts slightly zoomed so it can settle on load. The scrim is a gradient for text contrast. Each .hero__layer uses one transform built from CSS variables: --mx and --my come from the mouse, --depth differs per layer, and --sy comes from scrolling. The title uses the Stark font at up to 23vw with a silver gradient clipped to the text, and each word slides up from behind a mask. .hero__suit wraps the Mark III image. The thrusters are positioned under each boot (32.5% and 79% across) and drawn with radial gradients, flickering via a fast keyframe. The ground blast has three expanding rings. Finally, .hero.is-ready runs the entrance, and .hero__foot positions the tagline, intro, chips and the explore link.</p></details><div class="frame"><div class="stage"><section id="c-film">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 534–647 · TICKER AND FILM</p></div>
+<h2 class="title">A marquee and a paper‑white magazine page</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.ticker__track</span> {<br>&#160;&#160;display: flex; width: max-content;<br>&#160;&#160;animation: marquee 40s linear infinite;<br>}<br><span class="k">@keyframes</span> marquee {<br>&#160;&#160;to { transform: translateX(-50%); }<br>}<br><span class="k">.film__grid</span> {<br>&#160;&#160;display: grid;<br>&#160;&#160;grid-template-columns: 4.2fr 5fr 3fr;<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>An endless ticker</h3><p>The red band’s text slides left forever. Moving it by −50% loops seamlessly because the text repeats.</p></div>
+<div class="pt" style="--i:1"><h3>A contrasting section</h3><p>Film is the only light section: paper colour, dark ink and a faint grid pattern made with two gradients.</p></div>
+<div class="pt" style="--i:2"><h3>Grid layouts</h3><p>Poster, story and facts share one CSS grid with fixed proportions; the stats use a four‑column grid.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>21 / 44</summary><p>Part 6 has the ticker: a red band rotated slightly, its track a flex row of words moved left by a 40-second linear marquee animation. The words are separated by small dots made with ::after. The Film section uses the paper colour and dark ink, with a light graph-paper texture made from two repeating linear gradients and a faint red glow. .film__title is the huge "Directed by Jon Favreau" text with the second line pushed right. .film__grid is a three-column grid for poster, copy and facts. The poster gets a red corner bracket using ::before. The cast and facts lists use borders between rows. .stats is a four-column grid of big numbers, and .notes styles the accordion: the plus icon is two lines, and .is-open rotates it and expands the answer using grid-template-rows from 0fr to 1fr, which animates height smoothly.</p></details><div class="frame"><div class="stage"><section id="c-story-band">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 648–815 · STORY AND THE BLAST</p></div>
+<h2 class="title">A filling rail and a repulsor blast</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.timeline__fill</span> {<br>&#160;&#160;transform: scaleY(var(--fill, 0));<br>&#160;&#160;transform-origin: top;<br>}<br><span class="k">.charge</span> {<br>&#160;&#160;transform: translate(-50%,-50%)<br>&#160;&#160;&#160;&#160;scale(calc(.25 + var(--c) * 1.25));<br>&#160;&#160;opacity: var(--c);<br>}<br><span class="k">.band__flash::before</span> { opacity: var(--flash); }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Alternating chapters</h3><p>Each chapter is a two‑column grid; every other one swaps image and text so the timeline zig‑zags.</p></div>
+<div class="pt" style="--i:1"><h3>A rail that fills</h3><p>The gold line grows with scaleY(var(--fill)), so scrolling only updates one variable.</p></div>
+<div class="pt" style="--i:2"><h3>Everything from variables</h3><p>Charge glow, HUD, flash, rings and the slam‑in text all read --c, --hud, --flash, --ring and --slam.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>22 / 44</summary><p>The Story part styles the timeline: a centred vertical rail with a gradient fill scaled by --fill, and chapters as two-column grids where odd chapters put the image on the right. Chapter images start zoomed and settle when revealed. The node dot lights up gold when JavaScript adds is-lit. Big outlined numbers sit behind each chapter’s text. The band (interlude) is 240vh tall with a sticky pin. band__frame keeps the photo at its true shape so the palm glows line up, and zooms toward the right palm with --zoom. .charge is a radial-gradient glow whose size and opacity come from --c, with two rings converging inward on a loop. The HUD lock circle shrinks as --c rises. The flash is a radial gradient centred on --fx and --fy, the palm’s position, with two shockwave rings scaled by --ring. The line "Perfected in a workshop" scales down, sharpens from a blur and fades in with --slam.</p></details><div class="frame"><div class="stage"><section id="c-armory-cast">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 816–956 · ARMORY AND CAST</p></div>
+<h2 class="title">Scrolling cards and growing panels</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.hall</span> {<br>&#160;&#160;display: flex; overflow-x: auto;<br>&#160;&#160;scroll-snap-type: x mandatory;<br>}<br><span class="k">.suit</span> { --tone: 196, 22, 28; }<br><span class="k">.player</span> { flex: 1 1 0; }<br><span class="k">.player.is-active</span> { flex-grow: 4.2; }<br><span class="k">.player__photo</span> {<br>&#160;&#160;transition: filter .8s, width .8s;<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>A snapping gallery</h3><p>The hall is a sideways‑scrolling flex row; scroll‑snap makes each card stop neatly at the edge.</p></div>
+<div class="pt" style="--i:1"><h3>One colour per suit</h3><p>Each card sets --tone as an RGB triplet, so its glow, border and stripe all use that suit’s colour.</p></div>
+<div class="pt" style="--i:2"><h3>Flex‑grow panels</h3><p>All cast panels share the space equally; the active one grows to 4.2 shares and the photo slides to half width.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>23 / 44</summary><p>The Armory part styles the hall as a horizontally scrolling flex row with scroll snapping and a hidden scrollbar; while dragging, snapping turns off. Each .suit card has a --tone variable written as "R, G, B", so rgba(var(--tone), .3) can give any transparency of that suit’s colour. The card shows a big outlined Roman numeral, the suit image, a 3D badge and the labels, with a bottom stripe that grows on hover. The progress bar under the hall is scaled by --hp. The Cast part is a flex row of five panels, each flex: 1, with the active one at flex-grow 4.2, so it widens smoothly. Inactive photos are filtered (now a red duotone). The vertical name tab is rotated text. The body with the still, role, name and description fades in only on the active panel. Under 960px the row becomes a column of short bars, with the active one tall.</p></details><div class="frame"><div class="stage"><section id="c-villains-tech">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 957–1192 · VILLAINS AND STARK TECH</p></div>
+<h2 class="title">Crossfades and trigonometry in CSS</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.rogues__media img.is-active</span> {<br>&#160;&#160;opacity: 1; transform: scale(1);<br>}<br><span class="k">.node</span> {<br>&#160;&#160;--a: calc(var(--i) * (360deg / 7) - 90deg);<br>&#160;&#160;left: calc(50% + 41% * cos(var(--a)));<br>&#160;&#160;top: calc(50% + 41% * sin(var(--a)));<br>}<br><span class="k">.schematic__ring--outer</span> {<br>&#160;&#160;animation: spin calc(70s / var(--spin))…<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Villain backdrops</h3><p>All six images are stacked; the active one fades to full opacity and slowly settles from a zoom.</p></div>
+<div class="pt" style="--i:1"><h3>A circle from maths</h3><p>Each system’s angle is its number times 360°/7. cos() and sin() turn that angle into a position on the circle.</p></div>
+<div class="pt" style="--i:2"><h3>Speed from a variable</h3><p>Ring spin time is divided by --spin, so the flight throttle can speed every ring up at once.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>24 / 44</summary><p>Villains: six stacked background images, each tinted red with a filter; only .is-active is visible, with a one-second crossfade and a slow six-second zoom-out. A gradient darkens the left side so the text stays readable. The index buttons are large Stark-font names; the selected one shifts right and turns its alias red. Each file is a frosted glass panel with a red corner bracket. Stark Tech: the schematic grid puts the stage left and the panel right. The stage is a square with the SVG connector lines (the active one dashed and flowing), three rings spinning at different speeds based on --spin, the reactor core whose glow grows with --arc-p and swells with --charge, the radar sweep (a conic gradient rotating when .is-scanning) and the shockwave (when .is-firing). Each node’s position comes from cos() and sin() of its angle. The panels, specs, command buttons, sliders, AI chat log and hold button are styled here too.</p></details><div class="frame"><div class="stage"><section id="c-trilogy-footer">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1193–1382 · TRILOGY, FOOTER AND THE ARMOR FILE</p></div>
+<h2 class="title">Staggered posters and a modal that animates</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.movie:nth-child(2)</span> { margin-top: 6vw; }<br><span class="k">.movie:nth-child(3)</span> { margin-top: 12vw; }<br><span class="k">.dossier</span> {<br>&#160;&#160;opacity: 0; transform: translateY(24px);<br>&#160;&#160;transition: opacity .45s,<br>&#160;&#160;&#160;&#160;display .45s allow-discrete;<br>}<br><span class="k">.dossier[open]</span> { opacity: 1; transform: none; }<br><span class="k">@starting-style</span> { .dossier[open] { opacity: 0; } }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>A staircase of films</h3><p>Each poster sits lower than the last with nth-child margins, so the three films step down diagonally.</p></div>
+<div class="pt" style="--i:1"><h3>A big footer word</h3><p>“Iron Man” at up to 21vw, filled with a gradient clipped to the text and a charge layer on top.</p></div>
+<div class="pt" style="--i:2"><h3>Opening a dialog smoothly</h3><p>@starting-style tells the browser where to animate from, so the dialog fades and slides in when it opens.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>25 / 44</summary><p>Trilogy: a warm gradient background, a three-column grid of films where the second and third are pushed down with nth-child, a huge outlined year behind each, and posters with a perspective transform for the tilt and a light glare that follows the mouse position (--gx, --gy). Footer: a background image with a gradient fade, the closing line, the giant word with a text-clipped gradient, and a three-column grid for brand, links and legal text. The dossier dialog is centred, max 1120px wide, with a blurred backdrop. It animates open using @starting-style (the starting values when it appears) and allow-discrete (so display can transition). Inside, a two-column grid: the 3D viewer side with its tone-coloured glow, numeral and ring, and the text side with meta grid, description and a list of features marked with small rotated squares.</p></details><div class="frame"><div class="stage"><section id="c-responsive">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1383–1513 · RESPONSIVE</p></div>
+<h2 class="title">One page, three screen sizes</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">@media</span> (max-width: 1180px) {<br>&#160;&#160;.film__grid { grid-template-columns: 1fr 1.3fr; }<br>}<br><span class="k">@media</span> (max-width: 960px) {<br>&#160;&#160;.nav__toggle { display: block; }<br>&#160;&#160;.nav__links { position: fixed; inset: 0; }<br>}<br><span class="k">@media</span> (max-width: 720px) {<br>&#160;&#160;.hero { height: 220vh; }<br>&#160;&#160;.node { --r: 38%; font-size: .625rem; }<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Laptop: 1180px</h3><p>Three‑column layouts drop to two, so text columns never get too narrow to read.</p></div>
+<div class="pt" style="--i:1"><h3>Tablet: 960px</h3><p>The menu becomes a full‑screen overlay behind the hamburger; side‑by‑side sections stack.</p></div>
+<div class="pt" style="--i:2"><h3>Phone: 720px</h3><p>Smaller type and chips, shorter scroll scenes, re‑aimed images, and the schematic’s callouts pulled inward.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>26 / 44</summary><p>Part 16 is three media queries that adjust the layout as the screen gets narrower. Under 1180px: the nav links get tighter, the film grid goes to two columns with the facts below, and tech panels stack. Under 960px: the hamburger appears and the links become a full-screen overlay where each link slides in one after another; the notes, stats, timeline, cast, villains, trilogy, footer and dossier all switch to stacked layouts; the timeline rail moves to the left edge. Under 720px: the hero is shorter (220vh) with no cast names, a smaller reactor and a stacked footer; the interlude is 200vh and re-aimed at the firing palm; armory cards get phone widths; movie posters stack; and the tech callouts move to a 38% radius with smaller text so all seven fit. There is also a short-screen rule that hides the hero intro on laptops under 760px tall, and a hover:none rule for touch screens.</p></details><div class="frame"><div class="stage"><section id="c-extra-motion">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1514–1654 · EXTRA MOTION AND HUD TEXT</p></div>
+<h2 class="title">Cursor, embers and decoding letters</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.cursor.is-hover</span> {<br>&#160;&#160;width: 66px; border-color: rgba(196,22,28,.9);<br>}<br><span class="k">.hud-ch[data-s="scan"]::before</span> {<br>&#160;&#160;content: attr(data-g);<br>&#160;&#160;color: var(--arc);<br>}<br><span class="k">.hud-print:not(.is-printed)</span> {<br>&#160;&#160;clip-path: inset(0 100% 0 0);<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Custom cursor</h3><p>A glowing reactor ring follows the mouse and turns red over anything clickable; clicks fire a shockwave.</p></div>
+<div class="pt" style="--i:1"><h3>Letters from data</h3><p>While a letter scrambles, ::before shows its data-g attribute (a random glyph) in cyan instead of the real letter.</p></div>
+<div class="pt" style="--i:2"><h3>Printed paragraphs</h3><p>A paragraph starts clipped to nothing and is revealed left to right while a glowing bar runs along the edge.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>27 / 44</summary><p>Part 17 holds the extra motion. The .cursor is a fixed ring with a dashed inner ring and a dot; is-hover makes it bigger and red. .shock is the expanding ring that appears on each click. The hero embers canvas sits over the background with screen blending. A one-time cyan scan line sweeps down the hero when it powers on, and the title flickers on with a stepped animation. Armor cards get a glare that follows the mouse, and the ticker words lean with --skew. Part 18 is the HUD text. Each heading letter is a .hud-ch span with a data-s state: "off" is invisible, "scan" hides the real letter and shows a random cyan glyph from data-g through ::before, and "lock" plays a quick glow flash. Paragraphs with .hud-print start fully clipped; .is-printed animates the clip open and moves a glowing scan bar across in sync, while the text cools from cyan.</p></details><div class="frame"><div class="stage"><section id="c-polish-colour">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1655–1818 · POLISH, COLOUR, REDUCED MOTION</p></div>
+<h2 class="title">Finishing touches, and a way to turn them off</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.story</span> {<br>&#160;&#160;margin-top: -56px;<br>&#160;&#160;border-radius: 48px 48px 0 0;<br>}<br><span class="k">.player__photo</span> {<br>&#160;&#160;filter: grayscale(1) sepia(1)<br>&#160;&#160;&#160;&#160;hue-rotate(-48deg) saturate(3.4);<br>}<br><span class="k">@media</span> (prefers-reduced-motion: reduce) {<br>&#160;&#160;*, *::before { animation-duration: .001ms !important; }<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Motion polish</h3><p>Posters wipe in, images zoom on hover, buttons get a sheen, and the Story section slides over Film like a sheet.</p></div>
+<div class="pt" style="--i:1"><h3>Colour</h3><p>Section glows in gold and red, coloured outline words, and a filter chain that turns cast photos into a red duotone.</p></div>
+<div class="pt" style="--i:2"><h3>Reduced motion</h3><p>If the visitor’s device asks for less motion, animations finish instantly and everything starts in its final place.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>28 / 44</summary><p>Part 19 (motion polish): poster and still images reveal with a clip-path wipe and settle from a slight zoom; images zoom gently on hover using the separate scale property, so it never clashes with other transforms; parallax layers get extra room; buttons get a sweeping light sheen and a gold focus ring; the nav indicator bar is styled; the Story section overlaps the Film section with a rounded top and shadow while Film dims behind it (--cover); a glint runs down the timeline; and two faint HUD rings float in the Tech background. Part 20 (colour): radial-gradient glows for Story, Armory, Cast and Trilogy; gold and red outlines for heading words; tinted badges; the red duotone for inactive cast photos, made by chaining grayscale, sepia, hue-rotate and saturate filters; richer story images. The final block is prefers-reduced-motion: it makes every animation and transition finish instantly, cancels the scroll scenes, shows all hidden text and hides the purely decorative effects.</p></details><div class="frame"><div class="stage"><section id="d-js" class="divider">
+<p class="big">sait.js</p>
+<p class="sub">Every interaction and scroll scene. Plain JavaScript with no libraries, written as small functions that each own one feature.</p>
+<p class="meta">1,476 lines · 14 slides · read top to bottom</p>
+
+</section>
+</div></div><details><summary>29 / 44</summary><p>Part three covers the script in order. The pattern repeats everywhere: an init function finds its elements, adds event listeners, and either reacts to clicks and keys straight away or returns an update function that the shared scroll loop calls once per frame. JavaScript rarely moves things itself; it usually just sets a CSS variable or adds a class, and CSS does the animating.</p></details><div class="frame"><div class="stage"><section id="j-structure">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1–132 · STRUCTURE AND DATA</p></div>
+<h2 class="title">A private scope, helpers and the suit data</h2>
+<div class="split">
+<div class="code"><p class="src">(() =&gt; {<br>&#160;&#160;<span class="s">'use strict'</span>;<br>&#160;&#160;<span class="k">const</span> $ = (sel, ctx = document) =&gt;<br>&#160;&#160;&#160;&#160;ctx.querySelector(sel);<br>&#160;&#160;<span class="k">const</span> clamp = (v, min, max) =&gt;<br>&#160;&#160;&#160;&#160;Math.min(max, Math.max(min, v));<br>&#160;&#160;<span class="k">const</span> ARMORS = [<br>&#160;&#160;&#160;&#160;{ mark: <span class="s">'I'</span>, name: <span class="s">'Mark I'</span>, … },<br>&#160;&#160;];<br>})();</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>An IIFE wrapper</h3><p>The whole file is a function that runs itself once. Its variables stay private and can’t clash with other scripts.</p></div>
+<div class="pt" style="--i:1"><h3>Tiny helpers</h3><p>$ and $$ shorten querySelector, clamp keeps a number in range, and two flags check reduced motion and mouse.</p></div>
+<div class="pt" style="--i:2"><h3>Data, not markup</h3><p>ARMORS lists 13 suits and MODELS their 3D files. The gallery and dialog are built from this one list.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>30 / 44</summary><p>Lines 1 to 5 are a header comment. Line 6 opens an arrow-function IIFE (Immediately Invoked Function Expression) that closes on the last line, so nothing leaks into the global scope. 'use strict' turns on stricter error checking. root is the html element. $ returns one element, $$ returns an array of all matches. clamp limits a value between a min and max. reduceMotion and canHover read the visitor’s settings once with matchMedia. heroThrust is a shared number the hero sets and the embers read. Lines 17 to 111 hold WIKI (the image host prefix) and ARMORS: thirteen objects with each suit’s mark, name, nickname, film, year, power source, colour tone, image path, description and four features. armorSrc builds the full image URL. Lines 113 to 132 are MODELS, the Sketchfab id, title and author of each 3D model, attached to each armor with forEach.</p></details><div class="frame"><div class="stage"><section id="j-boot-nav-reveal">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 133–257 · BOOT, NAV, REVEALS, COUNTERS, NOTES</p></div>
+<h2 class="title">Watching what the visitor can see</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> io = <span class="k">new</span> IntersectionObserver((entries) =&gt; {<br>&#160;&#160;entries.forEach((entry) =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">if</span> (!entry.isIntersecting) <span class="k">return</span>;<br>&#160;&#160;&#160;&#160;el.classList.add(<span class="s">'is-in'</span>);<br>&#160;&#160;&#160;&#160;io.unobserve(entry.target);<br>&#160;&#160;});<br>}, { threshold: 0.15 });</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Boot</h3><p>Waits for the hero images and fonts (2 seconds at most), removes is-booting, then adds is-ready to start the hero.</p></div>
+<div class="pt" style="--i:1"><h3>IntersectionObserver</h3><p>The browser reports when an element enters the screen. Reveals add .is-in once, then stop watching it.</p></div>
+<div class="pt" style="--i:2"><h3>Nav, counters, notes</h3><p>The nav hides on scroll down and tracks the current section; counters ease up to their number; one note opens at a time.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>31 / 44</summary><p>initBoot waits for the hero images and fonts with Promise.race against a timeout, removes is-booting (hiding the boot screen) and adds is-ready to the hero. initNav opens and closes the phone menu (with Esc and on resize too), uses an IntersectionObserver as a scroll-spy to mark the current section’s link, and returns an update function that adds is-scrolled, hides the nav while scrolling down, and sets --p for the progress bar. initReveal staggers groups with --d, then watches every data-reveal element (wipes through their parent, because a fully clipped element never reports as visible) and adds is-in once. initCounters counts each data-count number up over 1.7 seconds with an ease-out curve when 60% of it is on screen. initNotes makes the accordion open one note at a time and keeps aria-expanded accurate.</p></details><div class="frame"><div class="stage"><section id="j-hero">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 258–343 · THE HERO TAKE‑OFF</p></div>
+<h2 class="title">Turning scroll position into a launch</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> phase = (p, a, b) =&gt; {<br>&#160;&#160;<span class="k">const</span> t = clamp((p - a) / (b - a), 0, 1);<br>&#160;&#160;<span class="k">return</span> t * t * (3 - 2 * t);<br>};<br><span class="k">const</span> p = clamp(y / travel, 0, 1);<br><span class="k">const</span> ignite = phase(p, 0.04, 0.28);<br><span class="k">const</span> rise = phase(p, 0.2, 0.95);<br><span class="k">const</span> lift = Math.pow(rise, 2.2);<br>suit.style.transform =<br>&#160;&#160;`translate3d(0, ${suitY}px, 0)…`;</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Progress p</h3><p>How far you’ve scrolled through the pinned hero, from 0 at the top to 1 when it lets go.</p></div>
+<div class="pt" style="--i:1"><h3>phase() windows</h3><p>phase turns a slice of p into a smooth 0→1: ignition runs from 4% to 28%, lift‑off from 20% to 95%.</p></div>
+<div class="pt" style="--i:2"><h3>Driving the scene</h3><p>Those values set the suit’s position, the --flame size, the ground glow, the title split and a camera shake.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>32 / 44</summary><p>initHero has two jobs. First, pointer depth: on mouse move it sets a target from −1 to 1 and eases --mx and --my toward it each frame, so the hero layers drift. Second, the scroll take-off. travel is how far you can scroll while the hero is pinned (section height minus one screen), and p is your progress from 0 to 1. phase(p, a, b) maps the window a to b onto 0 to 1 with a smoothstep curve, so effects start and finish gently. ignite drives the thrusters and ground blast. rise drives the lift-off, and lift = rise to the power 2.2 makes it start slowly then rocket. The suit crouches a little while igniting, then moves up by lift times 1.3 screens, grows and tilts. The title words slide apart by split × 34vw and fade. Cast names, year and bottom copy fade first. The reactor ring swells. A random shake is applied while igniting. heroThrust tells the embers to speed up.</p></details><div class="frame"><div class="stage"><section id="j-parallax-timeline">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 344–376 · PARALLAX AND THE TIMELINE</p></div>
+<h2 class="title">Small functions the scroll loop calls</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">return function</span> update() {<br>&#160;&#160;<span class="k">const</span> vh = window.innerHeight;<br>&#160;&#160;<span class="k">const</span> r = timeline.getBoundingClientRect();<br>&#160;&#160;<span class="k">const</span> line = vh * 0.6;<br>&#160;&#160;fill.style.setProperty(<span class="s">'--fill'</span>,<br>&#160;&#160;&#160;&#160;clamp((line - r.top) / r.height, 0, 1));<br>&#160;&#160;chapters.forEach((ch) =&gt;<br>&#160;&#160;&#160;&#160;ch.classList.toggle(<span class="s">'is-lit'</span>, …));<br>};</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Returning update()</h3><p>Init functions return an update function. They don’t listen to scrolling themselves; the shared loop calls them.</p></div>
+<div class="pt" style="--i:1"><h3>A line at 60%</h3><p>The rail fills up to an imaginary line 60% down the screen, and each chapter dot lights up as it crosses it.</p></div>
+<div class="pt" style="--i:2"><h3>Skip what’s off screen</h3><p>Each update checks the element’s position first and returns early when it’s far away, saving work.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>33 / 44</summary><p>initParallax finds every element with data-parallax and, on each scroll frame, moves it by the distance between its centre and the screen’s centre times the factor. It skips anything more than 100px off screen. (Nothing currently uses data-parallax since the interlude became a pinned scene, so it is a harmless leftover.) initTimeline measures the timeline’s box with getBoundingClientRect, works out how much of it has passed an imaginary line 60% down the viewport, and writes that as --fill (0 to 1), which the CSS uses to scale the gold rail. It also adds is-lit to each chapter whose dot has crossed the line. Both return their update function instead of adding their own scroll listener, so all scroll work happens together once per frame.</p></details><div class="frame"><div class="stage"><section id="j-armory">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 377–523 · ARMORY GALLERY AND DIALOG</p></div>
+<h2 class="title">Building 13 cards from one list</h2>
+<div class="split">
+<div class="code"><p class="src">hall.innerHTML = ARMORS.map((a, i) =&gt; `<br>&#160;&#160;&lt;button class=<span class="s">"suit"</span><br>&#160;&#160;&#160;&#160;style=<span class="s">"--tone:${a.tone}"</span><br>&#160;&#160;&#160;&#160;data-index=<span class="s">"${i}"</span>&gt;<br>&#160;&#160;&#160;&#160;&lt;span class=<span class="s">"suit__name"</span>&gt;${a.name}…<br>&#160;&#160;&lt;/button&gt;`).join(<span class="s">''</span>);<br><br>dialog.showModal();<br>fill(i);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Template strings</h3><p>map() turns each suit object into a button’s HTML, and join() glues all 13 together into the gallery.</p></div>
+<div class="pt" style="--i:1"><h3>Drag, arrows, wheel</h3><p>Mouse drag, the arrow buttons and the mouse wheel all scroll the gallery, and the counter tracks your place.</p></div>
+<div class="pt" style="--i:2"><h3>One dialog</h3><p>Clicking a card opens the dialog, then fill() writes that suit’s data in. Next, previous and arrow keys move between suits.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>34 / 44</summary><p>initArmory builds the gallery: ARMORS.map creates one button per suit with its tone, numeral, image, nickname, name and film, and join puts them into the hall. update() sets the progress bar, disables the arrows at either end, and finds which card is current (the centred one during the desktop ride). The arrows scroll by three quarters of the hall’s width. Mouse dragging changes scrollLeft and snaps to the nearest card on release, and a click right after a drag is ignored. The mouse wheel scrolls the gallery sideways until it reaches an edge. Clicking a card calls open(), which shows the dialog with showModal() first (the 3D viewer only starts inside a visible dialog), then fill() writes the name, nickname, film, year, power, description and features and loads the 3D model. Previous, next and the arrow keys change suit; closing it stops the viewer and returns focus to the card you clicked.</p></details><div class="frame"><div class="stage"><section id="j-viewer">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 524–624 · THE 3D VIEWER</p></div>
+<h2 class="title">Embedding a real 3D model</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> client = <span class="k">new</span> window.Sketchfab(<span class="s">'1.12.1'</span>, frame);<br>client.init(uid, {<br>&#160;&#160;...options,<br>&#160;&#160;success(api) {<br>&#160;&#160;&#160;&#160;api.addEventListener(<span class="s">'viewerready'</span>, () =&gt; {<br>&#160;&#160;&#160;&#160;&#160;&#160;api.focusOnVisibleGeometries(…);<br>&#160;&#160;&#160;&#160;});<br>&#160;&#160;}<br>});</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Sketchfab’s viewer API</h3><p>The iframe loads the model; the API lets the page talk to it and frame the whole suit in view.</p></div>
+<div class="pt" style="--i:1"><h3>Load only when needed</h3><p>A model downloads only when its 3D view is shown, and it’s unloaded when the dialog closes to free the graphics card.</p></div>
+<div class="pt" style="--i:2"><h3>Never stuck loading</h3><p>A token cancels stale loads, and timers make sure the spinner always clears, even on a slow connection.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>35 / 44</summary><p>initViewer controls the 3D panel in the armor dialog. options turns on autostart, a transparent background, a slow auto-spin and hides the viewer’s extra buttons (some of those only take effect for paid Sketchfab accounts). loadModel increases loadToken, so a model that finishes loading after you have already switched suits is ignored. If the Sketchfab API script is missing it falls back to a plain iframe embed. With the API, once the viewer is ready it calls focusOnVisibleGeometries (or recenterCamera) to frame the whole model, then moves the camera 20% closer on desktop or 5% on narrow phones. setMode switches between the 3D model and the photo and only loads the model when 3D is shown. load() fills the credit line and button labels ("3D bust", "3D helmet"), and stop() unloads the iframe when the dialog closes.</p></details><div class="frame"><div class="stage"><section id="j-cast-tabs">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 625–684 · CAST, TABS AND VILLAINS</p></div>
+<h2 class="title">One tab system, used twice</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">function</span> initTabs(tablist, onChange) {<br>&#160;&#160;<span class="k">const</span> select = (tab) =&gt; {<br>&#160;&#160;&#160;&#160;tabs.forEach((t) =&gt; {<br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="k">const</span> on = t === tab;<br>&#160;&#160;&#160;&#160;&#160;&#160;t.setAttribute(<span class="s">'aria-selected'</span>, on);<br>&#160;&#160;&#160;&#160;&#160;&#160;t.tabIndex = on ? 0 : -1;<br>&#160;&#160;&#160;&#160;&#160;&#160;panel.hidden = !on;<br>&#160;&#160;&#160;&#160;});<br>&#160;&#160;&#160;&#160;onChange(tab);<br>&#160;&#160;};</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Cast panels</h3><p>Hover, click, focus or Enter makes a panel active. Only one panel has .is-active at a time.</p></div>
+<div class="pt" style="--i:1"><h3>A reusable function</h3><p>initTabs works for any tablist. The villains and the tech schematic both use it, each passing its own onChange.</p></div>
+<div class="pt" style="--i:2"><h3>Keyboard support</h3><p>Arrow keys move to the next or previous tab, Home and End jump to the first and last, as tab widgets should.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>36 / 44</summary><p>initCast gives each cast panel listeners for pointerenter (mouse only), click, focus and Enter or Space, all calling activate, which toggles is-active so only one panel is open. initTabs is a general tab controller: select() updates aria-selected, puts only the chosen tab in the tab order, shows its panel and hides the rest, then calls onChange so each user can react. The keydown handler moves with arrow keys and Home and End, and scrolls a horizontal tab list to keep the focused tab visible. preloadNear starts loading a section’s lazy images 900px before it scrolls into view. initVillains sets the tablist to vertical, uses onChange to fade in the matching background image, and preloads the backdrops so switching never shows an empty frame.</p></details><div class="frame"><div class="stage"><section id="j-tech">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 685–863 · STARK TECH</p></div>
+<h2 class="title">Controls that drive the reactor</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> setArc = () =&gt; {<br>&#160;&#160;<span class="k">const</span> p = arcSlider.value / 100;<br>&#160;&#160;stage.style.setProperty(<span class="s">'--arc-p'</span>, p);<br>&#160;&#160;setCore(<span class="s">'Core output · GJ/s'</span>,<br>&#160;&#160;&#160;&#160;(p * 3).toFixed(1));<br>};<br>arcSlider.addEventListener(<span class="s">'input'</span>, setArc);<br><br>stage.classList.add(<span class="s">'is-firing'</span>);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Lines drawn by code</h3><p>drawLines measures each callout and draws an SVG line to it from the centre, redrawn on resize.</p></div>
+<div class="pt" style="--i:1"><h3>Variables and classes</h3><p>Sliders set --arc-p and --spin; the repulsor sets --charge then adds is-firing; the HUD adds is-scanning.</p></div>
+<div class="pt" style="--i:2"><h3>Typing AI replies</h3><p>J.A.R.V.I.S. and F.R.I.D.A.Y. type each line one letter at a time while the waveform bars jump.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>37 / 44</summary><p>initTech runs the schematic. drawLines measures every node’s centre relative to the stage and writes SVG line elements from the middle (50, 50) to each node; it reruns on resize, when fonts load and when the stage scrolls into view. initTabs handles the seven systems; onChange stops any typing, highlights the matching line and resets the core readout. The arc slider sets --arc-p and the readout in GJ/s. The AI chat types each line from SCRIPTS with a 22ms delay per letter while random heights animate the waveform bars; typingToken cancels an old reply when you click again or switch. The repulsor button charges --charge over 1.1 seconds while held (pointer or Space/Enter) and on release adds is-firing for the shockwave, then drains. The HUD scan adds is-scanning for the radar sweep and reports 7 / 7 targets. Workshop buttons swap the station text and set aria-pressed. The throttle sets --spin and the Mach readout and shows the ice warning above 85%.</p></details><div class="frame"><div class="stage"><section id="j-loop">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 864–906 · POSTER TILT, BACK TO TOP, THE SCROLL LOOP</p></div>
+<h2 class="title">The heart of it: one loop per frame</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">function</span> initScrollLoop(updaters) {<br>&#160;&#160;<span class="k">let</span> ticking = <span class="k">false</span>;<br>&#160;&#160;<span class="k">const</span> run = () =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">const</span> y = window.scrollY;<br>&#160;&#160;&#160;&#160;updaters.forEach((fn) =&gt; fn &amp;&amp; fn(y));<br>&#160;&#160;&#160;&#160;ticking = <span class="k">false</span>;<br>&#160;&#160;};<br>&#160;&#160;window.addEventListener(<span class="s">'scroll'</span>, () =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">if</span> (!ticking) { ticking = <span class="k">true</span>;<br>&#160;&#160;&#160;&#160;&#160;&#160;requestAnimationFrame(run); } });<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Why one loop</h3><p>Scroll events can fire many times per frame. The ticking flag makes all the updates run at most once per screen refresh.</p></div>
+<div class="pt" style="--i:1"><h3>requestAnimationFrame</h3><p>Runs the work right before the browser draws, so every scroll scene moves smoothly and in sync.</p></div>
+<div class="pt" style="--i:2"><h3>Tilt and back to top</h3><p>Posters tilt toward the mouse with --rx and --ry; the corner button appears after 1.2 screens of scrolling.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>38 / 44</summary><p>initTilt (mouse only, no reduced motion) tracks the pointer over each data-tilt poster and sets --ry and --rx for a 3D tilt plus --gx and --gy for the glare position; leaving resets the tilt. initToTop returns an update that shows the back-to-top button after 1.2 screen heights. initScrollLoop is the core of the motion system. Every scroll scene hands it an update(y) function. On scroll (marked passive, so the browser never waits for it) and on resize, it requests one animation frame unless one is already pending; in that frame it reads scrollY once and calls every update. This keeps a dozen scroll effects from each listening and redrawing separately, which would stutter. It also runs once immediately so everything starts in the right state. fancyPointer is true only with a mouse and no reduced motion.</p></details><div class="frame"><div class="stage"><section id="j-cursor-embers">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 907–1033 · CURSOR, EMBERS, SCRAMBLED LABELS</p></div>
+<h2 class="title">A cursor, a particle system and decoding labels</h2>
+<div class="split">
+<div class="code"><p class="src">pos.x += (target.x - pos.x) * 0.18;<br>ring.style.transform =<br>&#160;&#160;`translate3d(${pos.x}px, ${pos.y}px, 0)`;<br><br><span class="k">for</span> (<span class="k">const</span> s <span class="k">of</span> sparks) {<br>&#160;&#160;s.y += s.vy * boost;<br>&#160;&#160;ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);<br>&#160;&#160;ctx.fill();<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Easing the cursor</h3><p>Each frame the ring moves 18% of the way to the mouse, so it trails smoothly. Clicks add a .shock ring that removes itself.</p></div>
+<div class="pt" style="--i:1"><h3>Canvas embers</h3><p>Up to 70 sparks rise and sway on a canvas; they speed up while the hero’s thrusters fire, and stop when the hero is off screen.</p></div>
+<div class="pt" style="--i:2"><h3>Scrambled labels</h3><p>Small labels cycle random characters, then settle letter by letter on the real text once they scroll into view.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>39 / 44</summary><p>initCursor (mouse only) adds a ring element with a dot. pointermove updates the target and toggles is-hover over links, buttons and cards. Every frame the ring moves 18% of the remaining distance (a simple ease) and the dot sits exactly on the pointer. pointerdown shrinks the ring and adds a .shock span at the click point, removed when its animation ends. The ring hides while the dialog is open. initEmbers draws on the hero canvas: it sizes the canvas for the screen’s pixel density, spawns 24 to 70 sparks with random size, speed, sway and colour, and each frame moves them up, fades them as they rise, draws a soft glow and a bright core with additive blending, and respawns those that leave. heroThrust boosts their speed. It pauses when the hero is not visible. initScramble walks the text of small labels and, for about 0.9 seconds, swaps unrevealed characters for random glyphs before showing the real text.</p></details><div class="frame"><div class="stage"><section id="j-tilt-ticker">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1034–1103 · CARD TILT, MAGNETIC BUTTONS, TICKER</p></div>
+<h2 class="title">Small reactions to the mouse and the scroll</h2>
+<div class="split">
+<div class="code"><p class="src">el.addEventListener(<span class="s">'pointermove'</span>, (e) =&gt; {<br>&#160;&#160;<span class="k">const</span> r = el.getBoundingClientRect();<br>&#160;&#160;<span class="k">const</span> x = (e.clientX - (r.left + r.width / 2)) * 0.28;<br>&#160;&#160;el.style.translate = `${x}px ${y}px`;<br>});<br><br><span class="k">const</span> anim = track.getAnimations()[0];<br>anim.playbackRate = clamp(1 + vel * 0.12, -4, 6);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Tilting suit cards</h3><p>The pointer’s position inside a card becomes a small rotation and a glare position.</p></div>
+<div class="pt" style="--i:1"><h3>Magnetic buttons</h3><p>Buttons shift 28% of the way toward the pointer using the separate translate property, so press effects still work.</p></div>
+<div class="pt" style="--i:2"><h3>A ticker that listens</h3><p>Scroll speed changes the marquee’s playbackRate: faster when you scroll down, backwards when you scroll up.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>40 / 44</summary><p>initSuitTilt listens on the whole gallery once (event delegation) and finds the card under the pointer with closest('.suit'). It sets --ry and --rx from the pointer’s position for a tilt of up to 14 by 10 degrees, and --gx and --gy for the glare; it pauses while dragging and resets on leave. initMagnetic moves buttons a little toward the pointer using the translate property and resets on leave. initTickerSpeed reads the CSS animation running on the ticker with getAnimations() and changes its playbackRate from the smoothed scroll velocity: up to 6 times faster when scrolling down and negative (reversed) when scrolling up. It also sets --skew so the words lean. A small settle loop eases the speed back to normal when you stop.</p></details><div class="frame"><div class="stage"><section id="j-scenes">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1104–1259 · THE SCROLL SCENES</p></div>
+<h2 class="title">Blast, armory ride, posters, footer charge</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> pinProgress = (section, pin) =&gt; {<br>&#160;&#160;<span class="k">const</span> travel =<br>&#160;&#160;&#160;&#160;section.offsetHeight - pin.offsetHeight;<br>&#160;&#160;<span class="k">return</span> clamp(-section.getBoundingClientRect()<br>&#160;&#160;&#160;&#160;.top / travel, 0, 1);<br>};<br><span class="k">const</span> fired = phase(p, 0.58, 0.66);<br><span class="k">const</span> c = phase(p, 0.05, 0.55) * (1 - fired);<br>pin.style.setProperty(<span class="s">'--c'</span>, c);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>The same recipe</h3><p>Progress through a pinned section, cut into phase() windows, written as CSS variables. Like the hero.</p></div>
+<div class="pt" style="--i:1"><h3>The repulsor blast</h3><p>Charge builds, the shake grows, the palm fires a white flash and rings, then the line slams in.</p></div>
+<div class="pt" style="--i:2"><h3>Ride, deal, charge</h3><p>Scroll drives the armory sideways on desktop, swings the posters in and fills the footer word.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>41 / 44</summary><p>phase and pinProgress are shared helpers: pinProgress returns how far you are through a pinned section, from 0 to 1. initBlast cuts that progress into windows: charge from 5% to 55%, HUD on screen, a shake that grows from 30% to 57%, the flash from 55% to 82%, rings expanding from 57%, and the text slamming in from 64% to 80%. It aims the flash at the palm’s real position on screen. initArmoryRide (desktop with a mouse only) wraps the armory in a pinned frame, sets the section’s height to one screen plus the gallery’s overflow, then maps progress to hall.scrollLeft and scales and rotates each card by its distance from the centre (cover flow). Its arrow buttons scroll the page instead. initPosterDeal rotates each poster in from its own direction based on how far it has entered the screen. initFooterCharge sets --charge from 0 to 1 as the footer word arrives and adds is-charged at the end.</p></details><div class="frame"><div class="stage"><section id="j-hud-text">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1260–1388 · HUD TEXT</p></div>
+<h2 class="title">Splitting headings into letters</h2>
+<div class="split">
+<div class="code"><p class="src">[...part].forEach((ch) =&gt; {<br>&#160;&#160;<span class="k">const</span> c = document.createElement(<span class="s">'span'</span>);<br>&#160;&#160;c.className = <span class="s">'hud-ch'</span>;<br>&#160;&#160;c.textContent = ch;<br>&#160;&#160;c.dataset.s = <span class="s">'off'</span>;<br>&#160;&#160;word.appendChild(c);<br>});<br>owner.setAttribute(<span class="s">'aria-label'</span>, label);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>One span per letter</h3><p>Each heading’s text is split into word spans (so lines still wrap between words) holding one span per letter.</p></div>
+<div class="pt" style="--i:1"><h3>A state per letter</h3><p>Letters switch from off to scan to lock, staggered left to right; CSS draws each state.</p></div>
+<div class="pt" style="--i:2"><h3>Still readable</h3><p>The split letters are hidden from screen readers; the heading keeps its full text in aria-label or a hidden copy.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>42 / 44</summary><p>initHudText (skipped for reduced motion) has two halves. split() walks the text inside a heading, replaces each text node with word spans (white-space nowrap, so words never break in the middle) containing one hud-ch span per character, all marked aria-hidden. The original text goes into the heading’s aria-label, or into a hidden .sr-only copy for plain paragraphs, where aria-label is ignored. decode() then runs a frame loop: each letter starts after i × a short step, spends 280ms in "scan" with a new random glyph (data-g) every 45ms, then becomes "lock". Headings decode once when 40% visible; the villain and tech panel headings re-decode every time their tab is shown, using a MutationObserver that watches the hidden attribute. The second half marks paragraphs as hud-print and adds is-printed when their container scrolls in, staggering paragraphs that share a container.</p></details><div class="frame"><div class="stage"><section id="j-polish-start">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1389–1476 · MOTION POLISH AND START‑UP</p></div>
+<h2 class="title">Last details, then switching it all on</h2>
+<div class="split">
+<div class="code"><p class="src">initBoot();<br>initReveal();<br>initArmory();<br>initTech();<br>…<br>initNavIndicator();<br>initScrollLoop([<br>&#160;&#160;initNav(), initHero(), initTimeline(),<br>&#160;&#160;initBlast(), initArmoryRide(),<br>&#160;&#160;initPosterDeal(), initFooterCharge(),<br>&#160;&#160;initDepth(), initFilmCover() ]);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Depth and the nav bar</h3><p>Images drift against the scroll, and one glowing bar slides under whichever menu link is active or hovered.</p></div>
+<div class="pt" style="--i:1"><h3>The Story sheet</h3><p>As Story rises, --cover dims and shrinks the Film section behind it.</p></div>
+<div class="pt" style="--i:2"><h3>The start list</h3><p>The last lines call every init once. Those that return an update are passed to the scroll loop in one array.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>43 / 44</summary><p>initDepth moves story images, the villain backdrop and the footer image by a small, clamped amount against the scroll using the translate property. initNavIndicator adds one bar to the desktop menu and moves it with transform to the hovered link or, when nothing is hovered, to the active one; a MutationObserver notices when the scroll-spy changes the active link. initFilmCover sets --cover on the Film section as the Story section’s top rises through the screen. Lines 1457 to 1476 are the start-up list: plain init functions that only set up listeners run first, then initScrollLoop receives the update functions returned by the scroll-driven inits. The final line closes the IIFE that opened on line 6.</p></details><div class="frame"><div class="stage"><section id="recap" class="cover">
+<p class="eyebrow">RECAP</p>
+<h2 class="title">Four ideas hold the whole site together</h2>
+<div class="stats" style="grid-template-columns: repeat(2, 1fr);">
+<div class="stat" style="--i:0"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Tokens</p><p class="what" style="font-size:28px; color:#B9B4AA;">Colours, fonts and curves live once in :root and are reused through var().</p></div>
+<div class="stat" style="--i:1"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Classes and variables</p><p class="what" style="font-size:28px; color:#B9B4AA;">JavaScript sets a class or a --variable; CSS does the drawing and animating.</p></div>
+<div class="stat" style="--i:2"><p class="lbl" style="color:#F2EFE8; font-weight:600;">One scroll loop</p><p class="what" style="font-size:28px; color:#B9B4AA;">Every scroll scene is an update(y) run together, once per frame.</p></div>
+<div class="stat" style="--i:3"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Safe by default</p><p class="what" style="font-size:28px; color:#B9B4AA;">Without JS nothing hides; with reduced motion nothing moves; every control works by keyboard.</p></div>
+</div>
+
+</section>
+</div></div><details><summary>44 / 44</summary><p>If you remember four things: first, design tokens (CSS variables on :root) make the look consistent and easy to change. Second, the split of responsibilities: HTML holds content, CSS holds looks and animation, and JavaScript mostly just flips classes and sets CSS variables. Third, all scroll effects share one requestAnimationFrame loop, and the pinned scenes all use the same recipe of progress, phase() windows and variables. Fourth, the site degrades gracefully: hidden states only apply when the js class is present, reduced-motion visitors get a still page, and the tabs, dialog, sliders and buttons are real, labelled controls that work with a keyboard and screen reader.</p></details>
+<script>
+const fit = () => document.body.style.setProperty('--k', Math.min(1, (document.body.clientWidth - 32) / 1920));
+addEventListener('resize', fit); fit();
+</script>
+</body></html>

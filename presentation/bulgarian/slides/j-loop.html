@@ -1,0 +1,13 @@
+<section id="j-loop">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 864–906 · НАКЛОН, НАГОРЕ, ЦИКЪЛЪТ ЗА СКРОЛ</p></div>
+<h2 class="title">Сърцето: един цикъл на кадър</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">function</span> initScrollLoop(updaters) {<br>&#160;&#160;<span class="k">let</span> ticking = <span class="k">false</span>;<br>&#160;&#160;<span class="k">const</span> run = () =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">const</span> y = window.scrollY;<br>&#160;&#160;&#160;&#160;updaters.forEach((fn) =&gt; fn &amp;&amp; fn(y));<br>&#160;&#160;&#160;&#160;ticking = <span class="k">false</span>;<br>&#160;&#160;};<br>&#160;&#160;window.addEventListener(<span class="s">'scroll'</span>, () =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">if</span> (!ticking) { ticking = <span class="k">true</span>;<br>&#160;&#160;&#160;&#160;&#160;&#160;requestAnimationFrame(run); } });<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Защо един цикъл</h3><p>Събитията за скрол идват много пъти за един кадър. Флагът ticking пуска всички обновявания най-много веднъж на опресняване.</p></div>
+<div class="pt" style="--i:1"><h3>requestAnimationFrame</h3><p>Изпълнява работата точно преди браузърът да рисува, така че всяка сцена при скрол се движи плавно и синхронно.</p></div>
+<div class="pt" style="--i:2"><h3>Наклон и „нагоре“</h3><p>Плакатите се накланят към мишката с --rx и --ry; бутонът в ъгъла се появява след 1,2 екрана скрол.</p></div>
+</div>
+</div>
+<aside>initTilt (само с мишка, без намалено движение) следи курсора над всеки плакат с data-tilt и задава --ry и --rx за 3D наклон плюс --gx и --gy за позицията на отблясъка; излизането нулира наклона. initToTop връща update, която показва бутона „нагоре“ след 1,2 височини на екрана. initScrollLoop е ядрото на системата за движение. Всяка сцена при скрол му подава функция update(y). При скрол (маркиран като passive, така че браузърът никога не го чака) и при преоразмеряване тя заявява един анимационен кадър, освен ако вече има чакащ; в този кадър прочита scrollY веднъж и извиква всяка update. Така десетина ефекта при скрол не слушат и не прерисуват поотделно, което би накъсвало. Изпълнява се и веднъж веднага, така че всичко започва в правилното състояние. fancyPointer е true само при мишка и без намалено движение.</aside>
+</section>

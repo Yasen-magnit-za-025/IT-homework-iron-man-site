@@ -1,0 +1,13 @@
+<section id="c-reactor-boot">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 189–249 · THE ARC REACTOR AND THE BOOT SCREEN</p></div>
+<h2 class="title">An arc reactor drawn with pure CSS</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.reactor</span> {<br>&#160;&#160;--s: 64px;<br>&#160;&#160;width: var(--s); border-radius: 50%;<br>&#160;&#160;background: radial-gradient(…);<br>}<br><span class="k">.reactor::before</span> {<br>&#160;&#160;background: repeating-conic-gradient(…);<br>&#160;&#160;animation: spin 24s linear infinite;<br>}<br><span class="k">.reactor::after</span> { animation: core 3.2s… }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>One element, four layers</h3><p>The circle, the copper coil ring (::before), the pulsing core (::after) and a dashed inner ring (the i tag).</p></div>
+<div class="pt" style="--i:1"><h3>Sized by one variable</h3><p>--s sets the size, and the glow and borders scale from it. The same reactor is the logo, the boot screen and the tech core.</p></div>
+<div class="pt" style="--i:2"><h3>A boot failsafe</h3><p>The boot screen hides itself after 4 seconds with a CSS animation, even if the script never finishes.</p></div>
+</div>
+</div>
+<aside>Part 3 builds the arc reactor from a single element and no images. The element is a circle with a radial gradient for the glowing centre and a box-shadow for the outer glow. ::before is the ring of copper coil segments: a repeating-conic-gradient masked into a ring and spun slowly. ::after is the bright core, pulsing with the "core" keyframes. The i element inside is the dashed inner ring, spinning the other way. Every size is calculated from --s, so the same class works at 26px in the nav, 74px on the boot screen and over 200px in the tech section. The boot screen is a full-screen overlay with the reactor, text and a loading bar. It disappears when JavaScript removes is-booting from the html element, and as a safety net an animation hides it after 4 seconds no matter what.</aside>
+</section>

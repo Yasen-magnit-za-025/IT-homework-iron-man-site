@@ -1,0 +1,13 @@
+<section id="c-trilogy-footer">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1193–1382 · TRILOGY, FOOTER AND THE ARMOR FILE</p></div>
+<h2 class="title">Staggered posters and a modal that animates</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.movie:nth-child(2)</span> { margin-top: 6vw; }<br><span class="k">.movie:nth-child(3)</span> { margin-top: 12vw; }<br><span class="k">.dossier</span> {<br>&#160;&#160;opacity: 0; transform: translateY(24px);<br>&#160;&#160;transition: opacity .45s,<br>&#160;&#160;&#160;&#160;display .45s allow-discrete;<br>}<br><span class="k">.dossier[open]</span> { opacity: 1; transform: none; }<br><span class="k">@starting-style</span> { .dossier[open] { opacity: 0; } }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>A staircase of films</h3><p>Each poster sits lower than the last with nth-child margins, so the three films step down diagonally.</p></div>
+<div class="pt" style="--i:1"><h3>A big footer word</h3><p>“Iron Man” at up to 21vw, filled with a gradient clipped to the text and a charge layer on top.</p></div>
+<div class="pt" style="--i:2"><h3>Opening a dialog smoothly</h3><p>@starting-style tells the browser where to animate from, so the dialog fades and slides in when it opens.</p></div>
+</div>
+</div>
+<aside>Trilogy: a warm gradient background, a three-column grid of films where the second and third are pushed down with nth-child, a huge outlined year behind each, and posters with a perspective transform for the tilt and a light glare that follows the mouse position (--gx, --gy). Footer: a background image with a gradient fade, the closing line, the giant word with a text-clipped gradient, and a three-column grid for brand, links and legal text. The dossier dialog is centred, max 1120px wide, with a blurred backdrop. It animates open using @starting-style (the starting values when it appears) and allow-discrete (so display can transition). Inside, a two-column grid: the 3D viewer side with its tone-coloured glow, numeral and ring, and the text side with meta grid, description and a list of features marked with small rotated squares.</aside>
+</section>

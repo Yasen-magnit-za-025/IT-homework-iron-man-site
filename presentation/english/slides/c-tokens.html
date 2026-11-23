@@ -1,0 +1,13 @@
+<section id="c-tokens">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1–99 · TOKENS AND BASE</p></div>
+<h2 class="title">Design tokens: decide once, use everywhere</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">@font-face</span> { font-family: <span class="s">"Stark"</span>;<br>&#160;&#160;src: url(<span class="s">"fonts/stark-bold.otf"</span>); }<br><span class="k">:root</span> {<br>&#160;&#160;--bg: #050506;<br>&#160;&#160;--red: #c4161c;<br>&#160;&#160;--gold: #d7a84a;<br>&#160;&#160;--arc: #9be8ff;<br>&#160;&#160;--f-display: <span class="s">"Stark"</span>, sans-serif;<br>&#160;&#160;--ease-out: cubic-bezier(.16,1,.3,1);<br>}<br><span class="c">/* used as */</span> color: var(--gold);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Fonts first</h3><p>Three @font-face rules load the Stark font files from the fonts folder: regular, bold and hollow.</p></div>
+<div class="pt" style="--i:1"><h3>Variables on :root</h3><p>Every colour, font and easing curve is a --variable. Changing --red once updates every red on the site.</p></div>
+<div class="pt" style="--i:2"><h3>A clean base</h3><p>Box‑sizing, no default margins, smooth scrolling, a grain texture and a gold focus ring for keyboard users.</p></div>
+</div>
+</div>
+<aside>Line 10 paints the page background near-black before anything else loads, so there is no white flash. Lines 12 to 15 load the three Stark font files with @font-face. Lines 17 to 47 are the design tokens on :root: background shades, ink colours at different opacities, red, gold and arc-cyan, the four font stacks, two easing curves, the page gutter, the max width and the nav height. Everything else in the file refers to these with var(). The rest of part 1 is the base: box-sizing border-box on everything, smooth scrolling with room for the nav, body font and colour, a fixed SVG noise texture for film grain, the selection colour, resetting margins and list styles, and a visible gold focus outline. It also defines .sr-only for screen-reader-only text, the skip link that slides in on focus, and the .wrap and .section helpers that every section uses for width and spacing.</aside>
+</section>

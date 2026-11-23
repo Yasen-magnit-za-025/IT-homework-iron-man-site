@@ -1,0 +1,13 @@
+<section id="j-boot-nav-reveal">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 133–257 · BOOT, NAV, REVEALS, COUNTERS, NOTES</p></div>
+<h2 class="title">Watching what the visitor can see</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> io = <span class="k">new</span> IntersectionObserver((entries) =&gt; {<br>&#160;&#160;entries.forEach((entry) =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">if</span> (!entry.isIntersecting) <span class="k">return</span>;<br>&#160;&#160;&#160;&#160;el.classList.add(<span class="s">'is-in'</span>);<br>&#160;&#160;&#160;&#160;io.unobserve(entry.target);<br>&#160;&#160;});<br>}, { threshold: 0.15 });</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Boot</h3><p>Waits for the hero images and fonts (2 seconds at most), removes is-booting, then adds is-ready to start the hero.</p></div>
+<div class="pt" style="--i:1"><h3>IntersectionObserver</h3><p>The browser reports when an element enters the screen. Reveals add .is-in once, then stop watching it.</p></div>
+<div class="pt" style="--i:2"><h3>Nav, counters, notes</h3><p>The nav hides on scroll down and tracks the current section; counters ease up to their number; one note opens at a time.</p></div>
+</div>
+</div>
+<aside>initBoot waits for the hero images and fonts with Promise.race against a timeout, removes is-booting (hiding the boot screen) and adds is-ready to the hero. initNav opens and closes the phone menu (with Esc and on resize too), uses an IntersectionObserver as a scroll-spy to mark the current section’s link, and returns an update function that adds is-scrolled, hides the nav while scrolling down, and sets --p for the progress bar. initReveal staggers groups with --d, then watches every data-reveal element (wipes through their parent, because a fully clipped element never reports as visible) and adds is-in once. initCounters counts each data-count number up over 1.7 seconds with an ease-out curve when 60% of it is on screen. initNotes makes the accordion open one note at a time and keeps aria-expanded accurate.</aside>
+</section>

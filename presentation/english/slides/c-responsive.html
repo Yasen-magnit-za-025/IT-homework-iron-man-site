@@ -1,0 +1,13 @@
+<section id="c-responsive">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1383–1513 · RESPONSIVE</p></div>
+<h2 class="title">One page, three screen sizes</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">@media</span> (max-width: 1180px) {<br>&#160;&#160;.film__grid { grid-template-columns: 1fr 1.3fr; }<br>}<br><span class="k">@media</span> (max-width: 960px) {<br>&#160;&#160;.nav__toggle { display: block; }<br>&#160;&#160;.nav__links { position: fixed; inset: 0; }<br>}<br><span class="k">@media</span> (max-width: 720px) {<br>&#160;&#160;.hero { height: 220vh; }<br>&#160;&#160;.node { --r: 38%; font-size: .625rem; }<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Laptop: 1180px</h3><p>Three‑column layouts drop to two, so text columns never get too narrow to read.</p></div>
+<div class="pt" style="--i:1"><h3>Tablet: 960px</h3><p>The menu becomes a full‑screen overlay behind the hamburger; side‑by‑side sections stack.</p></div>
+<div class="pt" style="--i:2"><h3>Phone: 720px</h3><p>Smaller type and chips, shorter scroll scenes, re‑aimed images, and the schematic’s callouts pulled inward.</p></div>
+</div>
+</div>
+<aside>Part 16 is three media queries that adjust the layout as the screen gets narrower. Under 1180px: the nav links get tighter, the film grid goes to two columns with the facts below, and tech panels stack. Under 960px: the hamburger appears and the links become a full-screen overlay where each link slides in one after another; the notes, stats, timeline, cast, villains, trilogy, footer and dossier all switch to stacked layouts; the timeline rail moves to the left edge. Under 720px: the hero is shorter (220vh) with no cast names, a smaller reactor and a stacked footer; the interlude is 200vh and re-aimed at the firing palm; armory cards get phone widths; movie posters stack; and the tech callouts move to a 38% radius with smaller text so all seven fit. There is also a short-screen rule that hides the hero intro on laptops under 760px tall, and a hover:none rule for touch screens.</aside>
+</section>

@@ -1,0 +1,13 @@
+<section id="h-villains">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 473–566 · THE VILLAINS</p></div>
+<h2 class="title">Tabs, built the accessible way</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"rogues__index"</span> role=<span class="s">"tablist"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> role=<span class="s">"tab"</span><br>&#160;&#160;&#160;&#160;aria-controls=<span class="s">"rogue-stane"</span><br>&#160;&#160;&#160;&#160;aria-selected=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> role=<span class="s">"tab"</span> tabindex=<span class="s">"-1"</span><span class="t">&gt;</span>…<br><span class="t">&lt;article</span> role=<span class="s">"tabpanel"</span><br>&#160;&#160;id=<span class="s">"rogue-raza"</span> <span class="k">hidden</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>ARIA roles</h3><p>role="tablist", "tab" and "tabpanel" tell screen readers this is a tab set, not just a pile of buttons.</p></div>
+<div class="pt" style="--i:1"><h3>One tab in the order</h3><p>Only the selected tab has tabindex="0"; the rest are −1, so Tab skips them and the arrow keys move between them.</p></div>
+<div class="pt" style="--i:2"><h3>hidden panels</h3><p>Every file but the first has the hidden attribute. JavaScript removes it from the panel whose tab is chosen.</p></div>
+</div>
+</div>
+<aside>The Villains section has six background images stacked at the top, one per villain, each tagged with data-rogue so JavaScript can fade in the right one. The index is a tablist of six buttons. Each button says which panel it controls (aria-controls) and whether it is selected (aria-selected). Only the selected one is in the tab order; the arrow keys move between the others, which is how proper tab widgets behave. The panels are article elements with role="tabpanel", aria-labelledby pointing back at their tab, and the hidden attribute on all but the first. Each panel has a meta line (file number, film, actor), the villain’s name as an h3 with the alias in small, a description, and a "Connection to Tony Stark" box.</aside>
+</section>

@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The image host refuses requests that carry a foreign referrer, so none is sent. -->
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="A cinematic fan tribute to the Iron Man films: the story, the thirteen key armors, the cast, the villains and the technology of Tony Stark.">
+  <meta name="theme-color" content="#050506">
+  <title>Iron Man — Enter the World of Tony Stark</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23050506'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%239be8ff' stroke-width='7' stroke-dasharray='10 3.2'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23eafcff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://static.wikia.nocookie.net">
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sait.css">
+  <script>document.documentElement.className = 'js is-booting';</script>
+  <!-- Sketchfab's viewer API: lets sait.js frame each 3D armor model -->
+  <script src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js" defer></script>
+  <script src="sait.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#film">Skip to content</a>
+
+  <!-- Boot screen (shown only while scripts and hero media settle) -->
+  <div class="boot" aria-hidden="true">
+    <div class="reactor boot__reactor"><i></i></div>
+    <p class="boot__text">Stark Industries <span>// initializing</span></p>
+    <span class="boot__bar"></span>
+  </div>
+
+  <!-- ============ NAVIGATION ============ -->
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="#top" aria-label="Iron Man — back to top">
+      <span class="reactor nav__mark" aria-hidden="true"><i></i></span>
+      <span>Iron<b>Man</b></span>
+    </a>
+    <nav class="nav__links" id="nav-links" aria-label="Sections">
+      <a href="#film">Film</a>
+      <a href="#story">Story</a>
+      <a href="#armory">Armory</a>
+      <a href="#cast">Cast</a>
+      <a href="#villains">Villains</a>
+      <a href="#tech">Tech</a>
+      <a href="#trilogy">Trilogy</a>
+    </nav>
+    <a class="btn btn--small nav__cta" href="#armory">Suit up
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    </a>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+      <span></span><span></span>
+    </button>
+    <span class="nav__progress" aria-hidden="true"></span>
+  </header>
+
+  <main>
+    <!-- ============ 00 · HERO ============ -->
+    <!-- The hero is taller than the screen: its frame stays pinned while
+         scrolling plays the take-off (see initHero in sait.js). -->
+    <section class="hero" id="top" aria-label="Introduction">
+      <div class="hero__pin">
+      <div class="hero__bg">
+        <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/3/34/IronManMkII2-IM.png/revision/latest/scale-to-width-down/1920?cb=20230910174039"
+             alt="" fetchpriority="high" decoding="async" referrerpolicy="no-referrer">
+      </div>
+      <div class="hero__scrim" aria-hidden="true"></div>
+      <canvas class="hero__embers" aria-hidden="true"></canvas>
+
+      <div class="hero__stage">
+        <div class="hero__layer hero__layer--reactor" aria-hidden="true">
+          <div class="reactor hero__reactor"><i></i></div>
+        </div>
+
+        <div class="hero__layer hero__layer--title">
+          <div class="hero__headline">
+            <ul class="hero__cast" aria-label="Starring">
+              <li>Robert Downey Jr.</li>
+              <li>Terrence Howard</li>
+              <li>Jeff Bridges</li>
+              <li>Gwyneth Paltrow</li>
+            </ul>
+            <h1 class="hero__title">
+              <span class="hero__word"><span>Iron</span></span>
+              <span class="hero__word"><span>Man</span></span>
+            </h1>
+            <span class="hero__year" aria-hidden="true">[2008]</span>
+          </div>
+        </div>
+
+        <div class="hero__layer hero__layer--ground" aria-hidden="true">
+          <div class="hero__ground"><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="hero__layer hero__layer--figure">
+          <div class="hero__suit">
+            <span class="thruster thruster--left" aria-hidden="true"></span>
+            <span class="thruster thruster--right" aria-hidden="true"></span>
+            <img class="hero__figure"
+                 src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/4/47/Iron_Man_Armor_-_Mark_III.png/revision/latest?cb=20170424185316"
+                 alt="Iron Man standing in the red and gold Mark III armor" fetchpriority="high" decoding="async" referrerpolicy="no-referrer">
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__foot">
+        <div class="hero__intro">
+          <p class="eyebrow" data-in style="--i:0">A Jon Favreau film · Marvel Studios</p>
+          <p class="hero__tagline" data-in style="--i:1">Genius. Billionaire. Playboy. Philanthropist.</p>
+          <p class="hero__lede" data-in style="--i:2">Captured in a cave and handed a box of scraps, Tony Stark builds a suit of armor — and a reason to wear it. This is where the Marvel Cinematic Universe begins.</p>
+        </div>
+
+        <div class="hero__meta">
+          <ul class="chips" data-in style="--i:3" aria-label="Film facts">
+            <li class="chip chip--light"><small>Year</small>2008</li>
+            <li class="chip chip--red"><small>Mark</small>III</li>
+            <li class="chip"><small>Min</small>126</li>
+          </ul>
+          <a class="explore" href="#film" data-in style="--i:4">
+            <span class="explore__label">Explore the universe</span>
+            <span class="explore__ring" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M8 2v12M3 9l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+            </span>
+          </a>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- Ticker band -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        <span>I am Iron Man</span><span>Stark Industries</span><span>Mark III</span><span>Arc reactor technology</span><span>Malibu · California</span><span>Phase one</span>
+      </div>
+    </div>
+
+    <!-- ============ 01 · THE FILM ============ -->
+    <section class="film" id="film" aria-labelledby="film-title">
+      <div class="wrap">
+        <div class="film__head">
+          <p class="eyebrow eyebrow--ink" data-reveal><b>01</b>The film</p>
+          <p class="film__studio" data-reveal>Marvel Studios · Paramount Pictures · 2008</p>
+        </div>
+
+        <h2 class="film__title" id="film-title">
+          <span class="film__line" data-reveal="mask"><span>Directed <small>by</small></span></span>
+          <span class="film__line film__line--right" data-reveal="mask"><span>Jon <em>Favreau</em></span></span>
+        </h2>
+
+        <div class="film__grid">
+          <figure class="film__poster" data-reveal="left">
+            <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/1/1e/Iron_Man_Official_Poster.jpg/revision/latest/scale-to-width-down/800?cb=20251125025052"
+                 alt="Theatrical poster for Iron Man (2008)" width="800" height="1185" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            <figcaption>One-sheet · 2008</figcaption>
+          </figure>
+
+          <div class="film__copy" data-reveal>
+            <p class="film__lede">Tony Stark has everything: a weapons empire, a house on a Malibu cliff and a line for every occasion. Then a demonstration in Afghanistan goes very wrong.</p>
+            <p>Held captive and ordered to build a missile, he builds something else instead — a crude suit of armor powered by the device keeping him alive. Back home, the man who sold the world its weapons decides to take responsibility for where they end up.</p>
+            <p>Jon Favreau's film launched a universe, but it works because it is a character study with rocket boots.</p>
+
+            <h3 class="film__label">Starring</h3>
+            <dl class="film__cast">
+              <div><dt>Robert Downey Jr.</dt><dd>Tony Stark</dd></div>
+              <div><dt>Terrence Howard</dt><dd>James Rhodes</dd></div>
+              <div><dt>Jeff Bridges</dt><dd>Obadiah Stane</dd></div>
+              <div><dt>Gwyneth Paltrow</dt><dd>Pepper Potts</dd></div>
+              <div><dt>Shaun Toub</dt><dd>Ho Yinsen</dd></div>
+              <div><dt>Paul Bettany</dt><dd>J.A.R.V.I.S. (voice)</dd></div>
+            </dl>
+          </div>
+
+          <dl class="film__facts" data-reveal="right">
+            <div><dt>Release date</dt><dd>May 2, 2008</dd></div>
+            <div><dt>Director</dt><dd>Jon Favreau</dd></div>
+            <div><dt>Genre</dt><dd>Superhero · Action · Sci-fi</dd></div>
+            <div><dt>Running time</dt><dd>126 minutes</dd></div>
+            <div><dt>Music</dt><dd>Ramin Djawadi</dd></div>
+            <div><dt>Budget</dt><dd>$140 million</dd></div>
+            <div><dt>Studio</dt><dd>Marvel Studios</dd></div>
+          </dl>
+        </div>
+
+        <ul class="stats" data-reveal-group>
+          <li data-reveal><b><span data-count="585" data-prefix="$" data-suffix="M">$585M</span></b><span>Worldwide box office</span></li>
+          <li data-reveal><b><span data-count="126">126</span></b><span>Minutes, start to post-credits</span></li>
+          <li data-reveal><b><span data-count="2">2</span></b><span>Academy Award nominations</span></li>
+          <li data-reveal><b><span data-count="1" data-prefix="No. ">No. 1</span></b><span>First film of the MCU</span></li>
+        </ul>
+
+        <div class="notes">
+          <h3 class="notes__title" data-reveal>Production notes <span>Select a note to open it</span></h3>
+          <div class="notes__list" data-reveal-group>
+            <article class="note is-open" data-reveal>
+              <h4><button type="button" aria-expanded="true" aria-controls="note-1"><span class="note__no">01</span>The script was a work in progress<i aria-hidden="true"></i></button></h4>
+              <div class="note__body" id="note-1"><p>Shooting began without a finished screenplay. Favreau and Downey worked scenes out on the day and much of the dialogue was improvised — Jeff Bridges later compared it to making a very expensive student film.</p></div>
+            </article>
+            <article class="note" data-reveal>
+              <h4><button type="button" aria-expanded="false" aria-controls="note-2"><span class="note__no">02</span>The suits were really there<i aria-hidden="true"></i></button></h4>
+              <div class="note__body" id="note-2"><p>Stan Winston Studio built practical Mark I, II and III armor. The Mark I alone weighed around 90 pounds; digital effects took over mainly for flight and close combat.</p></div>
+            </article>
+            <article class="note" data-reveal>
+              <h4><button type="button" aria-expanded="false" aria-controls="note-3"><span class="note__no">03</span>A risky leading man<i aria-hidden="true"></i></button></h4>
+              <div class="note__body" id="note-3"><p>Marvel was wary of casting Robert Downey Jr. Favreau argued that Downey's own history made him the only person who could play Tony Stark — and won the argument.</p></div>
+            </article>
+            <article class="note" data-reveal>
+              <h4><button type="button" aria-expanded="false" aria-controls="note-4"><span class="note__no">04</span>Marvel bet the house<i aria-hidden="true"></i></button></h4>
+              <div class="note__body" id="note-4"><p>This was the first film Marvel Studios financed itself, backed by a loan secured against the screen rights to its own characters. Had it failed, the studio stood to lose them.</p></div>
+            </article>
+            <article class="note" data-reveal>
+              <h4><button type="button" aria-expanded="false" aria-controls="note-5"><span class="note__no">05</span>The secret after the credits<i aria-hidden="true"></i></button></h4>
+              <div class="note__body" id="note-5"><p>Samuel L. Jackson's cameo as Nick Fury was shot with a skeleton crew and kept out of preview screenings, so the first mention of the Avengers Initiative would be a genuine surprise.</p></div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 02 · THE STORY ============ -->
+    <section class="story section" id="story" aria-labelledby="story-title">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow" data-reveal><b>02</b>The story</p>
+          <h2 class="display" id="story-title" data-reveal="mask"><span>A hero, <em>forged</em></span></h2>
+          <p class="section-head__sub" data-reveal>Six chapters take Tony Stark from the top of the world to the bottom of a cave — and back out again, changed.</p>
+        </header>
+
+        <ol class="timeline" id="timeline">
+          <li class="timeline__rail" aria-hidden="true"><span class="timeline__fill"></span></li>
+
+          <li class="chapter">
+            <figure class="chapter__media" data-reveal="wipe">
+              <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/8/82/Jericho_Test.png/revision/latest/scale-to-width-down/1400?cb=20230910003650"
+                   alt="Tony Stark spreads his arms as Jericho missiles detonate across the mountains behind him" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </figure>
+            <span class="chapter__node" aria-hidden="true"></span>
+            <div class="chapter__copy" data-reveal>
+              <span class="chapter__no" aria-hidden="true">01</span>
+              <p class="chapter__place">Las Vegas · Afghanistan</p>
+              <h3>The merchant of death</h3>
+              <p>Tony Stark runs the world's biggest weapons company and enjoys every minute of it. In Afghanistan he unveils the Jericho missile to the U.S. military with a drink in his hand.</p>
+            </div>
+          </li>
+
+          <li class="chapter">
+            <figure class="chapter__media" data-reveal="wipe">
+              <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/e/e5/Tony_kidnapped.png/revision/latest/scale-to-width-down/1400?cb=20250914143506"
+                   alt="A captive Tony Stark surrounded by armed members of the Ten Rings" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </figure>
+            <span class="chapter__node" aria-hidden="true"></span>
+            <div class="chapter__copy" data-reveal>
+              <span class="chapter__no" aria-hidden="true">02</span>
+              <p class="chapter__place">Kunar Province</p>
+              <h3>The ambush</h3>
+              <p>On the drive back his convoy is attacked — with Stark Industries weapons. Tony wakes in a cave with an electromagnet wired into his chest and the Ten Rings demanding a Jericho of their own.</p>
+            </div>
+          </li>
+
+          <li class="chapter">
+            <figure class="chapter__media" data-reveal="wipe">
+              <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/3/3c/In_a_cave_with_a_box_of_scraps.jpg/revision/latest/scale-to-width-down/1400?cb=20210501204156"
+                   alt="Tony Stark hammering red-hot metal at a forge inside the cave" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </figure>
+            <span class="chapter__node" aria-hidden="true"></span>
+            <div class="chapter__copy" data-reveal>
+              <span class="chapter__no" aria-hidden="true">03</span>
+              <p class="chapter__place">The cave</p>
+              <h3>A box of scraps</h3>
+              <p>With fellow prisoner Ho Yinsen, Tony pretends to build a missile. Instead he miniaturises an arc reactor to keep the shrapnel from his heart, then hammers together something to wear around it.</p>
+            </div>
+          </li>
+
+          <li class="chapter">
+            <figure class="chapter__media" data-reveal="wipe">
+              <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/f/f1/Tony_escapes_cave_wearing_Mark-1_Armor.png/revision/latest/scale-to-width-down/1400?cb=20240721213901"
+                   alt="The hulking grey Mark I armor steps out of the mouth of the cave" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </figure>
+            <span class="chapter__node" aria-hidden="true"></span>
+            <div class="chapter__copy" data-reveal>
+              <span class="chapter__no" aria-hidden="true">04</span>
+              <p class="chapter__place">The escape</p>
+              <h3>Trial by fire</h3>
+              <p>The Mark I walks out of the cave through gunfire and flame. It barely survives the trip — but its pilot comes home with a new idea of what Stark Industries should be for.</p>
+            </div>
+          </li>
+
+          <li class="chapter">
+            <figure class="chapter__media" data-reveal="wipe">
+              <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/f/f2/Tony_Stark_creating_Mark_III.jpg/revision/latest/scale-to-width-down/1400?cb=20141129042033"
+                   alt="Tony Stark working on the red and gold Mark III armor in his workshop" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </figure>
+            <span class="chapter__node" aria-hidden="true"></span>
+            <div class="chapter__copy" data-reveal>
+              <span class="chapter__no" aria-hidden="true">05</span>
+              <p class="chapter__place">Malibu workshop</p>
+              <h3>The red and the gold</h3>
+              <p>Tony shuts down weapons manufacturing and starts again in his workshop. Flight tests, a frozen prototype and a splash of hot-rod red lead to the Mark III.</p>
+            </div>
+          </li>
+
+          <li class="chapter">
+            <figure class="chapter__media" data-reveal="wipe">
+              <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/d/d2/Iron-Monger-Iron-Man.jpg/revision/latest/scale-to-width-down/1400?cb=20210504165205"
+                   alt="The towering Iron Monger armor looms in the dark" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </figure>
+            <span class="chapter__node" aria-hidden="true"></span>
+            <div class="chapter__copy" data-reveal>
+              <span class="chapter__no" aria-hidden="true">06</span>
+              <p class="chapter__place">Los Angeles</p>
+              <h3>Iron against iron</h3>
+              <p>Someone close to Tony has plans for his technology — and builds a bigger suit to prove it. The fight spills from the freeway to the roof of Stark Industries.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Interlude: scrolling charges both palm repulsors, then they fire
+         (see initBlast in sait.js). The frame stays pinned while it plays. -->
+    <section class="band" aria-label="Interlude">
+      <div class="band__pin">
+        <div class="band__media">
+          <!-- the frame covers the screen at the image's own shape, so the
+               glows below can be placed on the palms in image percentages -->
+          <div class="band__frame">
+            <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/7/74/Iron_Man_Armor_Mark_III.png/revision/latest/scale-to-width-down/1920?cb=20250914143356"
+                 alt="Iron Man raises both palms, repulsors glowing" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            <span class="charge charge--right" aria-hidden="true"><i></i><i></i></span>
+            <span class="charge charge--left" aria-hidden="true"><i></i><i></i></span>
+            <span class="charge charge--chest" aria-hidden="true"><i></i><i></i></span>
+          </div>
+        </div>
+        <div class="band__hud" aria-hidden="true">
+          <span class="band__lock"></span>
+          <p class="band__readout">Repulsor charge <b id="blast-pct">0</b>%</p>
+        </div>
+        <div class="band__flash" aria-hidden="true"><i></i><i></i></div>
+        <div class="wrap band__copy">
+          <p class="band__kicker">Built in a cave</p>
+          <p class="band__line"><span>Perfected in a workshop</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03 · THE ARMORY ============ -->
+    <section class="armory section" id="armory" aria-labelledby="armory-title">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow" data-reveal><b>03</b>The armory</p>
+          <h2 class="display" id="armory-title" data-reveal="mask"><span>Hall of <em>armor</em></span></h2>
+          <p class="section-head__sub" data-reveal>Thirteen suits, eleven years of obsession. Select any armor to open its file and explore a real 3D model.</p>
+        </header>
+        <div class="hall__controls" data-reveal>
+          <p class="hall__counter" aria-live="polite"><b id="hall-current">01</b> / <span id="hall-total">13</span></p>
+          <div class="hall__arrows">
+            <button class="round-btn" type="button" id="hall-prev" aria-label="Previous armors">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M14 8H2M7 3 2 8l5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+            <button class="round-btn" type="button" id="hall-next" aria-label="Next armors">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hall" id="hall" role="group" aria-label="Iron Man armors">
+        <noscript><p class="hall__noscript">The armor gallery needs JavaScript to load.</p></noscript>
+      </div>
+
+      <div class="wrap hall__foot">
+        <span class="hall__bar" aria-hidden="true"><span id="hall-bar"></span></span>
+        <p class="hall__hint">Drag · scroll · select a suit to view it in 3D</p>
+      </div>
+    </section>
+
+    <!-- ============ 04 · THE CAST ============ -->
+    <section class="cast section" id="cast" aria-labelledby="cast-title">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow" data-reveal><b>04</b>The cast</p>
+          <h2 class="display" id="cast-title" data-reveal="mask"><span>The people <em>inside</em></span></h2>
+          <p class="section-head__sub" data-reveal>Five performances that gave the metal a pulse. Hover or tap a portrait to meet the character.</p>
+        </header>
+
+        <div class="players" data-reveal>
+          <article class="player is-active" tabindex="0" aria-label="Robert Downey Jr. as Tony Stark, Iron Man">
+            <img class="player__photo" style="object-position:50% 22%"
+                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/RobertDowneyJr-byPhilipRomano7_%28cropped%29.jpg/960px-RobertDowneyJr-byPhilipRomano7_%28cropped%29.jpg"
+                 alt="Portrait of Robert Downey Jr." loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            <span class="player__no" aria-hidden="true">01</span>
+            <span class="player__tab" aria-hidden="true">Robert Downey Jr.</span>
+            <div class="player__body">
+              <figure class="player__still">
+                <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/8/8d/Tony_Stark_2008.jpg/revision/latest/scale-to-width-down/800?cb=20141129033848"
+                     alt="Tony Stark testing a repulsor gauntlet" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+              </figure>
+              <p class="player__role">as Tony Stark / Iron Man</p>
+              <h3 class="player__name">Robert Downey Jr.</h3>
+              <p class="player__desc">A genius weapons heir who turns a near-fatal kidnapping into a second chance — and a suit of armor into a conscience.</p>
+            </div>
+          </article>
+
+          <article class="player" tabindex="0" aria-label="Gwyneth Paltrow as Pepper Potts">
+            <img class="player__photo" style="object-position:50% 24%"
+                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Gwyneth_Paltrow_-_Marty_Supreme.jpg/960px-Gwyneth_Paltrow_-_Marty_Supreme.jpg"
+                 alt="Portrait of Gwyneth Paltrow" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            <span class="player__no" aria-hidden="true">02</span>
+            <span class="player__tab" aria-hidden="true">Gwyneth Paltrow</span>
+            <div class="player__body">
+              <figure class="player__still">
+                <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/f/f4/Pepper_Potts_%282008%29.jpg/revision/latest/scale-to-width-down/800?cb=20241029012908"
+                     alt="Pepper Potts standing beside a car on an airfield" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+              </figure>
+              <p class="player__role">as Virginia “Pepper” Potts</p>
+              <h3 class="player__name">Gwyneth Paltrow</h3>
+              <p class="player__desc">Tony's unflappable assistant: the one person who can run his life, read his moods and call his bluff.</p>
+            </div>
+          </article>
+
+          <article class="player" tabindex="0" aria-label="Jon Favreau as Happy Hogan">
+            <img class="player__photo" style="object-position:50% 20%"
+                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Jon_Favreau_2016.jpeg/960px-Jon_Favreau_2016.jpeg"
+                 alt="Portrait of Jon Favreau" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            <span class="player__no" aria-hidden="true">03</span>
+            <span class="player__tab" aria-hidden="true">Jon Favreau</span>
+            <div class="player__body">
+              <figure class="player__still">
+                <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/d/d4/Tony_Stark_and_Happy_Hogan.jpg/revision/latest/scale-to-width-down/800?cb=20141129043449"
+                     alt="Happy Hogan walking beside Tony Stark outside Stark Industries" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+              </figure>
+              <p class="player__role">as Harold “Happy” Hogan</p>
+              <h3 class="player__name">Jon Favreau</h3>
+              <p class="player__desc">Tony's loyal driver, bodyguard and friend. Favreau also runs the whole film from the other side of the camera.</p>
+            </div>
+          </article>
+
+          <article class="player" tabindex="0" aria-label="Terrence Howard as James Rhodes">
+            <img class="player__photo" style="object-position:50% 30%"
+                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Terrence_Howard_-_Monte-Carlo.jpg/960px-Terrence_Howard_-_Monte-Carlo.jpg"
+                 alt="Portrait of Terrence Howard" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            <span class="player__no" aria-hidden="true">04</span>
+            <span class="player__tab" aria-hidden="true">Terrence Howard</span>
+            <div class="player__body">
+              <figure class="player__still">
+                <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/8/8f/James_Rhodes_%282008%29.png/revision/latest/scale-to-width-down/800?cb=20190406194351"
+                     alt="James Rhodes in his Air Force dress uniform" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+              </figure>
+              <p class="player__role">as Lt. Col. James “Rhodey” Rhodes</p>
+              <h3 class="player__name">Terrence Howard</h3>
+              <p class="player__desc">Air Force liaison to Stark Industries and Tony's oldest friend, forever caught between duty and loyalty.</p>
+            </div>
+          </article>
+
+          <article class="player" tabindex="0" aria-label="Jeff Bridges as Obadiah Stane">
+            <img class="player__photo" style="object-position:42% 24%"
+                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Jeff_Bridges_by_Gage_Skidmore_4.jpg/960px-Jeff_Bridges_by_Gage_Skidmore_4.jpg"
+                 alt="Portrait of Jeff Bridges" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            <span class="player__no" aria-hidden="true">05</span>
+            <span class="player__tab" aria-hidden="true">Jeff Bridges</span>
+            <div class="player__body">
+              <figure class="player__still">
+                <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/d/da/Obadiah_Stane.jpg/revision/latest/scale-to-width-down/800?cb=20130825085309"
+                     alt="Obadiah Stane gesturing in front of the Stark Industries arc reactor" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+              </figure>
+              <p class="player__role">as Obadiah Stane</p>
+              <h3 class="player__name">Jeff Bridges</h3>
+              <p class="player__desc">Howard Stark's old partner and Tony's mentor: a boardroom charmer with plans of his own.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 05 · THE VILLAINS ============ -->
+    <section class="rogues" id="villains" aria-labelledby="rogues-title">
+      <div class="rogues__media" aria-hidden="true">
+        <img class="is-active" data-rogue="stane" style="object-position:50% 30%"
+             src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/6/63/Obadiah-Stane-and-Armor.jpg/revision/latest?cb=20140927030617"
+             alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+        <img data-rogue="raza" style="object-position:60% 30%"
+             src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/6/60/Raza-IM.jpg/revision/latest?cb=20140714144549"
+             alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+        <img data-rogue="whiplash" style="object-position:50% 20%"
+             src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/1/17/Ivan_Vanko_%28Whiplash%29.jpg/revision/latest/scale-to-width-down/1600?cb=20141204052242"
+             alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+        <img data-rogue="hammer" style="object-position:50% 12%"
+             src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/b/b1/Iron_man_2_50.jpg/revision/latest/scale-to-width-down/1200?cb=20141204045154"
+             alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+        <img data-rogue="killian" style="object-position:50% 14%"
+             src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/c/c0/Aldrich_Killian_Infobox.jpeg/revision/latest/scale-to-width-down/1200?cb=20210418203927"
+             alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+        <img data-rogue="mandarin" style="object-position:50% 25%"
+             src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/6/66/Trevor_Slattery_%28Mandarin%29.jpg/revision/latest/scale-to-width-down/1600?cb=20210419001202"
+             alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+      </div>
+
+      <div class="wrap rogues__inner">
+        <header class="section-head">
+          <p class="eyebrow" data-reveal><b>05</b>The villains</p>
+          <h2 class="display" id="rogues-title" data-reveal="mask"><span>Rogues <em>gallery</em></span></h2>
+          <p class="section-head__sub" data-reveal>Every enemy Tony Stark faces is, one way or another, a problem he helped create.</p>
+        </header>
+
+        <div class="rogues__layout">
+          <div class="rogues__index" role="tablist" aria-label="Villains" data-reveal-group>
+            <button type="button" role="tab" id="rogue-tab-stane" aria-controls="rogue-stane" aria-selected="true" data-rogue="stane" data-reveal="left">
+              <span class="rogues__no">01</span><span class="rogues__name">Obadiah Stane</span><span class="rogues__alias">Iron Monger</span>
+            </button>
+            <button type="button" role="tab" id="rogue-tab-raza" aria-controls="rogue-raza" aria-selected="false" tabindex="-1" data-rogue="raza" data-reveal="left">
+              <span class="rogues__no">02</span><span class="rogues__name">Raza</span><span class="rogues__alias">The Ten Rings</span>
+            </button>
+            <button type="button" role="tab" id="rogue-tab-whiplash" aria-controls="rogue-whiplash" aria-selected="false" tabindex="-1" data-rogue="whiplash" data-reveal="left">
+              <span class="rogues__no">03</span><span class="rogues__name">Ivan Vanko</span><span class="rogues__alias">Whiplash</span>
+            </button>
+            <button type="button" role="tab" id="rogue-tab-hammer" aria-controls="rogue-hammer" aria-selected="false" tabindex="-1" data-rogue="hammer" data-reveal="left">
+              <span class="rogues__no">04</span><span class="rogues__name">Justin Hammer</span><span class="rogues__alias">Hammer Industries</span>
+            </button>
+            <button type="button" role="tab" id="rogue-tab-killian" aria-controls="rogue-killian" aria-selected="false" tabindex="-1" data-rogue="killian" data-reveal="left">
+              <span class="rogues__no">05</span><span class="rogues__name">Aldrich Killian</span><span class="rogues__alias">A.I.M. · Extremis</span>
+            </button>
+            <button type="button" role="tab" id="rogue-tab-mandarin" aria-controls="rogue-mandarin" aria-selected="false" tabindex="-1" data-rogue="mandarin" data-reveal="left">
+              <span class="rogues__no">06</span><span class="rogues__name">The Mandarin</span><span class="rogues__alias">Trevor Slattery</span>
+            </button>
+          </div>
+
+          <div class="rogues__files" data-reveal>
+            <article class="file is-active" id="rogue-stane" role="tabpanel" aria-labelledby="rogue-tab-stane" data-rogue="stane">
+              <p class="file__meta"><span>File 01</span><span>Iron Man · 2008</span><span>Played by Jeff Bridges</span></p>
+              <h3>Obadiah Stane <small>Iron Monger</small></h3>
+              <p>Stark Industries' second-in-command, quietly dealing weapons under the table and tired of standing in a younger man's shadow. When Tony changes course, Stane takes the arc reactor and builds a bigger suit.</p>
+              <div class="file__link"><h4>Connection to Tony Stark</h4><p>Howard Stark's partner and the closest thing Tony had to a father — which makes the betrayal personal.</p></div>
+            </article>
+            <article class="file" id="rogue-raza" role="tabpanel" aria-labelledby="rogue-tab-raza" data-rogue="raza" hidden>
+              <p class="file__meta"><span>File 02</span><span>Iron Man · 2008</span><span>Played by Faran Tahir</span></p>
+              <h3>Raza <small>The Ten Rings</small></h3>
+              <p>Commander of the Ten Rings cell that ambushes Tony's convoy in Afghanistan. He wants a Jericho missile, and he has all the time and tools a prisoner could need to build one.</p>
+              <div class="file__link"><h4>Connection to Tony Stark</h4><p>His captor. Without Raza's cave there is no Mark I — and no Iron Man.</p></div>
+            </article>
+            <article class="file" id="rogue-whiplash" role="tabpanel" aria-labelledby="rogue-tab-whiplash" data-rogue="whiplash" hidden>
+              <p class="file__meta"><span>File 03</span><span>Iron Man 2 · 2010</span><span>Played by Mickey Rourke</span></p>
+              <h3>Ivan Vanko <small>Whiplash</small></h3>
+              <p>A brilliant Russian physicist who builds his own arc reactor and a pair of electrified whips, then walks onto the track at the Monaco Grand Prix to prove that Iron Man can bleed.</p>
+              <div class="file__link"><h4>Connection to Tony Stark</h4><p>Son of Anton Vanko, the disgraced co-inventor of the arc reactor. He wants the Stark name to pay for his father's exile.</p></div>
+            </article>
+            <article class="file" id="rogue-hammer" role="tabpanel" aria-labelledby="rogue-tab-hammer" data-rogue="hammer" hidden>
+              <p class="file__meta"><span>File 04</span><span>Iron Man 2 · 2010</span><span>Played by Sam Rockwell</span></p>
+              <h3>Justin Hammer <small>Hammer Industries</small></h3>
+              <p>A rival defense contractor with all of Tony's ambition and none of his talent. He springs Vanko from prison to build him an army of armored drones for the Stark Expo.</p>
+              <div class="file__link"><h4>Connection to Tony Stark</h4><p>The competitor who will never be Tony Stark — and cannot stand it.</p></div>
+            </article>
+            <article class="file" id="rogue-killian" role="tabpanel" aria-labelledby="rogue-tab-killian" data-rogue="killian" hidden>
+              <p class="file__meta"><span>File 05</span><span>Iron Man 3 · 2013</span><span>Played by Guy Pearce</span></p>
+              <h3>Aldrich Killian <small>A.I.M. · Extremis</small></h3>
+              <p>Founder of Advanced Idea Mechanics and the mind behind Extremis, a regenerative treatment that turns its volunteers into living weapons. He sells the threat and the cure at the same time.</p>
+              <div class="file__link"><h4>Connection to Tony Stark</h4><p>Tony left him waiting on a rooftop on New Year's Eve 1999. Killian spent thirteen years composing his reply.</p></div>
+            </article>
+            <article class="file" id="rogue-mandarin" role="tabpanel" aria-labelledby="rogue-tab-mandarin" data-rogue="mandarin" hidden>
+              <p class="file__meta"><span>File 06</span><span>Iron Man 3 · 2013</span><span>Played by Ben Kingsley</span></p>
+              <h3>The Mandarin <small>Trevor Slattery</small></h3>
+              <p>The face of a terror campaign broadcast straight into America's living rooms: robes, rings and lessons delivered to camera. What is behind the performance is the film's best trick.</p>
+              <div class="file__link"><h4>Connection to Tony Stark</h4><p>He calls Tony out by name. Tony answers by giving him his home address on live television.</p></div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 06 · TECHNOLOGY ============ -->
+    <!-- A holographic schematic: the arc reactor sits in the middle and the seven
+         systems orbit it. Selecting a system shows its file; each file's control
+         drives the reactor (see initTech in sait.js). -->
+    <section class="lab section" id="tech" aria-labelledby="lab-title">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow" data-reveal><b>06</b>Technology</p>
+          <h2 class="display" id="lab-title" data-reveal="mask"><span>Stark <em>tech</em></span></h2>
+          <p class="section-head__sub" data-reveal>Seven systems that turn one man into Iron Man. Select one on the schematic, then try its controls.</p>
+        </header>
+
+        <div class="schematic" data-reveal>
+          <div class="schematic__stage" id="schematic">
+            <svg class="schematic__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <span class="schematic__ring schematic__ring--outer" aria-hidden="true"></span>
+            <span class="schematic__ring schematic__ring--mid" aria-hidden="true"></span>
+            <span class="schematic__ring schematic__ring--inner" aria-hidden="true"></span>
+            <span class="schematic__sweep" aria-hidden="true"></span>
+            <span class="schematic__shock" aria-hidden="true"></span>
+            <div class="reactor schematic__core" aria-hidden="true"><i></i></div>
+            <p class="schematic__readout" aria-hidden="true"><span id="core-label">Core output</span> <b id="core-value">1.8</b></p>
+
+            <div class="schematic__nodes" role="tablist" aria-label="Stark systems">
+              <button type="button" class="node" role="tab" id="tab-arc" aria-controls="sys-arc" aria-selected="true" style="--i:0"><span>01</span>Arc Reactor</button>
+              <button type="button" class="node" role="tab" id="tab-jarvis" aria-controls="sys-jarvis" aria-selected="false" tabindex="-1" style="--i:1"><span>02</span>J.A.R.V.I.S.</button>
+              <button type="button" class="node" role="tab" id="tab-friday" aria-controls="sys-friday" aria-selected="false" tabindex="-1" style="--i:2"><span>03</span>F.R.I.D.A.Y.</button>
+              <button type="button" class="node" role="tab" id="tab-repulsor" aria-controls="sys-repulsor" aria-selected="false" tabindex="-1" style="--i:3"><span>04</span>Repulsors</button>
+              <button type="button" class="node" role="tab" id="tab-hud" aria-controls="sys-hud" aria-selected="false" tabindex="-1" style="--i:4"><span>05</span>Suit HUD</button>
+              <button type="button" class="node" role="tab" id="tab-workshop" aria-controls="sys-workshop" aria-selected="false" tabindex="-1" style="--i:5"><span>06</span>Workshop</button>
+              <button type="button" class="node" role="tab" id="tab-flight" aria-controls="sys-flight" aria-selected="false" tabindex="-1" style="--i:6"><span>07</span>Flight</button>
+            </div>
+          </div>
+
+          <div class="schematic__panels">
+            <article class="sys is-active" id="sys-arc" role="tabpanel" aria-labelledby="tab-arc">
+              <p class="sys__code">SYS-01 · Power</p>
+              <h3>Arc Reactor</h3>
+              <p>A power plant the size of a hockey puck. Tony builds the first one in a cave to keep shrapnel away from his heart; every suit since has been wrapped around its descendants.</p>
+              <ul class="sys__specs">
+                <li><span>Core</span>Palladium, later a new element</li>
+                <li><span>Output</span>Up to 3 gigajoules per second</li>
+                <li><span>Scaled from</span>The Stark Industries reactor</li>
+              </ul>
+              <label class="slider" for="arc-power"><span>Output level · drives the core</span>
+                <input type="range" id="arc-power" min="5" max="100" value="60">
+              </label>
+            </article>
+
+            <article class="sys" id="sys-jarvis" role="tabpanel" aria-labelledby="tab-jarvis" hidden>
+              <p class="sys__code">SYS-02 · Intelligence</p>
+              <h3>J.A.R.V.I.S.</h3>
+              <p>“Just A Rather Very Intelligent System.” Tony's dry-witted AI runs the house, the workshop and the suit, and is not above commenting on all three.</p>
+              <ul class="sys__specs">
+                <li><span>Voice</span>Paul Bettany</li>
+                <li><span>Runs</span>Mansion, workshop and armor</li>
+                <li><span>Active</span>Iron Man to Age of Ultron</li>
+              </ul>
+              <div class="ai" data-ai="jarvis">
+                <div class="ai__wave" aria-hidden="true"></div>
+                <div class="ai__log" aria-live="polite"></div>
+              </div>
+              <div class="cmds" role="group" aria-label="Ask J.A.R.V.I.S.">
+                <button type="button" class="cmd" data-ai-target="jarvis" data-cmd="morning">Good morning</button>
+                <button type="button" class="cmd" data-ai-target="jarvis" data-cmd="diagnostics">Run diagnostics</button>
+                <button type="button" class="cmd" data-ai-target="jarvis" data-cmd="status">Suit status</button>
+              </div>
+            </article>
+
+            <article class="sys sys--amber" id="sys-friday" role="tabpanel" aria-labelledby="tab-friday" hidden>
+              <p class="sys__code">SYS-03 · Intelligence</p>
+              <h3>F.R.I.D.A.Y.</h3>
+              <p>When J.A.R.V.I.S. becomes part of the Vision, Tony loads a successor into the Mark XLV. Brisk, Irish-accented and unimpressed, she flies with him to the very end.</p>
+              <ul class="sys__specs">
+                <li><span>Voice</span>Kerry Condon</li>
+                <li><span>First suit</span>Mark XLV</li>
+                <li><span>Active</span>Age of Ultron to Endgame</li>
+              </ul>
+              <div class="ai" data-ai="friday">
+                <div class="ai__wave" aria-hidden="true"></div>
+                <div class="ai__log" aria-live="polite"></div>
+              </div>
+              <div class="cmds" role="group" aria-label="Ask F.R.I.D.A.Y.">
+                <button type="button" class="cmd" data-ai-target="friday" data-cmd="scan">Threat scan</button>
+                <button type="button" class="cmd" data-ai-target="friday" data-cmd="inventory">Armor inventory</button>
+                <button type="button" class="cmd" data-ai-target="friday" data-cmd="power">Reroute power</button>
+              </div>
+            </article>
+
+            <article class="sys" id="sys-repulsor" role="tabpanel" aria-labelledby="tab-repulsor" hidden>
+              <p class="sys__code">SYS-04 · Propulsion / Weapon</p>
+              <h3>Repulsors</h3>
+              <p>Designed as flight stabilisers and discovered, with a bang, to be weapons. The palm repulsors steer the suit in the air and knock down whatever is in front of it on the ground.</p>
+              <ul class="sys__specs">
+                <li><span>Location</span>Palms and boot soles</li>
+                <li><span>First test</span>The workshop wall</li>
+                <li><span>Chest unit</span>The unibeam</li>
+              </ul>
+              <button type="button" class="btn btn--hold" id="repulsor-fire">Hold to charge · release to fire</button>
+            </article>
+
+            <article class="sys" id="sys-hud" role="tabpanel" aria-labelledby="tab-hud" hidden>
+              <p class="sys__code">SYS-05 · Interface</p>
+              <h3>Suit HUD</h3>
+              <p>Inside the helmet, the world arrives as layers of light: altitude, power, targets and J.A.R.V.I.S.'s commentary, all tracked by the pilot's eyes.</p>
+              <ul class="sys__specs">
+                <li><span>Display</span>Holographic, eye-tracked</li>
+                <li><span>Shows</span>Flight data, threats, diagnostics</li>
+                <li><span>Introduced</span>Mark II</li>
+              </ul>
+              <button type="button" class="btn btn--hold" id="hud-scan">Run a target scan</button>
+            </article>
+
+            <article class="sys" id="sys-workshop" role="tabpanel" aria-labelledby="tab-workshop" hidden>
+              <p class="sys__code">SYS-06 · Facility</p>
+              <h3>The Workshop</h3>
+              <p>Under the Malibu house, behind a glass door and a keypad, is the room where everything is made. Choose a station.</p>
+              <div class="cmds" role="group" aria-label="Workshop stations">
+                <button type="button" class="cmd is-active" data-station="holo">Holo-table</button>
+                <button type="button" class="cmd" data-station="bots">DUM-E &amp; U</button>
+                <button type="button" class="cmd" data-station="gantry">Assembly gantry</button>
+                <button type="button" class="cmd" data-station="garage">The garage</button>
+              </div>
+              <p class="sys__station" id="station-text" aria-live="polite">A table-sized holographic workspace. Tony pulls designs apart with his hands, tries a part on for size and throws what he doesn't like in a virtual bin.</p>
+            </article>
+
+            <article class="sys" id="sys-flight" role="tabpanel" aria-labelledby="tab-flight" hidden>
+              <p class="sys__code">SYS-07 · Propulsion</p>
+              <h3>Flight Systems</h3>
+              <p>Boot thrusters push, palm repulsors steer and a set of flaps trims the ride. The Mark II proved the idea — and found out what thin, freezing air does to an unfinished suit.</p>
+              <ul class="sys__specs">
+                <li><span>Thrust</span>Boot-mounted jets</li>
+                <li><span>Control</span>Palm stabilisers and flaps</li>
+                <li><span>Known flaw</span>Icing at altitude (Mark II)</li>
+              </ul>
+              <label class="slider" for="flight-throttle"><span>Throttle · spins up the rings</span>
+                <input type="range" id="flight-throttle" min="0" max="100" value="40">
+              </label>
+              <p class="sys__warning" id="flight-warning" hidden>Ice build-up detected</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 07 · THE TRILOGY ============ -->
+    <section class="trilogy section" id="trilogy" aria-labelledby="trilogy-title">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow" data-reveal><b>07</b>The trilogy</p>
+          <h2 class="display" id="trilogy-title" data-reveal="mask"><span>Three films, <em>one man</em></span></h2>
+          <p class="section-head__sub" data-reveal>Three chapters, five years, and a character who never ends a film the way he started it.</p>
+        </header>
+
+        <div class="films" data-reveal-group>
+          <article class="movie" data-reveal>
+            <span class="movie__year" aria-hidden="true">2008</span>
+            <figure class="movie__poster" data-tilt>
+              <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/1/1e/Iron_Man_Official_Poster.jpg/revision/latest/scale-to-width-down/800?cb=20251125025052"
+                   alt="Iron Man (2008) poster" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </figure>
+            <div class="movie__body">
+              <p class="movie__part">Part one</p>
+              <h3>Iron Man</h3>
+              <dl>
+                <div><dt>Released</dt><dd>May 2, 2008</dd></div>
+                <div><dt>Director</dt><dd>Jon Favreau</dd></div>
+                <div><dt>Runtime</dt><dd>126 min</dd></div>
+              </dl>
+              <p>A captured weapons maker builds his way out of a cave and into a new purpose.</p>
+            </div>
+          </article>
+
+          <article class="movie" data-reveal>
+            <span class="movie__year" aria-hidden="true">2010</span>
+            <figure class="movie__poster" data-tilt>
+              <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/c/cb/Iron_Man_2_Official_Poster.jpg/revision/latest?cb=20120702233904"
+                   alt="Iron Man 2 (2010) poster" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </figure>
+            <div class="movie__body">
+              <p class="movie__part">Part two</p>
+              <h3>Iron Man 2</h3>
+              <dl>
+                <div><dt>Released</dt><dd>May 7, 2010</dd></div>
+                <div><dt>Director</dt><dd>Jon Favreau</dd></div>
+                <div><dt>Runtime</dt><dd>125 min</dd></div>
+              </dl>
+              <p>The world knows his name. Now governments, rivals and an old family enemy all want the suit — while the thing keeping Tony alive is slowly poisoning him.</p>
+            </div>
+          </article>
+
+          <article class="movie" data-reveal>
+            <span class="movie__year" aria-hidden="true">2013</span>
+            <figure class="movie__poster" data-tilt>
+              <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/5/55/Iron_Man_3_IMAX_poster.jpg/revision/latest?cb=20130319165854"
+                   alt="Iron Man 3 (2013) poster" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </figure>
+            <div class="movie__body">
+              <p class="movie__part">Part three</p>
+              <h3>Iron Man 3</h3>
+              <dl>
+                <div><dt>Released</dt><dd>May 3, 2013</dd></div>
+                <div><dt>Director</dt><dd>Shane Black</dd></div>
+                <div><dt>Runtime</dt><dd>131 min</dd></div>
+              </dl>
+              <p>After New York, Tony cannot sleep. When the Mandarin levels his home, he has to find out who he is without the armor.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" id="footer">
+    <div class="footer__media" aria-hidden="true">
+      <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/0/0e/Ironman_large.jpg/revision/latest/scale-to-width-down/1600?cb=20141129042738"
+           alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+    </div>
+    <div class="wrap footer__inner">
+      <p class="footer__closing" data-reveal>Heroes aren't born. <span>They're built.</span></p>
+      <p class="footer__word" aria-hidden="true" data-reveal="mask"><span>Iron Man</span></p>
+
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a class="nav__brand" href="#top" aria-label="Iron Man — back to top">
+            <span class="reactor nav__mark" aria-hidden="true"><i></i></span>
+            <span>Iron<b>Man</b></span>
+          </a>
+          <p>A cinematic tribute to the films that started the Marvel Cinematic Universe.</p>
+        </div>
+        <nav class="footer__nav" aria-label="Footer">
+          <a href="#film">The film</a>
+          <a href="#story">The story</a>
+          <a href="#armory">The armory</a>
+          <a href="#cast">The cast</a>
+          <a href="#villains">The villains</a>
+          <a href="#tech">Technology</a>
+          <a href="#trilogy">The trilogy</a>
+        </nav>
+        <div class="footer__legal">
+          <p>This is an unofficial, non-commercial fan project. Iron Man, Tony Stark and all related characters, names, images and marks are trademarks and © of Marvel and Marvel Studios (The Walt Disney Company). Film stills, renders and posters belong to their respective owners and are shown here for commentary only, via the Marvel Cinematic Universe Wiki.</p>
+          <p>Actor portraits from Wikimedia Commons: Robert Downey Jr. by Philip Romano (CC BY-SA 4.0), Gwyneth Paltrow by Kevin Paul (CC BY 4.0), Jon Favreau by Eva Rinaldi (CC BY-SA 2.0), Terrence Howard by Frantogian (CC BY-SA 4.0), Jeff Bridges by Gage Skidmore (CC BY-SA 3.0).</p>
+          <p>The 3D armor models are fan-made and hosted on Sketchfab; each one is credited to its creator in its armor file.</p>
+          <p>Headings set in Stark by Neale Davidson / Pixel Sagas (pixelsagas.com), used under its free personal-use licence.</p>
+        </div>
+      </div>
+
+      <p class="footer__base"><span>Fan tribute · Not affiliated with Marvel</span><a href="#top">Back to top ↑</a></p>
+    </div>
+  </footer>
+
+  <a class="totop" href="#top" aria-label="Back to top">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14V2M3 7l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+  </a>
+
+  <!-- ============ ARMOR FILE (modal) ============ -->
+  <dialog class="dossier" id="dossier" aria-labelledby="dossier-name">
+    <div class="dossier__frame">
+      <button class="dossier__close round-btn" type="button" id="dossier-close" aria-label="Close armor file">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+
+      <div class="dossier__visual">
+        <span class="dossier__numeral" id="dossier-numeral" aria-hidden="true"></span>
+        <span class="dossier__ring" aria-hidden="true"></span>
+
+        <!-- 3D viewer: a real, rotatable 3D model of the suit (Sketchfab embed), with the photo as a second view -->
+        <div class="viewer is-3d" id="viewer">
+          <div class="viewer__loading" aria-hidden="true">
+            <span class="reactor viewer__reactor"><i></i></span>
+            <span>Loading 3D model</span>
+          </div>
+          <!-- The 3D viewer must know which site embeds it (origin only) to talk to sait.js -->
+          <iframe class="viewer__frame" id="viewer-frame" title="3D model of the armor" referrerpolicy="origin"
+                  allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
+          <img class="viewer__photo" id="dossier-img" alt="" decoding="async" referrerpolicy="no-referrer" draggable="false">
+        </div>
+
+        <p class="viewer__hint" id="viewer-hint" aria-hidden="true">Drag to rotate · scroll to zoom</p>
+
+        <div class="viewer__bar">
+          <div class="viewer__modes" role="group" aria-label="Choose view">
+            <button type="button" class="viewer__mode" id="mode-3d" aria-pressed="true">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 14 5v6l-6 3.5L2 11V5zM2 5l6 3.5L14 5M8 8.5v6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              <span id="mode-3d-label">3D model</span>
+            </button>
+            <button type="button" class="viewer__mode" id="mode-photo" aria-pressed="false">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="m3 12 3.5-4 2.5 3 1.5-1.5L13 12" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+              <span>Photo</span>
+            </button>
+          </div>
+          <p class="viewer__credit" id="viewer-credit"></p>
+        </div>
+      </div>
+
+      <div class="dossier__body">
+        <p class="eyebrow" id="dossier-count">Suit file</p>
+        <h3 class="dossier__name" id="dossier-name"></h3>
+        <p class="dossier__nick" id="dossier-nick"></p>
+        <dl class="dossier__meta">
+          <div><dt>Appears in</dt><dd id="dossier-film"></dd></div>
+          <div><dt>Debut</dt><dd id="dossier-year"></dd></div>
+          <div><dt>Power source</dt><dd id="dossier-power"></dd></div>
+        </dl>
+        <p class="dossier__desc" id="dossier-desc"></p>
+        <h4 class="dossier__label">Technical features</h4>
+        <ul class="dossier__features" id="dossier-features"></ul>
+        <div class="dossier__nav">
+          <button class="btn btn--ghost" type="button" id="dossier-prev">← Previous suit</button>
+          <button class="btn" type="button" id="dossier-next">Next suit →</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>

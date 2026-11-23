@@ -1,0 +1,13 @@
+<section id="h-villains">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 473–566 · ЗЛОДЕИТЕ</p></div>
+<h2 class="title">Табове, направени по достъпния начин</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"rogues__index"</span> role=<span class="s">"tablist"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> role=<span class="s">"tab"</span><br>&#160;&#160;&#160;&#160;aria-controls=<span class="s">"rogue-stane"</span><br>&#160;&#160;&#160;&#160;aria-selected=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> role=<span class="s">"tab"</span> tabindex=<span class="s">"-1"</span><span class="t">&gt;</span>…<br><span class="t">&lt;article</span> role=<span class="s">"tabpanel"</span><br>&#160;&#160;id=<span class="s">"rogue-raza"</span> <span class="k">hidden</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>ARIA роли</h3><p>role="tablist", "tab" и "tabpanel" казват на екранните четци, че това е набор от табове, а не купчина бутони.</p></div>
+<div class="pt" style="--i:1"><h3>Един таб в реда</h3><p>Само избраният таб има tabindex="0"; останалите са −1, така че Tab ги прескача, а стрелките местят между тях.</p></div>
+<div class="pt" style="--i:2"><h3>Скрити панели</h3><p>Всяко досие освен първото има атрибута hidden. JavaScript го маха от панела, чийто таб е избран.</p></div>
+</div>
+</div>
+<aside>Секцията Villains има шест фонови снимки, наредени една върху друга най-горе, по една за всеки злодей, всяка маркирана с data-rogue, за да може JavaScript да покаже правилната. Индексът е tablist от шест бутона. Всеки бутон казва кой панел управлява (aria-controls) и дали е избран (aria-selected). Само избраният е в реда на Tab; стрелките местят между останалите – така се държат правилните табове. Панелите са елементи article с role="tabpanel", aria-labelledby, сочещ обратно към техния таб, и атрибута hidden на всички освен първия. Всеки панел има ред с мета данни (номер на досието, филм, актьор), името на злодея като h3 с прякора с по-малки букви, описание и каре „Connection to Tony Stark“.</aside>
+</section>

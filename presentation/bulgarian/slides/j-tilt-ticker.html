@@ -1,0 +1,13 @@
+<section id="j-tilt-ticker">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 1034–1103 · НАКЛОН НА КАРТИ, МАГНИТНИ БУТОНИ, ЛЕНТА</p></div>
+<h2 class="title">Малки реакции на мишката и скрола</h2>
+<div class="split">
+<div class="code"><p class="src">el.addEventListener(<span class="s">'pointermove'</span>, (e) =&gt; {<br>&#160;&#160;<span class="k">const</span> r = el.getBoundingClientRect();<br>&#160;&#160;<span class="k">const</span> x = (e.clientX - (r.left + r.width / 2)) * 0.28;<br>&#160;&#160;el.style.translate = `${x}px ${y}px`;<br>});<br><br><span class="k">const</span> anim = track.getAnimations()[0];<br>anim.playbackRate = clamp(1 + vel * 0.12, -4, 6);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Накланящи се карти</h3><p>Позицията на курсора в картата става малко завъртане и позиция на отблясъка.</p></div>
+<div class="pt" style="--i:1"><h3>Магнитни бутони</h3><p>Бутоните се изместват с 28% към курсора чрез отделното свойство translate, така че ефектите при натискане пак работят.</p></div>
+<div class="pt" style="--i:2"><h3>Лента, която слуша</h3><p>Скоростта на скрола променя playbackRate на лентата: по-бързо при скрол надолу, наобратно при скрол нагоре.</p></div>
+</div>
+</div>
+<aside>initSuitTilt слуша цялата галерия веднъж (делегиране на събития) и намира картата под курсора с closest('.suit'). Задава --ry и --rx от позицията на курсора за наклон до 14 на 10 градуса, и --gx и --gy за отблясъка; спира по време на влачене и се нулира при излизане. initMagnetic мести бутоните малко към курсора чрез свойството translate и се нулира при излизане. initTickerSpeed прочита CSS анимацията на лентата с getAnimations() и променя нейния playbackRate според изгладената скорост на скрола: до 6 пъти по-бързо при скрол надолу и отрицателно (наобратно) при скрол нагоре. Задава и --skew, така че думите се накланят. Малък цикъл за успокояване плавно връща скоростта към нормалната, когато спреш.</aside>
+</section>

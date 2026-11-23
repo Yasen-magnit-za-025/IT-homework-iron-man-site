@@ -1,0 +1,13 @@
+<section id="j-armory">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 377–523 · ARMORY GALLERY AND DIALOG</p></div>
+<h2 class="title">Building 13 cards from one list</h2>
+<div class="split">
+<div class="code"><p class="src">hall.innerHTML = ARMORS.map((a, i) =&gt; `<br>&#160;&#160;&lt;button class=<span class="s">"suit"</span><br>&#160;&#160;&#160;&#160;style=<span class="s">"--tone:${a.tone}"</span><br>&#160;&#160;&#160;&#160;data-index=<span class="s">"${i}"</span>&gt;<br>&#160;&#160;&#160;&#160;&lt;span class=<span class="s">"suit__name"</span>&gt;${a.name}…<br>&#160;&#160;&lt;/button&gt;`).join(<span class="s">''</span>);<br><br>dialog.showModal();<br>fill(i);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Template strings</h3><p>map() turns each suit object into a button’s HTML, and join() glues all 13 together into the gallery.</p></div>
+<div class="pt" style="--i:1"><h3>Drag, arrows, wheel</h3><p>Mouse drag, the arrow buttons and the mouse wheel all scroll the gallery, and the counter tracks your place.</p></div>
+<div class="pt" style="--i:2"><h3>One dialog</h3><p>Clicking a card opens the dialog, then fill() writes that suit’s data in. Next, previous and arrow keys move between suits.</p></div>
+</div>
+</div>
+<aside>initArmory builds the gallery: ARMORS.map creates one button per suit with its tone, numeral, image, nickname, name and film, and join puts them into the hall. update() sets the progress bar, disables the arrows at either end, and finds which card is current (the centred one during the desktop ride). The arrows scroll by three quarters of the hall’s width. Mouse dragging changes scrollLeft and snaps to the nearest card on release, and a click right after a drag is ignored. The mouse wheel scrolls the gallery sideways until it reaches an edge. Clicking a card calls open(), which shows the dialog with showModal() first (the 3D viewer only starts inside a visible dialog), then fill() writes the name, nickname, film, year, power, description and features and loads the 3D model. Previous, next and the arrow keys change suit; closing it stops the viewer and returns focus to the card you clicked.</aside>
+</section>

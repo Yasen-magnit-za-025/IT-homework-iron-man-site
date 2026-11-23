@@ -1,0 +1,11 @@
+<section id="recap" class="cover">
+<p class="eyebrow">RECAP</p>
+<h2 class="title">Four ideas hold the whole site together</h2>
+<div class="stats" style="grid-template-columns: repeat(2, 1fr);">
+<div class="stat" style="--i:0"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Tokens</p><p class="what" style="font-size:28px; color:#B9B4AA;">Colours, fonts and curves live once in :root and are reused through var().</p></div>
+<div class="stat" style="--i:1"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Classes and variables</p><p class="what" style="font-size:28px; color:#B9B4AA;">JavaScript sets a class or a --variable; CSS does the drawing and animating.</p></div>
+<div class="stat" style="--i:2"><p class="lbl" style="color:#F2EFE8; font-weight:600;">One scroll loop</p><p class="what" style="font-size:28px; color:#B9B4AA;">Every scroll scene is an update(y) run together, once per frame.</p></div>
+<div class="stat" style="--i:3"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Safe by default</p><p class="what" style="font-size:28px; color:#B9B4AA;">Without JS nothing hides; with reduced motion nothing moves; every control works by keyboard.</p></div>
+</div>
+<aside>If you remember four things: first, design tokens (CSS variables on :root) make the look consistent and easy to change. Second, the split of responsibilities: HTML holds content, CSS holds looks and animation, and JavaScript mostly just flips classes and sets CSS variables. Third, all scroll effects share one requestAnimationFrame loop, and the pinned scenes all use the same recipe of progress, phase() windows and variables. Fourth, the site degrades gracefully: hidden states only apply when the js class is present, reduced-motion visitors get a still page, and the tabs, dialog, sliders and buttons are real, labelled controls that work with a keyboard and screen reader.</aside>
+</section>

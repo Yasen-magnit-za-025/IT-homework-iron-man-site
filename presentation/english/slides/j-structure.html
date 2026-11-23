@@ -1,0 +1,13 @@
+<section id="j-structure">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1–132 · STRUCTURE AND DATA</p></div>
+<h2 class="title">A private scope, helpers and the suit data</h2>
+<div class="split">
+<div class="code"><p class="src">(() =&gt; {<br>&#160;&#160;<span class="s">'use strict'</span>;<br>&#160;&#160;<span class="k">const</span> $ = (sel, ctx = document) =&gt;<br>&#160;&#160;&#160;&#160;ctx.querySelector(sel);<br>&#160;&#160;<span class="k">const</span> clamp = (v, min, max) =&gt;<br>&#160;&#160;&#160;&#160;Math.min(max, Math.max(min, v));<br>&#160;&#160;<span class="k">const</span> ARMORS = [<br>&#160;&#160;&#160;&#160;{ mark: <span class="s">'I'</span>, name: <span class="s">'Mark I'</span>, … },<br>&#160;&#160;];<br>})();</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>An IIFE wrapper</h3><p>The whole file is a function that runs itself once. Its variables stay private and can’t clash with other scripts.</p></div>
+<div class="pt" style="--i:1"><h3>Tiny helpers</h3><p>$ and $$ shorten querySelector, clamp keeps a number in range, and two flags check reduced motion and mouse.</p></div>
+<div class="pt" style="--i:2"><h3>Data, not markup</h3><p>ARMORS lists 13 suits and MODELS their 3D files. The gallery and dialog are built from this one list.</p></div>
+</div>
+</div>
+<aside>Lines 1 to 5 are a header comment. Line 6 opens an arrow-function IIFE (Immediately Invoked Function Expression) that closes on the last line, so nothing leaks into the global scope. 'use strict' turns on stricter error checking. root is the html element. $ returns one element, $$ returns an array of all matches. clamp limits a value between a min and max. reduceMotion and canHover read the visitor’s settings once with matchMedia. heroThrust is a shared number the hero sets and the embers read. Lines 17 to 111 hold WIKI (the image host prefix) and ARMORS: thirteen objects with each suit’s mark, name, nickname, film, year, power source, colour tone, image path, description and four features. armorSrc builds the full image URL. Lines 113 to 132 are MODELS, the Sketchfab id, title and author of each 3D model, attached to each armor with forEach.</aside>
+</section>

@@ -1,0 +1,13 @@
+<section id="j-loop">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 864–906 · POSTER TILT, BACK TO TOP, THE SCROLL LOOP</p></div>
+<h2 class="title">The heart of it: one loop per frame</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">function</span> initScrollLoop(updaters) {<br>&#160;&#160;<span class="k">let</span> ticking = <span class="k">false</span>;<br>&#160;&#160;<span class="k">const</span> run = () =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">const</span> y = window.scrollY;<br>&#160;&#160;&#160;&#160;updaters.forEach((fn) =&gt; fn &amp;&amp; fn(y));<br>&#160;&#160;&#160;&#160;ticking = <span class="k">false</span>;<br>&#160;&#160;};<br>&#160;&#160;window.addEventListener(<span class="s">'scroll'</span>, () =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">if</span> (!ticking) { ticking = <span class="k">true</span>;<br>&#160;&#160;&#160;&#160;&#160;&#160;requestAnimationFrame(run); } });<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Why one loop</h3><p>Scroll events can fire many times per frame. The ticking flag makes all the updates run at most once per screen refresh.</p></div>
+<div class="pt" style="--i:1"><h3>requestAnimationFrame</h3><p>Runs the work right before the browser draws, so every scroll scene moves smoothly and in sync.</p></div>
+<div class="pt" style="--i:2"><h3>Tilt and back to top</h3><p>Posters tilt toward the mouse with --rx and --ry; the corner button appears after 1.2 screens of scrolling.</p></div>
+</div>
+</div>
+<aside>initTilt (mouse only, no reduced motion) tracks the pointer over each data-tilt poster and sets --ry and --rx for a 3D tilt plus --gx and --gy for the glare position; leaving resets the tilt. initToTop returns an update that shows the back-to-top button after 1.2 screen heights. initScrollLoop is the core of the motion system. Every scroll scene hands it an update(y) function. On scroll (marked passive, so the browser never waits for it) and on resize, it requests one animation frame unless one is already pending; in that frame it reads scrollY once and calls every update. This keeps a dozen scroll effects from each listening and redrawing separately, which would stutter. It also runs once immediately so everything starts in the right state. fancyPointer is true only with a mouse and no reduced motion.</aside>
+</section>

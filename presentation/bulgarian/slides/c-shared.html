@@ -1,0 +1,13 @@
+<section id="c-shared">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 100–188 · ОБЩИ ЧАСТИ И ПОЯВЯВАНЕ</p></div>
+<h2 class="title">Части, използвани навсякъде</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.js [data-reveal]</span> {<br>&#160;&#160;opacity: 0;<br>&#160;&#160;transform: translateY(32px);<br>&#160;&#160;filter: blur(8px);<br>&#160;&#160;transition: opacity 1s, transform 1.1s;<br>&#160;&#160;transition-delay: var(--d, 0s);<br>}<br><span class="k">.js [data-reveal].is-in</span> {<br>&#160;&#160;opacity: 1; transform: none;<br>&#160;&#160;filter: none;<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Класове за многократна употреба</h3><p>.eyebrow, .display, .btn, .round-btn и .chip се стилизират веднъж тук и се ползват във всяка секция.</p></div>
+<div class="pt" style="--i:1"><h3>Скрито само с JS</h3><p>Правилата за появяване започват с .js, така че ако скриптът не тръгне, нищо не остава невидимо.</p></div>
+<div class="pt" style="--i:2"><h3>Превключвателят .is-in</h3><p>Елементите започват избледнели, свалени и размазани. JavaScript добавя .is-in, когато влязат в екрана, и CSS ги анимира.</p></div>
+</div>
+</div>
+<aside>Част 2 определя частите, които всички секции споделят. .eyebrow е малкият етикет с номер в рамка. .display е огромното заглавие на секция, а .display em е контурната втора дума, направена с прозрачна запълка и -webkit-text-stroke. .section-head подрежда блок със заглавие. .btn е бутонът с отрязан ъгъл, направен с clip-path, със състояния при посочване и натискане; .round-btn е кръглият бутон със стрелка; .chips и .chip са кръглите значки с факти в началния екран. После идва системата за появяване: всичко с data-reveal започва скрито, изместено надолу и размазано, но само когато елементът html има клас js. Варианти: „left“ и „right“ влизат отстрани, „wipe“ се открива с clip-path, а „mask“ плъзга текста нагоре иззад ръб с overflow:hidden. Когато JavaScript добави is-in, всеки вариант преминава към крайното си, нормално състояние. --d е закъснение, зададено от JavaScript, за да се разредят групите.</aside>
+</section>

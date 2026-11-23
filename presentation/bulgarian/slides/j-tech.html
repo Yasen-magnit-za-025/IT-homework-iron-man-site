@@ -1,0 +1,13 @@
+<section id="j-tech">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 685–863 · STARK TECH</p></div>
+<h2 class="title">Контроли, които управляват реактора</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> setArc = () =&gt; {<br>&#160;&#160;<span class="k">const</span> p = arcSlider.value / 100;<br>&#160;&#160;stage.style.setProperty(<span class="s">'--arc-p'</span>, p);<br>&#160;&#160;setCore(<span class="s">'Core output · GJ/s'</span>,<br>&#160;&#160;&#160;&#160;(p * 3).toFixed(1));<br>};<br>arcSlider.addEventListener(<span class="s">'input'</span>, setArc);<br><br>stage.classList.add(<span class="s">'is-firing'</span>);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Линии, начертани с код</h3><p>drawLines измерва всеки етикет и чертае SVG линия до него от центъра, наново при преоразмеряване.</p></div>
+<div class="pt" style="--i:1"><h3>Променливи и класове</h3><p>Плъзгачите задават --arc-p и --spin; репулсорът задава --charge, после добавя is-firing; HUD добавя is-scanning.</p></div>
+<div class="pt" style="--i:2"><h3>AI отговори, които се пишат</h3><p>J.A.R.V.I.S. и F.R.I.D.A.Y. пишат всеки ред буква по буква, докато лентите на звуковата вълна подскачат.</p></div>
+</div>
+</div>
+<aside>initTech управлява схемата. drawLines измерва центъра на всеки възел спрямо сцената и записва SVG елементи line от средата (50, 50) до всеки възел; изпълнява се отново при преоразмеряване, при зареждане на шрифтовете и когато сцената влезе в екрана. initTabs се грижи за седемте системи; onChange спира всяко писане, осветява съответната линия и нулира показанието на ядрото. Плъзгачът за реактора задава --arc-p и показанието в GJ/s. AI чатът пише всеки ред от SCRIPTS със закъснение 22ms на буква, докато случайни височини анимират лентите на вълната; typingToken отменя стар отговор, когато цъкнеш отново или смениш. Бутонът на репулсора зарежда --charge за 1,1 секунди, докато е задържан (с курсор или Space/Enter), и при пускане добавя is-firing за ударната вълна, после се изпразва. HUD сканирането добавя is-scanning за радарния лъч и отчита 7 / 7 цели. Бутоните в работилницата сменят текста на станцията и задават aria-pressed. Тягата задава --spin и показанието в Мах и показва предупреждение за заледяване над 85%.</aside>
+</section>

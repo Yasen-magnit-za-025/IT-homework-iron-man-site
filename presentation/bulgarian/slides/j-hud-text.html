@@ -1,0 +1,13 @@
+<section id="j-hud-text">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 1260–1388 · HUD ТЕКСТ</p></div>
+<h2 class="title">Разделяне на заглавията на букви</h2>
+<div class="split">
+<div class="code"><p class="src">[...part].forEach((ch) =&gt; {<br>&#160;&#160;<span class="k">const</span> c = document.createElement(<span class="s">'span'</span>);<br>&#160;&#160;c.className = <span class="s">'hud-ch'</span>;<br>&#160;&#160;c.textContent = ch;<br>&#160;&#160;c.dataset.s = <span class="s">'off'</span>;<br>&#160;&#160;word.appendChild(c);<br>});<br>owner.setAttribute(<span class="s">'aria-label'</span>, label);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Един span на буква</h3><p>Текстът на заглавието се разделя на span-ове за думи (за да се пренася между думите), всеки с по един span на буква.</p></div>
+<div class="pt" style="--i:1"><h3>Състояние за всяка буква</h3><p>Буквите минават от off към scan към lock, разредено отляво надясно; CSS рисува всяко състояние.</p></div>
+<div class="pt" style="--i:2"><h3>Пак четимо</h3><p>Разделените букви са скрити от екранните четци; заглавието пази целия си текст в aria-label или в скрито копие.</p></div>
+</div>
+</div>
+<aside>initHudText (пропуска се при намалено движение) има две половини. split() обхожда текста в заглавие, заменя всеки текстов възел със span-ове за думи (white-space nowrap, за да не се чупят думите по средата), съдържащи по един span hud-ch за всеки символ, всички маркирани с aria-hidden. Оригиналният текст отива в aria-label на заглавието или в скрито копие .sr-only за обикновени параграфи, където aria-label се пренебрегва. После decode() пуска цикъл по кадри: всяка буква започва след i × кратка стъпка, прекарва 280ms в „scan“ с нов случаен символ (data-g) на всеки 45ms и после става „lock“. Заглавията се декодират веднъж, когато са видими на 40%; заглавията в панелите на злодеите и в Tech се декодират наново всеки път, когато табът им се покаже, чрез MutationObserver, който следи атрибута hidden. Втората половина маркира параграфите като hud-print и добавя is-printed, когато контейнерът им влезе в екрана, като разрежда параграфите в един контейнер.</aside>
+</section>

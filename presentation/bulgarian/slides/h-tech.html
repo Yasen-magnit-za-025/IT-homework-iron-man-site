@@ -1,0 +1,13 @@
+<section id="h-tech">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 567–711 · STARK TECH</p></div>
+<h2 class="title">Схема около дъговия реактор</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"schematic__stage"</span> id=<span class="s">"schematic"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;svg</span> class=<span class="s">"schematic__lines"</span><span class="t">&gt;&lt;/svg&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"reactor schematic__core"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> class=<span class="s">"node"</span> role=<span class="s">"tab"</span><br>&#160;&#160;&#160;&#160;style=<span class="s">"--i:0"</span><span class="t">&gt;</span>Arc Reactor<br><span class="t">&lt;article</span> class=<span class="s">"sys"</span> role=<span class="s">"tabpanel"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;input</span> type=<span class="s">"range"</span> id=<span class="s">"arc-power"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Сцената</h3><p>Празен SVG за светлинните линии, три пръстена, радарен лъч, ударна вълна и ядрото на реактора стоят в един квадрат.</p></div>
+<div class="pt" style="--i:1"><h3>Седем възела</h3><p>Всяка система е бутон‑таб с --i от 0 до 6. CSS използва това число, за да я постави по окръжността.</p></div>
+<div class="pt" style="--i:2"><h3>Истински контроли</h3><p>Плъзгачите са input type="range" с label, а бутоните са истински бутони, така че работят и с клавиатура.</p></div>
+</div>
+</div>
+<aside>Секцията Tech е холографска схема. schematic__stage е квадрат, който съдържа: празен svg, в който JavaScript рисува свързващите линии, три въртящи се пръстена, радарен лъч, пръстен за ударна вълна, ядрото на дъговия реактор и показание. Седемте бутона за системите са табове; всеки има style="--i:N" – число, което CSS използва с cos() и sin(), за да го постави по окръжността. Седемте панела са article елементи с role="tabpanel", всеки с кодов етикет, заглавие, описание и списък с характеристики. Всеки панел има своя контрола: плъзгача за дъговия реактор, два AI чата с бутони за команди, бутона за задържане на репулсора, бутона за HUD сканиране, бутоните за станциите в работилницата и плъзгача за тягата при полет. Всеки плъзгач има елемент label, така че предназначението му се обявява.</aside>
+</section>

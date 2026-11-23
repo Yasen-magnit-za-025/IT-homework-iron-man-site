@@ -1,0 +1,13 @@
+<section id="j-boot-nav-reveal">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 133–257 · ЗАРЕЖДАНЕ, МЕНЮ, ПОЯВЯВАНЕ, БРОЯЧИ, БЕЛЕЖКИ</p></div>
+<h2 class="title">Следене на това, което посетителят вижда</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> io = <span class="k">new</span> IntersectionObserver((entries) =&gt; {<br>&#160;&#160;entries.forEach((entry) =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">if</span> (!entry.isIntersecting) <span class="k">return</span>;<br>&#160;&#160;&#160;&#160;el.classList.add(<span class="s">'is-in'</span>);<br>&#160;&#160;&#160;&#160;io.unobserve(entry.target);<br>&#160;&#160;});<br>}, { threshold: 0.15 });</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Зареждане</h3><p>Изчаква снимките и шрифтовете (най-много 2 секунди), маха is-booting и добавя is-ready, за да тръгне началният екран.</p></div>
+<div class="pt" style="--i:1"><h3>IntersectionObserver</h3><p>Браузърът съобщава, когато елемент влезе в екрана. Появяването добавя .is-in веднъж и спира да го следи.</p></div>
+<div class="pt" style="--i:2"><h3>Меню, броячи, бележки</h3><p>Менюто се скрива при скрол надолу и следи текущата секция; броячите стигат плавно до числото си; отваря се една бележка наведнъж.</p></div>
+</div>
+</div>
+<aside>initBoot изчаква снимките и шрифтовете на началния екран с Promise.race срещу таймер, маха is-booting (скривайки екрана за зареждане) и добавя is-ready към началния екран. initNav отваря и затваря менюто на телефон (също с Esc и при преоразмеряване), използва IntersectionObserver като scroll-spy, за да маркира връзката на текущата секция, и връща update функция, която добавя is-scrolled, скрива менюто при скрол надолу и задава --p за лентата за прогрес. initReveal разрежда групите с --d, после следи всеки елемент с data-reveal (тези с wipe – чрез родителя им, защото напълно изрязан елемент никога не се отчита като видим) и добавя is-in веднъж. initCounters брои всяко число с data-count нагоре за 1,7 секунди с крива на забавяне, когато 60% от него е на екрана. initNotes кара акордеона да отваря по една бележка наведнъж и поддържа aria-expanded точен.</aside>
+</section>

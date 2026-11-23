@@ -1,0 +1,13 @@
+<section id="c-film">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 534–647 · TICKER AND FILM</p></div>
+<h2 class="title">A marquee and a paper‑white magazine page</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.ticker__track</span> {<br>&#160;&#160;display: flex; width: max-content;<br>&#160;&#160;animation: marquee 40s linear infinite;<br>}<br><span class="k">@keyframes</span> marquee {<br>&#160;&#160;to { transform: translateX(-50%); }<br>}<br><span class="k">.film__grid</span> {<br>&#160;&#160;display: grid;<br>&#160;&#160;grid-template-columns: 4.2fr 5fr 3fr;<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>An endless ticker</h3><p>The red band’s text slides left forever. Moving it by −50% loops seamlessly because the text repeats.</p></div>
+<div class="pt" style="--i:1"><h3>A contrasting section</h3><p>Film is the only light section: paper colour, dark ink and a faint grid pattern made with two gradients.</p></div>
+<div class="pt" style="--i:2"><h3>Grid layouts</h3><p>Poster, story and facts share one CSS grid with fixed proportions; the stats use a four‑column grid.</p></div>
+</div>
+</div>
+<aside>Part 6 has the ticker: a red band rotated slightly, its track a flex row of words moved left by a 40-second linear marquee animation. The words are separated by small dots made with ::after. The Film section uses the paper colour and dark ink, with a light graph-paper texture made from two repeating linear gradients and a faint red glow. .film__title is the huge "Directed by Jon Favreau" text with the second line pushed right. .film__grid is a three-column grid for poster, copy and facts. The poster gets a red corner bracket using ::before. The cast and facts lists use borders between rows. .stats is a four-column grid of big numbers, and .notes styles the accordion: the plus icon is two lines, and .is-open rotates it and expands the answer using grid-template-rows from 0fr to 1fr, which animates height smoothly.</aside>
+</section>

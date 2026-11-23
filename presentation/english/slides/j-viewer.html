@@ -1,0 +1,13 @@
+<section id="j-viewer">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 524–624 · THE 3D VIEWER</p></div>
+<h2 class="title">Embedding a real 3D model</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> client = <span class="k">new</span> window.Sketchfab(<span class="s">'1.12.1'</span>, frame);<br>client.init(uid, {<br>&#160;&#160;...options,<br>&#160;&#160;success(api) {<br>&#160;&#160;&#160;&#160;api.addEventListener(<span class="s">'viewerready'</span>, () =&gt; {<br>&#160;&#160;&#160;&#160;&#160;&#160;api.focusOnVisibleGeometries(…);<br>&#160;&#160;&#160;&#160;});<br>&#160;&#160;}<br>});</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Sketchfab’s viewer API</h3><p>The iframe loads the model; the API lets the page talk to it and frame the whole suit in view.</p></div>
+<div class="pt" style="--i:1"><h3>Load only when needed</h3><p>A model downloads only when its 3D view is shown, and it’s unloaded when the dialog closes to free the graphics card.</p></div>
+<div class="pt" style="--i:2"><h3>Never stuck loading</h3><p>A token cancels stale loads, and timers make sure the spinner always clears, even on a slow connection.</p></div>
+</div>
+</div>
+<aside>initViewer controls the 3D panel in the armor dialog. options turns on autostart, a transparent background, a slow auto-spin and hides the viewer’s extra buttons (some of those only take effect for paid Sketchfab accounts). loadModel increases loadToken, so a model that finishes loading after you have already switched suits is ignored. If the Sketchfab API script is missing it falls back to a plain iframe embed. With the API, once the viewer is ready it calls focusOnVisibleGeometries (or recenterCamera) to frame the whole model, then moves the camera 20% closer on desktop or 5% on narrow phones. setMode switches between the 3D model and the photo and only loads the model when 3D is shown. load() fills the credit line and button labels ("3D bust", "3D helmet"), and stop() unloads the iframe when the dialog closes.</aside>
+</section>

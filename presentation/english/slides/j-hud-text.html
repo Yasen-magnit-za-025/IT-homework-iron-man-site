@@ -1,0 +1,13 @@
+<section id="j-hud-text">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1260–1388 · HUD TEXT</p></div>
+<h2 class="title">Splitting headings into letters</h2>
+<div class="split">
+<div class="code"><p class="src">[...part].forEach((ch) =&gt; {<br>&#160;&#160;<span class="k">const</span> c = document.createElement(<span class="s">'span'</span>);<br>&#160;&#160;c.className = <span class="s">'hud-ch'</span>;<br>&#160;&#160;c.textContent = ch;<br>&#160;&#160;c.dataset.s = <span class="s">'off'</span>;<br>&#160;&#160;word.appendChild(c);<br>});<br>owner.setAttribute(<span class="s">'aria-label'</span>, label);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>One span per letter</h3><p>Each heading’s text is split into word spans (so lines still wrap between words) holding one span per letter.</p></div>
+<div class="pt" style="--i:1"><h3>A state per letter</h3><p>Letters switch from off to scan to lock, staggered left to right; CSS draws each state.</p></div>
+<div class="pt" style="--i:2"><h3>Still readable</h3><p>The split letters are hidden from screen readers; the heading keeps its full text in aria-label or a hidden copy.</p></div>
+</div>
+</div>
+<aside>initHudText (skipped for reduced motion) has two halves. split() walks the text inside a heading, replaces each text node with word spans (white-space nowrap, so words never break in the middle) containing one hud-ch span per character, all marked aria-hidden. The original text goes into the heading’s aria-label, or into a hidden .sr-only copy for plain paragraphs, where aria-label is ignored. decode() then runs a frame loop: each letter starts after i × a short step, spends 280ms in "scan" with a new random glyph (data-g) every 45ms, then becomes "lock". Headings decode once when 40% visible; the villain and tech panel headings re-decode every time their tab is shown, using a MutationObserver that watches the hidden attribute. The second half marks paragraphs as hud-print and adds is-printed when their container scrolls in, staggering paragraphs that share a container.</aside>
+</section>

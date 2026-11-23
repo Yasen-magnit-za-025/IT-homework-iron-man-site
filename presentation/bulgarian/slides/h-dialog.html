@@ -1,0 +1,13 @@
+<section id="h-dialog">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 823–883 · ДОСИЕТО НА БРОНЯТА</p></div>
+<h2 class="title">Един диалог за всичките 13 костюма</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;dialog</span> class=<span class="s">"dossier"</span> id=<span class="s">"dossier"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"viewer is-3d"</span> id=<span class="s">"viewer"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;iframe</span> id=<span class="s">"viewer-frame"</span><br>&#160;&#160;&#160;&#160;&#160;&#160;referrerpolicy=<span class="s">"origin"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"viewer__photo"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> id=<span class="s">"mode-3d"</span> aria-pressed=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h3</span> id=<span class="s">"dossier-name"</span><span class="t">&gt;&lt;/h3&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Вграден dialog</h3><p>Тагът dialog дава истински модален прозорец даром: фокусът остава вътре, Esc го затваря, а страницата отзад е блокирана.</p></div>
+<div class="pt" style="--i:1"><h3>Празни места</h3><p>Име, филм, година и характеристики са празни елементи с id-та. JavaScript ги попълва за избрания костюм.</p></div>
+<div class="pt" style="--i:2"><h3>3D или снимка</h3><p>iframe съдържа модела от Sketchfab; два бутона превключват към снимката, а aria-pressed показва кое е включено.</p></div>
+</div>
+</div>
+<aside>Досието на бронята е един елемент dialog в края на body. Вместо тринадесет изскачащи прозореца има един и JavaScript го попълва с данните на избрания костюм. Вътре: бутон за затваряне с aria-label; визуалната страна с голямата римска цифра, пръстен, 3D визуализатора (индикатор за зареждане, iframe-а с модела от Sketchfab и снимката на костюма като втори изглед), подсказка, превключвателя 3D/Снимка и ред с благодарност към автора на модела. referrerpolicy="origin" на iframe-а отменя правилото no-referrer на страницата, защото 3D визуализаторът трябва да знае кой сайт го е вградил, преди да започне да „говори“ със sait.js. Другата страна има празни места за името, прякора, филма, годината на дебюта, източника на енергия, описанието и списъка с характеристики, плюс бутони за предишен и следващ костюм.</aside>
+</section>

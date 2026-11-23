@@ -1,0 +1,13 @@
+<section id="h-armory-cast">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 344–472 · АРСЕНАЛ И АКТЬОРИ</p></div>
+<h2 class="title">Празна галерия и пет панела с актьори</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"hall"</span> id=<span class="s">"hall"</span> role=<span class="s">"group"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;noscript&gt;</span>…needs JavaScript<br><span class="t">&lt;/div&gt;</span><br><br><span class="t">&lt;article</span> class=<span class="s">"player is-active"</span><br>&#160;&#160;tabindex=<span class="s">"0"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"player__photo"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h3</span> class=<span class="s">"player__name"</span><span class="t">&gt;</span>…</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Запълва се от JavaScript</h3><p>Галерията започва празна: 13-те карти с костюми се изграждат от списък с данни в sait.js, така че HTML остава кратък.</p></div>
+<div class="pt" style="--i:1"><h3>Резервен noscript</h3><p>Ако JavaScript е изключен, съобщение обяснява защо галерията липсва, вместо да остане празно място.</p></div>
+<div class="pt" style="--i:2"><h3>Панели с фокус</h3><p>Всеки панел с актьор има tabindex="0", така че с клавиатура стигаш до него и го отваряш, както с мишка.</p></div>
+</div>
+</div>
+<aside>Секцията Armory има заглавие, брояч (01 / 13) и два бутона със стрелки с aria-label, защото показват само иконка. Самата галерия, div с id „hall“, е празна в HTML: JavaScript изгражда тринадесетте карти от данните ARMORS, което избягва повтарянето на тринадесет почти еднакви блока код. Съобщение в noscript покрива посетителите без JavaScript. Под нея са лентата за прогрес и ред с подсказка. Секцията Cast има пет елемента article, по един за всеки актьор. Всеки съдържа портрета на актьора, номер, вертикален етикет с името и тяло с кадър от филма, ролята, името на актьора като h3 и кратко описание. Първият започва с класа is-active. tabindex="0" прави всеки панел достъпен с клавиатура, а aria-label дава ясно име на всеки панел.</aside>
+</section>

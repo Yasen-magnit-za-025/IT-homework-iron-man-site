@@ -1,0 +1,13 @@
+<section id="j-polish-start">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1389–1476 · MOTION POLISH AND START‑UP</p></div>
+<h2 class="title">Last details, then switching it all on</h2>
+<div class="split">
+<div class="code"><p class="src">initBoot();<br>initReveal();<br>initArmory();<br>initTech();<br>…<br>initNavIndicator();<br>initScrollLoop([<br>&#160;&#160;initNav(), initHero(), initTimeline(),<br>&#160;&#160;initBlast(), initArmoryRide(),<br>&#160;&#160;initPosterDeal(), initFooterCharge(),<br>&#160;&#160;initDepth(), initFilmCover() ]);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Depth and the nav bar</h3><p>Images drift against the scroll, and one glowing bar slides under whichever menu link is active or hovered.</p></div>
+<div class="pt" style="--i:1"><h3>The Story sheet</h3><p>As Story rises, --cover dims and shrinks the Film section behind it.</p></div>
+<div class="pt" style="--i:2"><h3>The start list</h3><p>The last lines call every init once. Those that return an update are passed to the scroll loop in one array.</p></div>
+</div>
+</div>
+<aside>initDepth moves story images, the villain backdrop and the footer image by a small, clamped amount against the scroll using the translate property. initNavIndicator adds one bar to the desktop menu and moves it with transform to the hovered link or, when nothing is hovered, to the active one; a MutationObserver notices when the scroll-spy changes the active link. initFilmCover sets --cover on the Film section as the Story section’s top rises through the screen. Lines 1457 to 1476 are the start-up list: plain init functions that only set up listeners run first, then initScrollLoop receives the update functions returned by the scroll-driven inits. The final line closes the IIFE that opened on line 6.</aside>
+</section>

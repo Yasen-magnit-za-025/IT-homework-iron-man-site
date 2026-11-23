@@ -1,0 +1,13 @@
+<section id="j-cast-tabs">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 625–684 · АКТЬОРИ, ТАБОВЕ И ЗЛОДЕИ</p></div>
+<h2 class="title">Една система за табове, използвана два пъти</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">function</span> initTabs(tablist, onChange) {<br>&#160;&#160;<span class="k">const</span> select = (tab) =&gt; {<br>&#160;&#160;&#160;&#160;tabs.forEach((t) =&gt; {<br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="k">const</span> on = t === tab;<br>&#160;&#160;&#160;&#160;&#160;&#160;t.setAttribute(<span class="s">'aria-selected'</span>, on);<br>&#160;&#160;&#160;&#160;&#160;&#160;t.tabIndex = on ? 0 : -1;<br>&#160;&#160;&#160;&#160;&#160;&#160;panel.hidden = !on;<br>&#160;&#160;&#160;&#160;});<br>&#160;&#160;&#160;&#160;onChange(tab);<br>&#160;&#160;};</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Панели с актьори</h3><p>Посочване, клик, фокус или Enter правят панел активен. Само един панел има .is-active в даден момент.</p></div>
+<div class="pt" style="--i:1"><h3>Функция за повторна употреба</h3><p>initTabs работи с всеки tablist. Злодеите и схемата в Tech я използват, всеки със свой onChange.</p></div>
+<div class="pt" style="--i:2"><h3>Поддръжка на клавиатура</h3><p>Стрелките местят към следващия или предишния таб, Home и End – към първия и последния, както трябва при табове.</p></div>
+</div>
+</div>
+<aside>initCast дава на всеки панел с актьор слушатели за pointerenter (само мишка), click, focus и Enter или Space, които всички извикват activate – тя превключва is-active, така че е отворен само един панел. initTabs е общ контролер за табове: select() обновява aria-selected, слага само избрания таб в реда на Tab, показва неговия панел и скрива останалите, после извиква onChange, за да може всяко място, което я ползва, да реагира. Обработчикът на keydown мести със стрелките и Home и End, и скролва хоризонтален списък с табове, за да остане фокусираният таб видим. preloadNear започва да зарежда „мързеливите“ снимки на секция 900px преди тя да влезе в екрана. initVillains прави tablist-а вертикален, използва onChange, за да покаже съответната фонова снимка, и зарежда фоновете предварително, така че превключването никога не показва празен кадър.</aside>
+</section>

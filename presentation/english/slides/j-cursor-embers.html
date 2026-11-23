@@ -1,0 +1,13 @@
+<section id="j-cursor-embers">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 907–1033 · CURSOR, EMBERS, SCRAMBLED LABELS</p></div>
+<h2 class="title">A cursor, a particle system and decoding labels</h2>
+<div class="split">
+<div class="code"><p class="src">pos.x += (target.x - pos.x) * 0.18;<br>ring.style.transform =<br>&#160;&#160;`translate3d(${pos.x}px, ${pos.y}px, 0)`;<br><br><span class="k">for</span> (<span class="k">const</span> s <span class="k">of</span> sparks) {<br>&#160;&#160;s.y += s.vy * boost;<br>&#160;&#160;ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);<br>&#160;&#160;ctx.fill();<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Easing the cursor</h3><p>Each frame the ring moves 18% of the way to the mouse, so it trails smoothly. Clicks add a .shock ring that removes itself.</p></div>
+<div class="pt" style="--i:1"><h3>Canvas embers</h3><p>Up to 70 sparks rise and sway on a canvas; they speed up while the hero’s thrusters fire, and stop when the hero is off screen.</p></div>
+<div class="pt" style="--i:2"><h3>Scrambled labels</h3><p>Small labels cycle random characters, then settle letter by letter on the real text once they scroll into view.</p></div>
+</div>
+</div>
+<aside>initCursor (mouse only) adds a ring element with a dot. pointermove updates the target and toggles is-hover over links, buttons and cards. Every frame the ring moves 18% of the remaining distance (a simple ease) and the dot sits exactly on the pointer. pointerdown shrinks the ring and adds a .shock span at the click point, removed when its animation ends. The ring hides while the dialog is open. initEmbers draws on the hero canvas: it sizes the canvas for the screen’s pixel density, spawns 24 to 70 sparks with random size, speed, sway and colour, and each frame moves them up, fades them as they rise, draws a soft glow and a bright core with additive blending, and respawns those that leave. heroThrust boosts their speed. It pauses when the hero is not visible. initScramble walks the text of small labels and, for about 0.9 seconds, swaps unrevealed characters for random glyphs before showing the real text.</aside>
+</section>

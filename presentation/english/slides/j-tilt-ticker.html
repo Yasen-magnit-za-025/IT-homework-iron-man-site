@@ -1,0 +1,13 @@
+<section id="j-tilt-ticker">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 1034–1103 · CARD TILT, MAGNETIC BUTTONS, TICKER</p></div>
+<h2 class="title">Small reactions to the mouse and the scroll</h2>
+<div class="split">
+<div class="code"><p class="src">el.addEventListener(<span class="s">'pointermove'</span>, (e) =&gt; {<br>&#160;&#160;<span class="k">const</span> r = el.getBoundingClientRect();<br>&#160;&#160;<span class="k">const</span> x = (e.clientX - (r.left + r.width / 2)) * 0.28;<br>&#160;&#160;el.style.translate = `${x}px ${y}px`;<br>});<br><br><span class="k">const</span> anim = track.getAnimations()[0];<br>anim.playbackRate = clamp(1 + vel * 0.12, -4, 6);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Tilting suit cards</h3><p>The pointer’s position inside a card becomes a small rotation and a glare position.</p></div>
+<div class="pt" style="--i:1"><h3>Magnetic buttons</h3><p>Buttons shift 28% of the way toward the pointer using the separate translate property, so press effects still work.</p></div>
+<div class="pt" style="--i:2"><h3>A ticker that listens</h3><p>Scroll speed changes the marquee’s playbackRate: faster when you scroll down, backwards when you scroll up.</p></div>
+</div>
+</div>
+<aside>initSuitTilt listens on the whole gallery once (event delegation) and finds the card under the pointer with closest('.suit'). It sets --ry and --rx from the pointer’s position for a tilt of up to 14 by 10 degrees, and --gx and --gy for the glare; it pauses while dragging and resets on leave. initMagnetic moves buttons a little toward the pointer using the translate property and resets on leave. initTickerSpeed reads the CSS animation running on the ticker with getAnimations() and changes its playbackRate from the smoothed scroll velocity: up to 6 times faster when scrolling down and negative (reversed) when scrolling up. It also sets --skew so the words lean. A small settle loop eases the speed back to normal when you stop.</aside>
+</section>

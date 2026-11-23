@@ -1,0 +1,13 @@
+<section id="c-hero">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 316–533 · THE HERO</p></div>
+<h2 class="title">Sticky pinning and flame thrusters</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.hero</span> { height: 260vh; }<br><span class="k">.hero__pin</span> {<br>&#160;&#160;position: sticky; top: 0;<br>&#160;&#160;height: 100svh; overflow: hidden;<br>}<br><span class="k">.thruster</span> {<br>&#160;&#160;top: 97.5%; left: 32.5%;<br>&#160;&#160;transform: translateX(-50%)<br>&#160;&#160;&#160;&#160;scaleY(var(--flame));<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Why 260vh</h3><p>The section is 2.6 screens tall, but its sticky frame only 1. The extra 1.6 screens of scrolling play the take‑off.</p></div>
+<div class="pt" style="--i:1"><h3>Layers that move</h3><p>Each layer’s transform reads --mx, --my and --depth, so the mouse moves near layers more than far ones.</p></div>
+<div class="pt" style="--i:2"><h3>Flames from a variable</h3><p>The thrusters stretch with scaleY(var(--flame)). JavaScript only changes one number from 0 to 1.</p></div>
+</div>
+</div>
+<aside>Part 5 styles the hero. .hero is 260vh tall; .hero__pin is sticky with top 0 and exactly one screen tall, so it stays put while the extra height scrolls past. It clips its contents with overflow hidden and isolates its stacking. The background image is darkened and starts slightly zoomed so it can settle on load. The scrim is a gradient for text contrast. Each .hero__layer uses one transform built from CSS variables: --mx and --my come from the mouse, --depth differs per layer, and --sy comes from scrolling. The title uses the Stark font at up to 23vw with a silver gradient clipped to the text, and each word slides up from behind a mask. .hero__suit wraps the Mark III image. The thrusters are positioned under each boot (32.5% and 79% across) and drawn with radial gradients, flickering via a fast keyframe. The ground blast has three expanding rings. Finally, .hero.is-ready runs the entrance, and .hero__foot positions the tagline, intro, chips and the explore link.</aside>
+</section>

@@ -1,0 +1,13 @@
+<section id="h-tech">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 567–711 · STARK TECH</p></div>
+<h2 class="title">A schematic around the arc reactor</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"schematic__stage"</span> id=<span class="s">"schematic"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;svg</span> class=<span class="s">"schematic__lines"</span><span class="t">&gt;&lt;/svg&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"reactor schematic__core"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> class=<span class="s">"node"</span> role=<span class="s">"tab"</span><br>&#160;&#160;&#160;&#160;style=<span class="s">"--i:0"</span><span class="t">&gt;</span>Arc Reactor<br><span class="t">&lt;article</span> class=<span class="s">"sys"</span> role=<span class="s">"tabpanel"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;input</span> type=<span class="s">"range"</span> id=<span class="s">"arc-power"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>The stage</h3><p>An empty SVG for the light lines, three rings, a sweep, a shockwave and the reactor core all sit in one square.</p></div>
+<div class="pt" style="--i:1"><h3>Seven nodes</h3><p>Each system is a tab button with --i from 0 to 6. CSS uses that number to place it around the circle.</p></div>
+<div class="pt" style="--i:2"><h3>Real controls</h3><p>Sliders are input type="range" with a label, and buttons are real buttons, so they work with a keyboard too.</p></div>
+</div>
+</div>
+<aside>The Tech section is a holographic schematic. schematic__stage is a square holding: an empty svg where JavaScript draws the connector lines, three spinning rings, a radar sweep, a shockwave ring, the arc reactor core and a readout. The seven system buttons are tabs; each has a style="--i:N" number that the CSS uses with cos() and sin() to place it around the circle. The seven panels are articles with role="tabpanel", each with a code label, a heading, a description and a specs list. Each panel has its own control: the arc reactor slider, two AI chat boxes with command buttons, the repulsor hold button, the HUD scan button, workshop station buttons and the flight throttle slider. Every slider has a label element, so its purpose is announced.</aside>
+</section>

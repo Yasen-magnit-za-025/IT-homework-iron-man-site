@@ -1,0 +1,13 @@
+<section id="j-tech">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 685–863 · STARK TECH</p></div>
+<h2 class="title">Controls that drive the reactor</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> setArc = () =&gt; {<br>&#160;&#160;<span class="k">const</span> p = arcSlider.value / 100;<br>&#160;&#160;stage.style.setProperty(<span class="s">'--arc-p'</span>, p);<br>&#160;&#160;setCore(<span class="s">'Core output · GJ/s'</span>,<br>&#160;&#160;&#160;&#160;(p * 3).toFixed(1));<br>};<br>arcSlider.addEventListener(<span class="s">'input'</span>, setArc);<br><br>stage.classList.add(<span class="s">'is-firing'</span>);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Lines drawn by code</h3><p>drawLines measures each callout and draws an SVG line to it from the centre, redrawn on resize.</p></div>
+<div class="pt" style="--i:1"><h3>Variables and classes</h3><p>Sliders set --arc-p and --spin; the repulsor sets --charge then adds is-firing; the HUD adds is-scanning.</p></div>
+<div class="pt" style="--i:2"><h3>Typing AI replies</h3><p>J.A.R.V.I.S. and F.R.I.D.A.Y. type each line one letter at a time while the waveform bars jump.</p></div>
+</div>
+</div>
+<aside>initTech runs the schematic. drawLines measures every node’s centre relative to the stage and writes SVG line elements from the middle (50, 50) to each node; it reruns on resize, when fonts load and when the stage scrolls into view. initTabs handles the seven systems; onChange stops any typing, highlights the matching line and resets the core readout. The arc slider sets --arc-p and the readout in GJ/s. The AI chat types each line from SCRIPTS with a 22ms delay per letter while random heights animate the waveform bars; typingToken cancels an old reply when you click again or switch. The repulsor button charges --charge over 1.1 seconds while held (pointer or Space/Enter) and on release adds is-firing for the shockwave, then drains. The HUD scan adds is-scanning for the radar sweep and reports 7 / 7 targets. Workshop buttons swap the station text and set aria-pressed. The throttle sets --spin and the Mach readout and shows the ice warning above 85%.</aside>
+</section>

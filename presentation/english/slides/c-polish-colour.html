@@ -1,0 +1,13 @@
+<section id="c-polish-colour">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 1655–1818 · POLISH, COLOUR, REDUCED MOTION</p></div>
+<h2 class="title">Finishing touches, and a way to turn them off</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.story</span> {<br>&#160;&#160;margin-top: -56px;<br>&#160;&#160;border-radius: 48px 48px 0 0;<br>}<br><span class="k">.player__photo</span> {<br>&#160;&#160;filter: grayscale(1) sepia(1)<br>&#160;&#160;&#160;&#160;hue-rotate(-48deg) saturate(3.4);<br>}<br><span class="k">@media</span> (prefers-reduced-motion: reduce) {<br>&#160;&#160;*, *::before { animation-duration: .001ms !important; }<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Motion polish</h3><p>Posters wipe in, images zoom on hover, buttons get a sheen, and the Story section slides over Film like a sheet.</p></div>
+<div class="pt" style="--i:1"><h3>Colour</h3><p>Section glows in gold and red, coloured outline words, and a filter chain that turns cast photos into a red duotone.</p></div>
+<div class="pt" style="--i:2"><h3>Reduced motion</h3><p>If the visitor’s device asks for less motion, animations finish instantly and everything starts in its final place.</p></div>
+</div>
+</div>
+<aside>Part 19 (motion polish): poster and still images reveal with a clip-path wipe and settle from a slight zoom; images zoom gently on hover using the separate scale property, so it never clashes with other transforms; parallax layers get extra room; buttons get a sweeping light sheen and a gold focus ring; the nav indicator bar is styled; the Story section overlaps the Film section with a rounded top and shadow while Film dims behind it (--cover); a glint runs down the timeline; and two faint HUD rings float in the Tech background. Part 20 (colour): radial-gradient glows for Story, Armory, Cast and Trilogy; gold and red outlines for heading words; tinted badges; the red duotone for inactive cast photos, made by chaining grayscale, sepia, hue-rotate and saturate filters; richer story images. The final block is prefers-reduced-motion: it makes every animation and transition finish instantly, cancels the scroll scenes, shows all hidden text and hides the purely decorative effects.</aside>
+</section>

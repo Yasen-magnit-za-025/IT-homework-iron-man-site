@@ -1,0 +1,13 @@
+<section id="j-parallax-timeline">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 344–376 · ПАРАЛАКС И ХРОНОЛОГИЯТА</p></div>
+<h2 class="title">Малки функции, които цикълът за скрол вика</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">return function</span> update() {<br>&#160;&#160;<span class="k">const</span> vh = window.innerHeight;<br>&#160;&#160;<span class="k">const</span> r = timeline.getBoundingClientRect();<br>&#160;&#160;<span class="k">const</span> line = vh * 0.6;<br>&#160;&#160;fill.style.setProperty(<span class="s">'--fill'</span>,<br>&#160;&#160;&#160;&#160;clamp((line - r.top) / r.height, 0, 1));<br>&#160;&#160;chapters.forEach((ch) =&gt;<br>&#160;&#160;&#160;&#160;ch.classList.toggle(<span class="s">'is-lit'</span>, …));<br>};</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Връщане на update()</h3><p>Init функциите връщат update функция. Те не слушат скрола сами; общият цикъл ги извиква.</p></div>
+<div class="pt" style="--i:1"><h3>Линия на 60%</h3><p>Релсата се пълни до въображаема линия на 60% от височината на екрана, а точката на всяка глава светва, когато я пресече.</p></div>
+<div class="pt" style="--i:2"><h3>Пропусни невидимото</h3><p>Всяка update първо проверява позицията на елемента и спира рано, когато той е далеч, за да пести работа.</p></div>
+</div>
+</div>
+<aside>initParallax намира всеки елемент с data-parallax и при всеки кадър на скрола го мести с разстоянието между центъра му и центъра на екрана, умножено по коефициента. Пропуска всичко, което е на повече от 100px извън екрана. (В момента нищо не използва data-parallax, откакто интерлюдията стана закрепена сцена, така че това е безвреден остатък.) initTimeline измерва кутията на хронологията с getBoundingClientRect, изчислява каква част от нея е минала въображаема линия на 60% надолу в прозореца и записва това като --fill (от 0 до 1), което CSS използва, за да мащабира златната релса. Добавя и is-lit към всяка глава, чиято точка е пресякла линията. И двете връщат своята update функция, вместо да добавят собствен слушател за скрол, така че цялата работа по скрола се случва заедно, веднъж на кадър.</aside>
+</section>

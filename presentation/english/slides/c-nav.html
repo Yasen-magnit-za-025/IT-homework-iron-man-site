@@ -1,0 +1,13 @@
+<section id="c-nav">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 250–315 · NAVIGATION</p></div>
+<h2 class="title">A nav bar that reacts to scrolling</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.nav</span> {<br>&#160;&#160;position: fixed; top: 0;<br>&#160;&#160;transition: height .4s, background .4s;<br>}<br><span class="k">.nav.is-scrolled</span> {<br>&#160;&#160;background: rgba(5,5,6,.78);<br>&#160;&#160;backdrop-filter: blur(14px);<br>}<br><span class="k">.nav.is-hidden</span> { transform: translateY(-100%); }<br><span class="k">.nav__progress</span> {<br>&#160;&#160;transform: scaleX(var(--p, 0));<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Three states</h3><p>Transparent at the top, frosted glass once you scroll (.is-scrolled), and tucked away while scrolling down (.is-hidden).</p></div>
+<div class="pt" style="--i:1"><h3>A progress bar</h3><p>JavaScript sets --p from 0 to 1 as you scroll; the bar under the nav grows with scaleX.</p></div>
+<div class="pt" style="--i:2"><h3>The back‑to‑top button</h3><p>A red circle in the corner that fades in after one screen of scrolling.</p></div>
+</div>
+</div>
+<aside>The nav is position: fixed so it stays at the top. Its height and background transition smoothly. When JavaScript adds is-scrolled it gets a dark translucent background with a blur behind it, the frosted-glass look. is-hidden slides it up out of view while you scroll down, and it comes back when you scroll up. The brand is the small reactor plus "Iron Man" with "Man" in red. Links are small Stark-font labels that turn bright on hover or when active. The progress bar is a gradient line scaled horizontally by --p. The toggle (hamburger) is hidden on desktop; its two lines rotate into an X when aria-expanded is true. The back-to-top button is fixed bottom-right, invisible until JavaScript adds is-visible, and turns gold on hover.</aside>
+</section>

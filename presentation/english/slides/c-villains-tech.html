@@ -1,0 +1,13 @@
+<section id="c-villains-tech">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">LINES 957–1192 · VILLAINS AND STARK TECH</p></div>
+<h2 class="title">Crossfades and trigonometry in CSS</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.rogues__media img.is-active</span> {<br>&#160;&#160;opacity: 1; transform: scale(1);<br>}<br><span class="k">.node</span> {<br>&#160;&#160;--a: calc(var(--i) * (360deg / 7) - 90deg);<br>&#160;&#160;left: calc(50% + 41% * cos(var(--a)));<br>&#160;&#160;top: calc(50% + 41% * sin(var(--a)));<br>}<br><span class="k">.schematic__ring--outer</span> {<br>&#160;&#160;animation: spin calc(70s / var(--spin))…<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Villain backdrops</h3><p>All six images are stacked; the active one fades to full opacity and slowly settles from a zoom.</p></div>
+<div class="pt" style="--i:1"><h3>A circle from maths</h3><p>Each system’s angle is its number times 360°/7. cos() and sin() turn that angle into a position on the circle.</p></div>
+<div class="pt" style="--i:2"><h3>Speed from a variable</h3><p>Ring spin time is divided by --spin, so the flight throttle can speed every ring up at once.</p></div>
+</div>
+</div>
+<aside>Villains: six stacked background images, each tinted red with a filter; only .is-active is visible, with a one-second crossfade and a slow six-second zoom-out. A gradient darkens the left side so the text stays readable. The index buttons are large Stark-font names; the selected one shifts right and turns its alias red. Each file is a frosted glass panel with a red corner bracket. Stark Tech: the schematic grid puts the stage left and the panel right. The stage is a square with the SVG connector lines (the active one dashed and flowing), three rings spinning at different speeds based on --spin, the reactor core whose glow grows with --arc-p and swells with --charge, the radar sweep (a conic gradient rotating when .is-scanning) and the shockwave (when .is-firing). Each node’s position comes from cos() and sin() of its angle. The panels, specs, command buttons, sliders, AI chat log and hold button are styled here too.</aside>
+</section>

@@ -1,0 +1,27 @@
+{
+  "v": 5,
+  "createdOnFiles": { "v": 1, "at": "2026-11-19T20:20:00Z" },
+  "lists": "css",
+  "format": { "v": 1, "shared": ["project/deck.css"] },
+  "title": "How the Iron Man site works",
+  "cover": "cover",
+  "order": [
+    "cover", "files", "graph",
+    "d-html", "h-head", "h-boot-nav", "h-hero", "h-film", "h-story", "h-armory-cast", "h-villains", "h-tech", "h-trilogy-footer", "h-dialog",
+    "d-css", "c-tokens", "c-shared", "c-reactor-boot", "c-nav", "c-hero", "c-film", "c-story-band", "c-armory-cast", "c-villains-tech", "c-trilogy-footer", "c-responsive", "c-extra-motion", "c-polish-colour",
+    "d-js", "j-structure", "j-boot-nav-reveal", "j-hero", "j-parallax-timeline", "j-armory", "j-viewer", "j-cast-tabs", "j-tech", "j-loop", "j-cursor-embers", "j-tilt-ticker", "j-scenes", "j-hud-text", "j-polish-start",
+    "recap"
+  ],
+  "sections": {
+    "overview": { "description": "What the site is made of: three files, 4,177 lines.", "start": "cover" },
+    "html": { "description": "sait.html, top to bottom: the page’s structure and content.", "start": "d-html" },
+    "css": { "description": "sait.css, top to bottom: how everything looks and moves.", "start": "d-css" },
+    "js": { "description": "sait.js, top to bottom: every interaction and scroll scene.", "start": "d-js" },
+    "recap": { "description": "The ideas that hold the whole site together.", "start": "recap" }
+  },
+  "faces": {
+    "geist": { "family": "Geist", "href": "https://fonts.googleapis.com/css2?family=Geist:wght@400..700&display=swap" },
+    "geist-mono": { "family": "Geist Mono", "href": "https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400..600&display=swap" }
+  },
+  "designSystems": []
+}

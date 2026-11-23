@@ -1,0 +1,13 @@
+<section id="h-dialog">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 823–883 · THE ARMOR FILE</p></div>
+<h2 class="title">One dialog, reused for all 13 suits</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;dialog</span> class=<span class="s">"dossier"</span> id=<span class="s">"dossier"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"viewer is-3d"</span> id=<span class="s">"viewer"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;iframe</span> id=<span class="s">"viewer-frame"</span><br>&#160;&#160;&#160;&#160;&#160;&#160;referrerpolicy=<span class="s">"origin"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"viewer__photo"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> id=<span class="s">"mode-3d"</span> aria-pressed=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h3</span> id=<span class="s">"dossier-name"</span><span class="t">&gt;&lt;/h3&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Native dialog</h3><p>The dialog tag gives a real modal for free: focus stays inside, Esc closes it, and the page behind is blocked.</p></div>
+<div class="pt" style="--i:1"><h3>Empty slots</h3><p>Name, film, year and features are empty elements with ids. JavaScript fills them for whichever suit you click.</p></div>
+<div class="pt" style="--i:2"><h3>3D or photo</h3><p>An iframe holds the Sketchfab model; two toggle buttons switch to the photo, with aria-pressed showing which is on.</p></div>
+</div>
+</div>
+<aside>The armor file is a single dialog element at the end of the body. Instead of thirteen pop-ups, there is one, and JavaScript fills it with the clicked suit’s data. Inside: a close button with an aria-label; the visual side with the big Roman numeral, a ring, the 3D viewer (a loading spinner, the iframe that shows the Sketchfab model, and the suit photo as a second view), a hint, the 3D/Photo toggle and a credit line for the model’s creator. The iframe’s referrerpolicy="origin" overrides the page’s no-referrer rule, because the 3D viewer needs to know which site embedded it before it will talk to sait.js. The other side has empty slots for the name, nickname, film, debut year, power source, description and feature list, plus previous and next buttons.</aside>
+</section>

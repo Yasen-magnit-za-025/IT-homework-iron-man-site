@@ -1,0 +1,634 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Как работи сайтът за Железния човек</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..700&amp;display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400..600&amp;display=swap">
+<style>
+/* Iron Man code walkthrough: dark, flat backgrounds; Manrope for text, JetBrains Mono for code */
+body { font-family: 'Manrope', Arial, sans-serif; color: #EDEAE3; }
+
+section {
+  background: #181818;
+  padding: 128px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* type scale: 96 / 64 / 36 / 28 / 24 */
+.eyebrow { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 24px; font-weight: 500; letter-spacing: 2px; color: #D7A84A; }
+.title { font-size: 64px; font-weight: 600; line-height: 1.1; color: #F2EFE8; margin-top: 16px; }
+.lede { font-size: 28px; line-height: 1.45; color: #B9B4AA; margin-top: 24px; width: 1100px; }
+
+/* code slides: code on the left, three points on the right */
+.split { display: grid; grid-template-columns: 920px 1fr; gap: 64px; margin-top: 48px; align-items: start; }
+.code { background: #1F1F1F; border: 1px solid #313131; border-radius: 16px; padding: 32px; }
+.code .src { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 24px; line-height: 1.5; color: #D8D4CB; }
+.code .k { color: #9BE8FF; }
+.code .s { color: #F0D08A; }
+.code .c { color: #8C887F; }
+.code .t { color: #F08A6E; }
+.points { display: flex; flex-direction: column; gap: 32px; }
+.pt { border-left: 3px solid #C4161C; padding-left: 24px; animation: rise .6s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--i, 0) * 120ms); }
+.pt h3 { font-size: 36px; font-weight: 600; line-height: 1.15; color: #F2EFE8; }
+.pt p { font-size: 28px; line-height: 1.4; color: #B9B4AA; margin-top: 8px; }
+
+/* file tag next to the eyebrow */
+.tagrow { display: flex; gap: 16px; align-items: center; }
+.tag { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 24px; font-weight: 600; padding: 4px 16px; border-radius: 8px; }
+.tag-html { background: #3A2A12; color: #F0D08A; }
+.tag-css { background: #12303A; color: #9BE8FF; }
+.tag-js { background: #3A1416; color: #F3B4A6; }
+
+/* chapter dividers: the one red statement slide per file */
+section.divider { background: #8F1015; justify-content: center; }
+.divider .big { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 96px; font-weight: 600; color: #FBF6EE; line-height: 1.05; }
+.divider .sub { font-size: 36px; line-height: 1.35; color: #F6DCD4; margin-top: 32px; width: 1300px; }
+.divider .meta { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 28px; color: #FBF6EE; margin-top: 48px; }
+
+/* cover and summary slides */
+section.cover { background: #131313; justify-content: center; }
+.cover .big { font-size: 96px; font-weight: 600; line-height: 1.05; color: #F2EFE8; width: 1100px; }
+.cover .lede { width: 980px; }
+.chips { display: flex; gap: 16px; margin-top: 48px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 56px; }
+.stat { background: #1F1F1F; border: 1px solid #313131; border-radius: 16px; padding: 32px; animation: rise .6s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--i, 0) * 120ms); }
+.stat .num { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 96px; font-weight: 600; color: #F2EFE8; line-height: 1; }
+.stat .lbl { font-size: 28px; color: #B9B4AA; margin-top: 16px; }
+.stat .what { font-size: 24px; color: #8C887F; margin-top: 8px; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+
+html { background: #0E0E0E; }
+body { margin: 0 auto; padding: 16px; max-width: 1920px; }
+h1, h2, h3, p { margin: 0; }
+.frame { height: calc(1080px * var(--k, .5)); overflow: hidden; border-radius: 8px; }
+.stage { width: 1920px; height: 1080px; transform: scale(var(--k, .5)); transform-origin: 0 0; }
+.stage > section { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+details { color: #B9B4AA; font-size: 16px; line-height: 1.5; margin: 8px 0 32px; }
+details p { margin-top: 8px; max-width: 900px; }
+summary { cursor: pointer; color: #8C887F; }
+</style></head><body>
+<div class="frame"><div class="stage"><section id="cover" class="cover">
+<svg aria-label="Светещ пръстен на дъгов реактор" width="420" height="420" viewBox="0 0 420 420" style="position:absolute; left:1372px; top:330px; width:420px; height:420px;"><circle cx="210" cy="210" r="200" fill="none" stroke="#9BE8FF" stroke-opacity="0.25" stroke-width="2"/><circle cx="210" cy="210" r="160" fill="none" stroke="#9BE8FF" stroke-width="18" stroke-dasharray="26 10" stroke-opacity="0.75"/><circle cx="210" cy="210" r="104" fill="none" stroke="#C4161C" stroke-width="3" stroke-opacity="0.8"/><circle cx="210" cy="210" r="62" fill="#EAFCFF"/><circle cx="210" cy="210" r="90" fill="#9BE8FF" fill-opacity="0.18"/></svg>
+<p class="eyebrow">РАЗБОР НА КОДА · SAIT.HTML · SAIT.CSS · SAIT.JS</p>
+<h1 class="big" style="margin-top:24px;">Как работи сайтът ми</h1>
+<p class="lede">Всяка част от трите файла, обяснена отгоре надолу: какво прави всеки блок от редове и защо е там.</p>
+<div class="chips">
+<p class="tag tag-html">HTML · 883 реда</p>
+<p class="tag tag-css">CSS · 1818 реда</p>
+<p class="tag tag-js">JS · 1476 реда</p>
+</div>
+
+</section>
+</div></div><details><summary>1 / 44</summary><p>Тази презентация разглежда целия фен сайт за Железния човек файл по файл. Всеки слайд посочва точните редове, които обхваща, така че заедно слайдовете покриват всеки ред от трите файла: 883 реда HTML, 1818 реда CSS и 1476 реда JavaScript. Кодът на всеки слайд е кратък откъс от тези редове, а точките до него обясняват какво правят редовете и защо са написани така.</p></details><div class="frame"><div class="stage"><section id="files">
+<p class="eyebrow">ОБЗОР</p>
+<h2 class="title">Три файла, три задачи</h2>
+<p class="lede">Браузърът зарежда sait.html, който извиква другите два. HTML казва какво има на страницата, CSS – как изглежда и се движи, а JS я кара да реагира.</p>
+<div class="stats">
+<div class="stat" style="--i:0"><p class="tag tag-html" style="align-self:flex-start;">sait.html</p><p class="num" style="margin-top:24px;">883</p><p class="lbl">реда структура</p><p class="what">Десет секции, менюто, футърът и един диалог</p></div>
+<div class="stat" style="--i:1"><p class="tag tag-css" style="align-self:flex-start;">sait.css</p><p class="num" style="margin-top:24px;">1818</p><p class="lbl">реда стилове</p><p class="what">Двадесет номерирани части, от токените до намаленото движение</p></div>
+<div class="stat" style="--i:2"><p class="tag tag-js" style="align-self:flex-start;">sait.js</p><p class="num" style="margin-top:24px;">1476</p><p class="lbl">реда поведение</p><p class="what">Около 45 малки init функции и един цикъл за скрол</p></div>
+</div>
+
+</section>
+</div></div><details><summary>2 / 44</summary><p>Трите файла са в една папка и зависят един от друг. sait.html е входната точка: в head частта свързва sait.css с link таг и зарежда sait.js със script таг с defer, а папката fonts съдържа шрифта Stark. CSS е най-големият файл, защото всяка секция има собствен вид, версия за телефон и правила за движение. JavaScript е написан като много малки функции, всяка от които отговаря за една функционалност, така че всяка може да се чете самостоятелно.</p></details><div class="frame"><div class="stage"><section id="graph">
+<p class="eyebrow">РАЗМЕР НА КОДА</p>
+<h2 class="title">Редове код, файл по файл</h2>
+<div style="display:flex; gap:64px; margin-top:48px; align-items:flex-start;">
+<div style="position:relative; width:1100px; height:560px;">
+<svg aria-label="Линейна графика: общият брой редове расте от 0 до 883 с HTML, 2701 с CSS и 4177 с JavaScript" width="1100" height="560" viewBox="0 0 1100 560" style="position:absolute; left:0; top:0; width:1100px; height:560px;">
+<line x1="0" y1="480" x2="1100" y2="480" stroke="#313131" stroke-width="2"/>
+<line x1="0" y1="40" x2="1100" y2="40" stroke="#272727" stroke-width="2" stroke-dasharray="6 8"/>
+<path d="M0 480 L366 387 L733 196 L1080 40" fill="none" stroke="#9BE8FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1200" stroke-dashoffset="0"><animate attributeName="stroke-dashoffset" from="1200" to="0" dur="1.6s" begin="0s"/></path>
+<circle cx="366" cy="387" r="10" fill="#F0D08A"/>
+<circle cx="733" cy="196" r="10" fill="#9BE8FF"/>
+<circle cx="1080" cy="40" r="12" fill="#F3B4A6"/>
+</svg>
+<p style="position:absolute; left:0; top:500px; width:200px; font-size:24px; color:#8C887F;">Начало · 0</p>
+<p style="position:absolute; left:246px; top:410px; width:240px; font-size:24px; color:#F0D08A;">HTML · 883</p>
+<p style="position:absolute; left:600px; top:216px; width:300px; font-size:24px; color:#9BE8FF;">+ CSS · 2701</p>
+<p style="position:absolute; left:820px; top:64px; width:260px; font-size:24px; color:#F3B4A6; text-align:right;">+ JS · 4177</p>
+</div>
+<div style="display:flex; flex-direction:column; width:500px;">
+<p style="font-family:'JetBrains Mono','Courier New',monospace; font-size:96px; font-weight:600; color:#F2EFE8; line-height:1;">4177</p>
+<p style="font-size:28px; color:#B9B4AA; margin-top:16px;">реда общо</p>
+<p style="font-size:28px; line-height:1.4; color:#B9B4AA; margin-top:40px;">CSS е най-стръмното изкачване: всяка секция носи собствено оформление, версия за телефон и правила за движение.</p>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>3 / 44</summary><p>Линията показва натрупания брой редове при добавяне на всеки файл: 883 реда HTML, после 1818 реда CSS вдигат общото до 2701, а 1476 реда JavaScript – до 4177. Това са реалните броеве редове на файловете в момента. Планът беше това да е видео, направено със skill-а за анимирани графики, но рендерът му изисква Chrome или Edge, които ги няма на този компютър, затова графиката е начертана директно в слайда.</p></details><div class="frame"><div class="stage"><section id="d-html" class="divider">
+<p class="big">sait.html</p>
+<p class="sub">Структурата на страницата: какво съществува, в какъв ред и какво означава. Без стилове, без поведение – само съдържание и етикети.</p>
+<p class="meta">883 реда · 10 слайда · отгоре надолу</p>
+
+</section>
+</div></div><details><summary>4 / 44</summary><p>Първата част разглежда HTML файла поред – от head частта на ред 1 до диалога за бронята в края. Всеки слайд посочва своите редове. Полезен начин да четеш HTML е да питаш за всеки таг: какво е това и за кого е? Някои тагове са за посетителите (заглавия, снимки), някои – за екранните четци (aria етикети), а някои са „куки“ за CSS и JavaScript (класове, id-та и data атрибути).</p></details><div class="frame"><div class="stage"><section id="h-head">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 1–20 · HEAD ЧАСТТА</p></div>
+<h2 class="title">Head: подготовка, която посетителят не вижда</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;html</span> lang=<span class="s">"en"</span> class=<span class="s">"no-js"</span><span class="t">&gt;</span><br><span class="t">&lt;meta</span> name=<span class="s">"viewport"</span> content=<span class="s">"width=device-width…"</span><span class="t">&gt;</span><br><span class="t">&lt;meta</span> name=<span class="s">"referrer"</span> content=<span class="s">"no-referrer"</span><span class="t">&gt;</span><br><span class="t">&lt;title&gt;</span>Iron Man — Enter the World…<span class="t">&lt;/title&gt;</span><br><span class="t">&lt;link</span> rel=<span class="s">"stylesheet"</span> href=<span class="s">"sait.css"</span><span class="t">&gt;</span><br><span class="t">&lt;script&gt;</span><br>&#160;&#160;document.documentElement.className =<br>&#160;&#160;&#160;&#160;<span class="s">'js is-booting'</span>;<br><span class="t">&lt;/script&gt;</span><br><span class="t">&lt;script</span> src=<span class="s">"sait.js"</span> <span class="k">defer</span><span class="t">&gt;&lt;/script&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Viewport и заглавие</h3><p>Редове 4–10 задават кодировката, мащаба на телефона, заглавието на таба, описание и иконка с дъгов реактор като вграден SVG.</p></div>
+<div class="pt" style="--i:1"><h3>Без referrer</h3><p>Уикито, което хоства снимките, блокира заявки от други сайтове, затова ред 7 казва на браузъра да не изпраща referrer изобщо.</p></div>
+<div class="pt" style="--i:2"><h3>Свързване на файловете</h3><p>Редове 11–20 зареждат шрифтовете предварително, свързват sait.css, отбелязват, че JS работи, и зареждат sait.js с defer.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>5 / 44</summary><p>Ред 1 обявява модерен HTML документ. Ред 2 отваря елемента html с английски език и клас no-js. Редове 4 и 5 задават UTF-8 текст и карат телефоните да използват реалната си ширина, вместо да намаляват мащаба. Ред 7 е правилото no-referrer: хостът на снимките отказва заявки, които казват от кой сайт идват. Редове 8 до 10 са описанието, цветът на лентата на браузъра и заглавието на страницата. Ред 11 е иконката (favicon) – SVG рисунка на дъговия реактор, записана направо във връзката. Редове 12 до 14 отварят ранни връзки към Google Fonts и хоста на снимките, за да се зареждат по-бързо. Ред 15 зарежда шрифта Exo 2. Ред 16 свързва стиловете. Ред 17 е скрипт от един ред, който сменя no-js с „js is-booting“: CSS използва това, за да скрива неща само когато JavaScript е наличен, и за да покаже екрана за зареждане. Ред 19 зарежда API-то на Sketchfab за 3D моделите, а ред 20 зарежда sait.js с defer, така че скриптът изчаква целия HTML да бъде прочетен.</p></details><div class="frame"><div class="stage"><section id="h-boot-nav">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 21–56 · ЕКРАН ЗА ЗАРЕЖДАНЕ И НАВИГАЦИЯ</p></div>
+<h2 class="title">Skip връзка, екран за зареждане и менюто</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;a</span> class=<span class="s">"skip-link"</span> href=<span class="s">"#film"</span><span class="t">&gt;</span>Skip to content<span class="t">&lt;/a&gt;</span><br><span class="t">&lt;div</span> class=<span class="s">"boot"</span> aria-hidden=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"reactor boot__reactor"</span><span class="t">&gt;</span>…<br><span class="t">&lt;/div&gt;</span><br><span class="t">&lt;header</span> class=<span class="s">"nav"</span> id=<span class="s">"nav"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;nav</span> class=<span class="s">"nav__links"</span> id=<span class="s">"nav-links"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;a</span> href=<span class="s">"#film"</span><span class="t">&gt;</span>Film<span class="t">&lt;/a&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;a</span> href=<span class="s">"#story"</span><span class="t">&gt;</span>Story<span class="t">&lt;/a&gt;</span> …<br>&#160;&#160;<span class="t">&lt;button</span> class=<span class="s">"nav__toggle"</span><br>&#160;&#160;&#160;&#160;aria-expanded=<span class="s">"false"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Skip връзка</h3><p>Потребителите на клавиатура могат да прескочат менюто направо до първата секция. Появява се само при фокус.</p></div>
+<div class="pt" style="--i:1"><h3>Екран за зареждане</h3><p>Въртящ се реактор и текст „initializing“ покриват страницата, докато се заредят шрифтовете и главната снимка.</p></div>
+<div class="pt" style="--i:2"><h3>Меню</h3><p>Връзките сочат към id-тата на секциите (#film, #story…). Бутонът отваря менюто на телефон и съобщава състоянието си с aria‑expanded.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>6 / 44</summary><p>Ред 23 е skip връзката – стандартна функция за достъпност за потребители на клавиатура. Редове 25 до 30 са екранът за зареждане: дъгов реактор, текстът „Stark Industries // initializing“ и лента за зареждане. Скрит е от екранните четци с aria-hidden, защото е само декорация. Редове 32 до 56 са навигацията. Връзката с марката води обратно най-горе (#top). Елементът nav съдържа седем връзки, по една за секция, всяка с hash връзка, така че браузърът скролва до съответното id. Бутонът „Suit up“ води към арсенала. Бутонът за превключване е „хамбургерът“ за телефони: aria-expanded казва на екранните четци дали менюто е отворено, а aria-controls посочва кое меню отваря. Последният span е тънката лента за прогрес под менюто, която се запълва при скролване.</p></details><div class="frame"><div class="stage"><section id="h-hero">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 57–135 · НАЧАЛНИЯТ ЕКРАН (HERO)</p></div>
+<h2 class="title">Началният екран е изграден на слоеве</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;section</span> class=<span class="s">"hero"</span> id=<span class="s">"top"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"hero__pin"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"hero__bg"</span><span class="t">&gt;</span>…<span class="t">&lt;/div&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;canvas</span> class=<span class="s">"hero__embers"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"hero__layer--title"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="t">&lt;h1&gt;</span>Iron Man<span class="t">&lt;/h1&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"hero__suit"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="t">&lt;span</span> class=<span class="s">"thruster"</span><span class="t">&gt;</span> ×2<br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"hero__figure"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Закрепена рамка</h3><p>Секцията е по-висока от екрана; hero__pin остава закрепена на място, докато скролът изиграва излитането.</p></div>
+<div class="pt" style="--i:1"><h3>Наслагани слоеве</h3><p>Фоновата снимка, тъмен воал, canvas с искри, пръстенът на реактора, заглавието и костюмът стоят един върху друг.</p></div>
+<div class="pt" style="--i:2"><h3>Костюм и двигатели</h3><p>Двата span-а за двигателите са в обвивката на костюма, така че пламъците се движат с него, когато излита.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>7 / 44</summary><p>Редове 57 до 135 изграждат началния екран. Секцията има id „top“, за да може връзката с марката да скролва обратно до нея. hero__pin е рамката, която остава неподвижна, докато скролваш (CSS я прави sticky). В нея: hero__bg съдържа затъмнената снимка на работилницата; hero__scrim е градиент, който пази текста четим; canvas е мястото, където JavaScript рисува издигащите се искри. hero__stage съдържа четири слоя, които се движат с различна скорост: пръстена на реактора, сиянието по земята, заглавието (имената на актьорите, h1 „Iron Man“, разделено на две думи, и вертикалното [2008]) и костюма. hero__suit обвива снимката на Mark III и двата span-а за двигателите, разположени под всеки ботуш. Под сцената hero__foot съдържа слогана, кратко въведение, три кръгли чипа с факти и връзката „Explore the universe“. Елементите с data-in се появяват един след друг, когато страницата е готова, според числото --i на всеки.</p></details><div class="frame"><div class="stage"><section id="h-film">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 136–217 · ФИЛМЪТ</p></div>
+<h2 class="title">Страница в стил списание за филма от 2008</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;section</span> class=<span class="s">"film"</span> id=<span class="s">"film"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h2</span> class=<span class="s">"film__title"</span><span class="t">&gt;</span>Directed by…<br>&#160;&#160;<span class="t">&lt;figure</span> class=<span class="s">"film__poster"</span> <span class="k">data-reveal</span>=<span class="s">"left"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;dl</span> class=<span class="s">"film__facts"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;dt&gt;</span>Release date<span class="t">&lt;/dt&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;dd&gt;</span>May 2, 2008<span class="t">&lt;/dd&gt;</span><br>&#160;&#160;<span class="t">&lt;span</span> <span class="k">data-count</span>=<span class="s">"585"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> aria-expanded=<span class="s">"true"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Списъци с дефиниции</h3><p>Фактите и актьорите използват dl, dt и dd – правилните тагове за етикет, сдвоен със стойност.</p></div>
+<div class="pt" style="--i:1"><h3>data‑ куки</h3><p>data-reveal казва на CSS как да се появи нещо; data-count дава на JavaScript числото, до което да брои.</p></div>
+<div class="pt" style="--i:2"><h3>Бележки като акордеон</h3><p>Петте бележки за продукцията са бутони с aria-expanded, така че екранните четци знаят коя е отворена.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>8 / 44</summary><p>Секцията Film (id „film“) е светлата секция с цвят на хартия. Започва с малък етикет и голямото заглавие „Directed by Jon Favreau“, разделено на два реда, всеки обвит в span, за да може да се плъзне нагоре. Решетката има три части: плаката във figure с надпис, резюмето и списъка с актьори, и списък с факти. Фактите и актьорите използват dl (списък с описания) с dt за етикета и dd за стойността. Редът със статистики има четири числа; data-count, data-prefix и data-suffix казват на JavaScript до какво да брои и как да го форматира. Бележките за продукцията са акордеон: всяко заглавие е бутон с aria-expanded и aria-controls, сочещ към неговия параграф, така че помощните технологии знаят какво отваря всеки бутон.</p></details><div class="frame"><div class="stage"><section id="h-story">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 218–343 · ИСТОРИЯТА И ИНТЕРЛЮДИЯТА</p></div>
+<h2 class="title">Хронология от шест глави и сцената с изстрела</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;ol</span> class=<span class="s">"timeline"</span> id=<span class="s">"timeline"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;li</span> class=<span class="s">"chapter"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;figure</span> <span class="k">data-reveal</span>=<span class="s">"wipe"</span><span class="t">&gt;</span>…<br>&#160;&#160;&#160;&#160;<span class="t">&lt;h3&gt;</span>The merchant of death<span class="t">&lt;/h3&gt;</span><br><span class="t">&lt;section</span> class=<span class="s">"band"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"band__pin"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;span</span> class=<span class="s">"charge charge--right"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"band__flash"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Подреден списък</h3><p>Историята е ol, защото главите се случват поред. Всяко li е една глава: снимка, място, заглавие, текст.</p></div>
+<div class="pt" style="--i:1"><h3>Разкриване с „wipe“</h3><p>data-reveal="wipe" кара всяка снимка да се открие отгоре надолу, когато влезе в екрана.</p></div>
+<div class="pt" style="--i:2"><h3>Интерлюдията с изстрела</h3><p>Закрепена рамка държи снимката, три светещи span-а на дланите и гърдите, HUD прицел и слой за светкавица.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>9 / 44</summary><p>Секцията Story (id „story“) има заглавие и подреден списък. Първото li е релсата – вертикална линия, която се запълва при скролване. Другите шест li елемента са главите: figure с кадър от филма, точка върху релсата и текстов блок с голямо контурно число, мястото, h3 заглавие и кратък параграф. Всяка снимка има alt текст, който описва какво показва. Редовете от около 318 до 343 са интерлюдията („band“): тя е по-висока от екрана и има закрепена рамка вътре. band__frame пази снимката в собствените ѝ пропорции, така че трите „charge“ сияния да се поставят точно върху дланите и гърдите с проценти. band__hud съдържа пръстена за прицелване и показанието за заряд, band__flash е побеляването и ударните пръстени, а band__copy съдържа текста „Built in a cave / Perfected in a workshop“.</p></details><div class="frame"><div class="stage"><section id="h-armory-cast">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 344–472 · АРСЕНАЛ И АКТЬОРИ</p></div>
+<h2 class="title">Празна галерия и пет панела с актьори</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"hall"</span> id=<span class="s">"hall"</span> role=<span class="s">"group"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;noscript&gt;</span>…needs JavaScript<br><span class="t">&lt;/div&gt;</span><br><br><span class="t">&lt;article</span> class=<span class="s">"player is-active"</span><br>&#160;&#160;tabindex=<span class="s">"0"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"player__photo"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h3</span> class=<span class="s">"player__name"</span><span class="t">&gt;</span>…</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Запълва се от JavaScript</h3><p>Галерията започва празна: 13-те карти с костюми се изграждат от списък с данни в sait.js, така че HTML остава кратък.</p></div>
+<div class="pt" style="--i:1"><h3>Резервен noscript</h3><p>Ако JavaScript е изключен, съобщение обяснява защо галерията липсва, вместо да остане празно място.</p></div>
+<div class="pt" style="--i:2"><h3>Панели с фокус</h3><p>Всеки панел с актьор има tabindex="0", така че с клавиатура стигаш до него и го отваряш, както с мишка.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>10 / 44</summary><p>Секцията Armory има заглавие, брояч (01 / 13) и два бутона със стрелки с aria-label, защото показват само иконка. Самата галерия, div с id „hall“, е празна в HTML: JavaScript изгражда тринадесетте карти от данните ARMORS, което избягва повтарянето на тринадесет почти еднакви блока код. Съобщение в noscript покрива посетителите без JavaScript. Под нея са лентата за прогрес и ред с подсказка. Секцията Cast има пет елемента article, по един за всеки актьор. Всеки съдържа портрета на актьора, номер, вертикален етикет с името и тяло с кадър от филма, ролята, името на актьора като h3 и кратко описание. Първият започва с класа is-active. tabindex="0" прави всеки панел достъпен с клавиатура, а aria-label дава ясно име на всеки панел.</p></details><div class="frame"><div class="stage"><section id="h-villains">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 473–566 · ЗЛОДЕИТЕ</p></div>
+<h2 class="title">Табове, направени по достъпния начин</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"rogues__index"</span> role=<span class="s">"tablist"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> role=<span class="s">"tab"</span><br>&#160;&#160;&#160;&#160;aria-controls=<span class="s">"rogue-stane"</span><br>&#160;&#160;&#160;&#160;aria-selected=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> role=<span class="s">"tab"</span> tabindex=<span class="s">"-1"</span><span class="t">&gt;</span>…<br><span class="t">&lt;article</span> role=<span class="s">"tabpanel"</span><br>&#160;&#160;id=<span class="s">"rogue-raza"</span> <span class="k">hidden</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>ARIA роли</h3><p>role="tablist", "tab" и "tabpanel" казват на екранните четци, че това е набор от табове, а не купчина бутони.</p></div>
+<div class="pt" style="--i:1"><h3>Един таб в реда</h3><p>Само избраният таб има tabindex="0"; останалите са −1, така че Tab ги прескача, а стрелките местят между тях.</p></div>
+<div class="pt" style="--i:2"><h3>Скрити панели</h3><p>Всяко досие освен първото има атрибута hidden. JavaScript го маха от панела, чийто таб е избран.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>11 / 44</summary><p>Секцията Villains има шест фонови снимки, наредени една върху друга най-горе, по една за всеки злодей, всяка маркирана с data-rogue, за да може JavaScript да покаже правилната. Индексът е tablist от шест бутона. Всеки бутон казва кой панел управлява (aria-controls) и дали е избран (aria-selected). Само избраният е в реда на Tab; стрелките местят между останалите – така се държат правилните табове. Панелите са елементи article с role="tabpanel", aria-labelledby, сочещ обратно към техния таб, и атрибута hidden на всички освен първия. Всеки панел има ред с мета данни (номер на досието, филм, актьор), името на злодея като h3 с прякора с по-малки букви, описание и каре „Connection to Tony Stark“.</p></details><div class="frame"><div class="stage"><section id="h-tech">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 567–711 · STARK TECH</p></div>
+<h2 class="title">Схема около дъговия реактор</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"schematic__stage"</span> id=<span class="s">"schematic"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;svg</span> class=<span class="s">"schematic__lines"</span><span class="t">&gt;&lt;/svg&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"reactor schematic__core"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> class=<span class="s">"node"</span> role=<span class="s">"tab"</span><br>&#160;&#160;&#160;&#160;style=<span class="s">"--i:0"</span><span class="t">&gt;</span>Arc Reactor<br><span class="t">&lt;article</span> class=<span class="s">"sys"</span> role=<span class="s">"tabpanel"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;input</span> type=<span class="s">"range"</span> id=<span class="s">"arc-power"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Сцената</h3><p>Празен SVG за светлинните линии, три пръстена, радарен лъч, ударна вълна и ядрото на реактора стоят в един квадрат.</p></div>
+<div class="pt" style="--i:1"><h3>Седем възела</h3><p>Всяка система е бутон‑таб с --i от 0 до 6. CSS използва това число, за да я постави по окръжността.</p></div>
+<div class="pt" style="--i:2"><h3>Истински контроли</h3><p>Плъзгачите са input type="range" с label, а бутоните са истински бутони, така че работят и с клавиатура.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>12 / 44</summary><p>Секцията Tech е холографска схема. schematic__stage е квадрат, който съдържа: празен svg, в който JavaScript рисува свързващите линии, три въртящи се пръстена, радарен лъч, пръстен за ударна вълна, ядрото на дъговия реактор и показание. Седемте бутона за системите са табове; всеки има style="--i:N" – число, което CSS използва с cos() и sin(), за да го постави по окръжността. Седемте панела са article елементи с role="tabpanel", всеки с кодов етикет, заглавие, описание и списък с характеристики. Всеки панел има своя контрола: плъзгача за дъговия реактор, два AI чата с бутони за команди, бутона за задържане на репулсора, бутона за HUD сканиране, бутоните за станциите в работилницата и плъзгача за тягата при полет. Всеки плъзгач има елемент label, така че предназначението му се обявява.</p></details><div class="frame"><div class="stage"><section id="h-trilogy-footer">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 712–822 · ТРИЛОГИЯ, ФУТЪР, НАГОРЕ</p></div>
+<h2 class="title">Три филма, после финалните надписи</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;article</span> class=<span class="s">"movie"</span> <span class="k">data-reveal</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;figure</span> class=<span class="s">"movie__poster"</span> <span class="k">data-tilt</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;dl&gt;</span>Released · Director · Runtime<br><span class="t">&lt;footer</span> class=<span class="s">"footer"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;p</span> class=<span class="s">"footer__word"</span><span class="t">&gt;</span>Iron Man<br>&#160;&#160;<span class="t">&lt;nav</span> class=<span class="s">"footer__nav"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"footer__legal"</span><span class="t">&gt;</span><br><span class="t">&lt;a</span> class=<span class="s">"totop"</span> href=<span class="s">"#top"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Три карти за филми</h3><p>Всеки филм е article с плакат, dl с факти и едно изречение. data-tilt маркира плаката за 3D накланяне.</p></div>
+<div class="pt" style="--i:1"><h3>Футърът</h3><p>Заключителен ред, огромната дума „Iron Man“, второ меню и текстът за авторски права и благодарности.</p></div>
+<div class="pt" style="--i:2"><h3>Благодарностите са важни</h3><p>Правният блок казва, че това е неофициален фен проект, и посочва всеки фотограф, 3D авторите и шрифта.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>13 / 44</summary><p>Секцията Trilogy има три карти article, по една за всеки филм. Всяка има голяма контурна година, плаката във figure с data-tilt, етикет за частта, заглавието, списък с дефиниции за дата на излизане, режисьор и продължителност, и едно изречение. Футърът започва с фонова снимка, заключителния ред „Heroes aren’t born. They’re built.“ и огромната дума Iron Man, която се „зарежда“, докато скролваш. Решетката на футъра съдържа марката, навигационен списък с по една връзка за секция и правния текст: че сайтът е неофициален фен проект, че Marvel притежава героите и снимките, и благодарности за снимките на актьорите, 3D моделите и шрифта Stark. Последният ред има връзка „нагоре“, а извън футъра е плаващият червен бутон за връщане нагоре с aria-label, защото е само иконка със стрелка.</p></details><div class="frame"><div class="stage"><section id="h-dialog">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">РЕДОВЕ 823–883 · ДОСИЕТО НА БРОНЯТА</p></div>
+<h2 class="title">Един диалог за всичките 13 костюма</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;dialog</span> class=<span class="s">"dossier"</span> id=<span class="s">"dossier"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;div</span> class=<span class="s">"viewer is-3d"</span> id=<span class="s">"viewer"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;iframe</span> id=<span class="s">"viewer-frame"</span><br>&#160;&#160;&#160;&#160;&#160;&#160;referrerpolicy=<span class="s">"origin"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"viewer__photo"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> id=<span class="s">"mode-3d"</span> aria-pressed=<span class="s">"true"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h3</span> id=<span class="s">"dossier-name"</span><span class="t">&gt;&lt;/h3&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Вграден dialog</h3><p>Тагът dialog дава истински модален прозорец даром: фокусът остава вътре, Esc го затваря, а страницата отзад е блокирана.</p></div>
+<div class="pt" style="--i:1"><h3>Празни места</h3><p>Име, филм, година и характеристики са празни елементи с id-та. JavaScript ги попълва за избрания костюм.</p></div>
+<div class="pt" style="--i:2"><h3>3D или снимка</h3><p>iframe съдържа модела от Sketchfab; два бутона превключват към снимката, а aria-pressed показва кое е включено.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>14 / 44</summary><p>Досието на бронята е един елемент dialog в края на body. Вместо тринадесет изскачащи прозореца има един и JavaScript го попълва с данните на избрания костюм. Вътре: бутон за затваряне с aria-label; визуалната страна с голямата римска цифра, пръстен, 3D визуализатора (индикатор за зареждане, iframe-а с модела от Sketchfab и снимката на костюма като втори изглед), подсказка, превключвателя 3D/Снимка и ред с благодарност към автора на модела. referrerpolicy="origin" на iframe-а отменя правилото no-referrer на страницата, защото 3D визуализаторът трябва да знае кой сайт го е вградил, преди да започне да „говори“ със sait.js. Другата страна има празни места за името, прякора, филма, годината на дебюта, източника на енергия, описанието и списъка с характеристики, плюс бутони за предишен и следващ костюм.</p></details><div class="frame"><div class="stage"><section id="d-css" class="divider">
+<p class="big">sait.css</p>
+<p class="sub">Как всичко изглежда и се движи: цветове, шрифтове, оформление, версията за телефон и всяка анимация. Двадесет номерирани части.</p>
+<p class="meta">1818 реда · 13 слайда · отгоре надолу</p>
+
+</section>
+</div></div><details><summary>15 / 44</summary><p>Втората част разглежда стиловете поред. Файлът е разделен на номерирани части със заглавия в коментари – от 1 (токени и основа) до 20 (цвят), плюс блока за намалено движение в самия край. Добър начин да четеш CSS: намери селектора (какво стилизира), после свойството (какво променя). Много правила започват с .js, което значи „само когато JavaScript работи“, така че страницата никога не остава скрита, ако някой скрипт се провали.</p></details><div class="frame"><div class="stage"><section id="c-tokens">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 1–99 · ТОКЕНИ И ОСНОВА</p></div>
+<h2 class="title">Токени: решаваш веднъж, ползваш навсякъде</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">@font-face</span> { font-family: <span class="s">"Stark"</span>;<br>&#160;&#160;src: url(<span class="s">"fonts/stark-bold.otf"</span>); }<br><span class="k">:root</span> {<br>&#160;&#160;--bg: #050506;<br>&#160;&#160;--red: #c4161c;<br>&#160;&#160;--gold: #d7a84a;<br>&#160;&#160;--arc: #9be8ff;<br>&#160;&#160;--f-display: <span class="s">"Stark"</span>, sans-serif;<br>&#160;&#160;--ease-out: cubic-bezier(.16,1,.3,1);<br>}<br><span class="c">/* used as */</span> color: var(--gold);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Първо шрифтовете</h3><p>Три правила @font-face зареждат файловете на шрифта Stark от папката fonts: нормален, удебелен и контурен.</p></div>
+<div class="pt" style="--i:1"><h3>Променливи в :root</h3><p>Всеки цвят, шрифт и крива на плавност е --променлива. Смяната на --red веднъж обновява всяко червено в сайта.</p></div>
+<div class="pt" style="--i:2"><h3>Чиста основа</h3><p>Box‑sizing, без стандартни отстъпи, плавно скролване, текстура на зърно и златна рамка при фокус с клавиатура.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>16 / 44</summary><p>Ред 10 боядисва фона на страницата почти в черно, преди да се зареди каквото и да е, така че няма бяло проблясване. Редове 12 до 15 зареждат трите файла на шрифта Stark с @font-face. Редове 17 до 47 са дизайн токените в :root: нюанси на фона, цветове на текста с различна прозрачност, червено, златно и циан на реактора, четирите набора шрифтове, две криви на плавност, страничният отстъп, максималната ширина и височината на менюто. Всичко останало във файла се позовава на тях с var(). Останалото от част 1 е основата: box-sizing border-box за всичко, плавно скролване с място за менюто, шрифт и цвят на body, фиксирана SVG текстура на шум за филмово зърно, цвят при селекция, нулиране на отстъпите и стиловете на списъците, и видима златна рамка при фокус. Тук са и .sr-only за текст само за екранни четци, skip връзката, която се плъзга при фокус, и помощните класове .wrap и .section, които всяка секция използва за ширина и разстояния.</p></details><div class="frame"><div class="stage"><section id="c-shared">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 100–188 · ОБЩИ ЧАСТИ И ПОЯВЯВАНЕ</p></div>
+<h2 class="title">Части, използвани навсякъде</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.js [data-reveal]</span> {<br>&#160;&#160;opacity: 0;<br>&#160;&#160;transform: translateY(32px);<br>&#160;&#160;filter: blur(8px);<br>&#160;&#160;transition: opacity 1s, transform 1.1s;<br>&#160;&#160;transition-delay: var(--d, 0s);<br>}<br><span class="k">.js [data-reveal].is-in</span> {<br>&#160;&#160;opacity: 1; transform: none;<br>&#160;&#160;filter: none;<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Класове за многократна употреба</h3><p>.eyebrow, .display, .btn, .round-btn и .chip се стилизират веднъж тук и се ползват във всяка секция.</p></div>
+<div class="pt" style="--i:1"><h3>Скрито само с JS</h3><p>Правилата за появяване започват с .js, така че ако скриптът не тръгне, нищо не остава невидимо.</p></div>
+<div class="pt" style="--i:2"><h3>Превключвателят .is-in</h3><p>Елементите започват избледнели, свалени и размазани. JavaScript добавя .is-in, когато влязат в екрана, и CSS ги анимира.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>17 / 44</summary><p>Част 2 определя частите, които всички секции споделят. .eyebrow е малкият етикет с номер в рамка. .display е огромното заглавие на секция, а .display em е контурната втора дума, направена с прозрачна запълка и -webkit-text-stroke. .section-head подрежда блок със заглавие. .btn е бутонът с отрязан ъгъл, направен с clip-path, със състояния при посочване и натискане; .round-btn е кръглият бутон със стрелка; .chips и .chip са кръглите значки с факти в началния екран. После идва системата за появяване: всичко с data-reveal започва скрито, изместено надолу и размазано, но само когато елементът html има клас js. Варианти: „left“ и „right“ влизат отстрани, „wipe“ се открива с clip-path, а „mask“ плъзга текста нагоре иззад ръб с overflow:hidden. Когато JavaScript добави is-in, всеки вариант преминава към крайното си, нормално състояние. --d е закъснение, зададено от JavaScript, за да се разредят групите.</p></details><div class="frame"><div class="stage"><section id="c-reactor-boot">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 189–249 · ДЪГОВИЯТ РЕАКТОР И ЗАРЕЖДАНЕТО</p></div>
+<h2 class="title">Дъгов реактор, нарисуван само с CSS</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.reactor</span> {<br>&#160;&#160;--s: 64px;<br>&#160;&#160;width: var(--s); border-radius: 50%;<br>&#160;&#160;background: radial-gradient(…);<br>}<br><span class="k">.reactor::before</span> {<br>&#160;&#160;background: repeating-conic-gradient(…);<br>&#160;&#160;animation: spin 24s linear infinite;<br>}<br><span class="k">.reactor::after</span> { animation: core 3.2s… }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Един елемент, четири слоя</h3><p>Кръгът, медният пръстен с намотки (::before), пулсиращото ядро (::after) и пунктиран вътрешен пръстен (тагът i).</p></div>
+<div class="pt" style="--i:1"><h3>Размер от една променлива</h3><p>--s задава размера, а сиянието и рамките следват от нея. Същият реактор е логото, екранът за зареждане и ядрото в Tech.</p></div>
+<div class="pt" style="--i:2"><h3>Защита при зареждане</h3><p>Екранът за зареждане се скрива сам след 4 секунди с CSS анимация, дори ако скриптът не завърши.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>18 / 44</summary><p>Част 3 изгражда дъговия реактор от един елемент без снимки. Елементът е кръг с радиален градиент за светещия център и box-shadow за външното сияние. ::before е пръстенът от медни намотки: repeating-conic-gradient, маскиран във формата на пръстен и бавно въртящ се. ::after е яркото ядро, пулсиращо с keyframes „core“. Елементът i вътре е пунктираният вътрешен пръстен, който се върти в обратна посока. Всеки размер се изчислява от --s, така че един и същ клас работи с 26px в менюто, 74px на екрана за зареждане и над 200px в секцията Tech. Екранът за зареждане е слой на цял екран с реактора, текст и лента за зареждане. Изчезва, когато JavaScript махне is-booting от елемента html, а като предпазна мрежа анимация го скрива след 4 секунди каквото и да стане.</p></details><div class="frame"><div class="stage"><section id="c-nav">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 250–315 · НАВИГАЦИЯ</p></div>
+<h2 class="title">Меню, което реагира на скрола</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.nav</span> {<br>&#160;&#160;position: fixed; top: 0;<br>&#160;&#160;transition: height .4s, background .4s;<br>}<br><span class="k">.nav.is-scrolled</span> {<br>&#160;&#160;background: rgba(5,5,6,.78);<br>&#160;&#160;backdrop-filter: blur(14px);<br>}<br><span class="k">.nav.is-hidden</span> { transform: translateY(-100%); }<br><span class="k">.nav__progress</span> {<br>&#160;&#160;transform: scaleX(var(--p, 0));<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Три състояния</h3><p>Прозрачно най-горе, матово стъкло след скрол (.is-scrolled) и прибрано, докато скролваш надолу (.is-hidden).</p></div>
+<div class="pt" style="--i:1"><h3>Лента за прогрес</h3><p>JavaScript задава --p от 0 до 1 при скролване; лентата под менюто расте със scaleX.</p></div>
+<div class="pt" style="--i:2"><h3>Бутонът „нагоре“</h3><p>Червен кръг в ъгъла, който се появява плавно след един екран скрол.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>19 / 44</summary><p>Менюто е с position: fixed, за да остава най-горе. Височината и фонът му се сменят плавно. Когато JavaScript добави is-scrolled, то получава тъмен полупрозрачен фон с размазване отзад – ефектът на матово стъкло. is-hidden го плъзга нагоре извън екрана, докато скролваш надолу, и то се връща, когато скролваш нагоре. Марката е малкият реактор плюс „Iron Man“, с „Man“ в червено. Връзките са малки етикети с шрифта Stark, които светват при посочване или когато са активни. Лентата за прогрес е градиентна линия, мащабирана хоризонтално с --p. Бутонът за превключване (хамбургерът) е скрит на десктоп; двете му линии се завъртат в X, когато aria-expanded е true. Бутонът „нагоре“ е фиксиран долу вдясно, невидим, докато JavaScript не добави is-visible, и става златен при посочване.</p></details><div class="frame"><div class="stage"><section id="c-hero">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 316–533 · НАЧАЛНИЯТ ЕКРАН (HERO)</p></div>
+<h2 class="title">Sticky закрепване и пламъци от двигателите</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.hero</span> { height: 260vh; }<br><span class="k">.hero__pin</span> {<br>&#160;&#160;position: sticky; top: 0;<br>&#160;&#160;height: 100svh; overflow: hidden;<br>}<br><span class="k">.thruster</span> {<br>&#160;&#160;top: 97.5%; left: 32.5%;<br>&#160;&#160;transform: translateX(-50%)<br>&#160;&#160;&#160;&#160;scaleY(var(--flame));<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Защо 260vh</h3><p>Секцията е висока 2,6 екрана, но sticky рамката ѝ – само 1. Допълнителните 1,6 екрана скрол изиграват излитането.</p></div>
+<div class="pt" style="--i:1"><h3>Слоеве, които се движат</h3><p>transform на всеки слой чете --mx, --my и --depth, така че мишката мести близките слоеве повече от далечните.</p></div>
+<div class="pt" style="--i:2"><h3>Пламъци от променлива</h3><p>Двигателите се разтягат със scaleY(var(--flame)). JavaScript сменя само едно число от 0 до 1.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>20 / 44</summary><p>Част 5 стилизира началния екран. .hero е висок 260vh; .hero__pin е sticky с top 0 и точно един екран висок, така че остава на място, докато допълнителната височина минава. Тя изрязва съдържанието си с overflow hidden и изолира наслояването си. Фоновата снимка е затъмнена и започва леко увеличена, за да може да се „намести“ при зареждане. Воалът (scrim) е градиент за контраст на текста. Всеки .hero__layer използва един transform, изграден от CSS променливи: --mx и --my идват от мишката, --depth е различен за всеки слой, а --sy идва от скрола. Заглавието използва шрифта Stark с размер до 23vw и сребърен градиент, изрязан по текста, а всяка дума се плъзга нагоре иззад маска. .hero__suit обвива снимката на Mark III. Двигателите са поставени под всеки ботуш (на 32,5% и 79% по ширина) и нарисувани с радиални градиенти, трептящи чрез бърз keyframe. Ударът в земята има три разширяващи се пръстена. Накрая .hero.is-ready пуска появата, а .hero__foot позиционира слогана, въведението, чиповете и връзката за разглеждане.</p></details><div class="frame"><div class="stage"><section id="c-film">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 534–647 · ЛЕНТА С НАДПИСИ И ФИЛМЪТ</p></div>
+<h2 class="title">Бягащ надпис и бяла страница от списание</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.ticker__track</span> {<br>&#160;&#160;display: flex; width: max-content;<br>&#160;&#160;animation: marquee 40s linear infinite;<br>}<br><span class="k">@keyframes</span> marquee {<br>&#160;&#160;to { transform: translateX(-50%); }<br>}<br><span class="k">.film__grid</span> {<br>&#160;&#160;display: grid;<br>&#160;&#160;grid-template-columns: 4.2fr 5fr 3fr;<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Безкрайна лента</h3><p>Текстът на червената лента се плъзга наляво безкрай. Местенето с −50% се повтаря без шев, защото текстът е дублиран.</p></div>
+<div class="pt" style="--i:1"><h3>Контрастна секция</h3><p>Film е единствената светла секция: цвят на хартия, тъмно мастило и бледа мрежа, направена с два градиента.</p></div>
+<div class="pt" style="--i:2"><h3>Grid оформления</h3><p>Плакат, история и факти делят една CSS решетка с фиксирани пропорции; статистиките са в решетка с четири колони.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>21 / 44</summary><p>Част 6 съдържа лентата с надписи: червена лента, леко завъртяна, чиято писта е flex ред от думи, местен наляво от линейна анимация marquee с продължителност 40 секунди. Думите са разделени с малки точки, направени с ::after. Секцията Film използва цвета на хартия и тъмно мастило, с лека текстура на милиметрова хартия от два повтарящи се линейни градиента и бледо червено сияние. .film__title е огромният текст „Directed by Jon Favreau“ с втория ред, изместен надясно. .film__grid е решетка с три колони за плакат, текст и факти. Плакатът получава червен ъглов маркер с ::before. Списъците с актьори и факти използват рамки между редовете. .stats е решетка с четири колони големи числа, а .notes стилизира акордеона: иконката плюс е две линии, а .is-open я завърта и разгъва отговора чрез grid-template-rows от 0fr до 1fr, което анимира височината плавно.</p></details><div class="frame"><div class="stage"><section id="c-story-band">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 648–815 · ИСТОРИЯТА И ИЗСТРЕЛЪТ</p></div>
+<h2 class="title">Запълваща се релса и изстрел от репулсор</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.timeline__fill</span> {<br>&#160;&#160;transform: scaleY(var(--fill, 0));<br>&#160;&#160;transform-origin: top;<br>}<br><span class="k">.charge</span> {<br>&#160;&#160;transform: translate(-50%,-50%)<br>&#160;&#160;&#160;&#160;scale(calc(.25 + var(--c) * 1.25));<br>&#160;&#160;opacity: var(--c);<br>}<br><span class="k">.band__flash::before</span> { opacity: var(--flash); }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Редуващи се глави</h3><p>Всяка глава е решетка с две колони; всяка втора разменя снимката и текста, така че хронологията върви на зигзаг.</p></div>
+<div class="pt" style="--i:1"><h3>Релса, която се пълни</h3><p>Златната линия расте със scaleY(var(--fill)), така че скролът обновява само една променлива.</p></div>
+<div class="pt" style="--i:2"><h3>Всичко от променливи</h3><p>Сиянието на заряда, HUD, светкавицата, пръстените и влитащият текст четат --c, --hud, --flash, --ring и --slam.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>22 / 44</summary><p>Частта за Story стилизира хронологията: централна вертикална релса с градиентна запълка, мащабирана от --fill, и глави като решетки с две колони, където нечетните глави поставят снимката вдясно. Снимките на главите започват увеличени и се наместват при появата си. Точката светва в златно, когато JavaScript добави is-lit. Големи контурни числа стоят зад текста на всяка глава. Интерлюдията (band) е висока 240vh със sticky рамка. band__frame пази снимката в истинските ѝ пропорции, така че сиянията на дланите да съвпадат, и приближава към дясната длан с --zoom. .charge е сияние от радиален градиент, чийто размер и прозрачност идват от --c, с два пръстена, които се събират навътре в цикъл. HUD кръгът за прицелване се свива, докато --c расте. Светкавицата е радиален градиент с център --fx и --fy – позицията на дланта, с два ударни пръстена, мащабирани от --ring. Редът „Perfected in a workshop“ се смалява, изостря се от размазване и се появява с --slam.</p></details><div class="frame"><div class="stage"><section id="c-armory-cast">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 816–956 · АРСЕНАЛ И АКТЬОРИ</p></div>
+<h2 class="title">Скролващи карти и растящи панели</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.hall</span> {<br>&#160;&#160;display: flex; overflow-x: auto;<br>&#160;&#160;scroll-snap-type: x mandatory;<br>}<br><span class="k">.suit</span> { --tone: 196, 22, 28; }<br><span class="k">.player</span> { flex: 1 1 0; }<br><span class="k">.player.is-active</span> { flex-grow: 4.2; }<br><span class="k">.player__photo</span> {<br>&#160;&#160;transition: filter .8s, width .8s;<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Галерия със снапване</h3><p>Залата е flex ред, който скролва настрани; scroll‑snap кара всяка карта да спира точно до ръба.</p></div>
+<div class="pt" style="--i:1"><h3>Един цвят за костюм</h3><p>Всяка карта задава --tone като RGB тройка, така че сиянието, рамката и лентата ѝ ползват цвета на този костюм.</p></div>
+<div class="pt" style="--i:2"><h3>Flex‑grow панели</h3><p>Панелите с актьори делят мястото поравно; активният нараства до 4,2 дяла, а снимката се плъзга до половин ширина.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>23 / 44</summary><p>Частта за Armory стилизира залата като хоризонтално скролващ flex ред със снапване и скрита лента за скрол; докато влачиш, снапването се изключва. Всяка карта .suit има променлива --tone, записана като „R, G, B“, така че rgba(var(--tone), .3) може да даде всякаква прозрачност на цвета на костюма. Картата показва голяма контурна римска цифра, снимката на костюма, значка 3D и етикетите, с лента отдолу, която расте при посочване. Лентата за прогрес под залата се мащабира с --hp. Частта за Cast е flex ред от пет панела, всеки с flex: 1, а активният е с flex-grow 4,2, така че се разширява плавно. Неактивните снимки са с филтър (вече червен дуотон). Вертикалният етикет с името е завъртян текст. Тялото с кадъра, ролята, името и описанието се появява само на активния панел. Под 960px редът става колона от ниски ленти, като активната е висока.</p></details><div class="frame"><div class="stage"><section id="c-villains-tech">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 957–1192 · ЗЛОДЕИ И STARK TECH</p></div>
+<h2 class="title">Преливания и тригонометрия в CSS</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.rogues__media img.is-active</span> {<br>&#160;&#160;opacity: 1; transform: scale(1);<br>}<br><span class="k">.node</span> {<br>&#160;&#160;--a: calc(var(--i) * (360deg / 7) - 90deg);<br>&#160;&#160;left: calc(50% + 41% * cos(var(--a)));<br>&#160;&#160;top: calc(50% + 41% * sin(var(--a)));<br>}<br><span class="k">.schematic__ring--outer</span> {<br>&#160;&#160;animation: spin calc(70s / var(--spin))…<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Фонове на злодеите</h3><p>Шестте снимки са наслагани; активната става напълно видима и бавно се намества от увеличение.</p></div>
+<div class="pt" style="--i:1"><h3>Окръжност от математика</h3><p>Ъгълът на всяка система е номерът ѝ по 360°/7. cos() и sin() превръщат ъгъла в позиция по окръжността.</p></div>
+<div class="pt" style="--i:2"><h3>Скорост от променлива</h3><p>Времето за завъртане на пръстените се дели на --spin, така че тягата ускорява всички пръстени наведнъж.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>24 / 44</summary><p>Злодеите: шест наслагани фонови снимки, всяка оцветена в червено с филтър; видима е само .is-active, с преливане за една секунда и бавно отдалечаване за шест секунди. Градиент затъмнява лявата страна, за да остане текстът четим. Бутоните на индекса са големи имена с шрифта Stark; избраният се измества надясно и прякорът му става червен. Всяко досие е панел от матово стъкло с червен ъглов маркер. Stark Tech: решетката на схемата поставя сцената вляво, а панела вдясно. Сцената е квадрат със SVG свързващите линии (активната е пунктирана и „тече“), три пръстена, въртящи се с различна скорост според --spin, ядрото на реактора, чието сияние расте с --arc-p и набъбва с --charge, радарния лъч (коничен градиент, който се върти при .is-scanning) и ударната вълна (при .is-firing). Позицията на всеки възел идва от cos() и sin() на неговия ъгъл. Тук се стилизират и панелите, характеристиките, бутоните за команди, плъзгачите, AI чатът и бутонът за задържане.</p></details><div class="frame"><div class="stage"><section id="c-trilogy-footer">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 1193–1382 · ТРИЛОГИЯ, ФУТЪР И ДОСИЕТО</p></div>
+<h2 class="title">Стъпаловидни плакати и анимиран диалог</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.movie:nth-child(2)</span> { margin-top: 6vw; }<br><span class="k">.movie:nth-child(3)</span> { margin-top: 12vw; }<br><span class="k">.dossier</span> {<br>&#160;&#160;opacity: 0; transform: translateY(24px);<br>&#160;&#160;transition: opacity .45s,<br>&#160;&#160;&#160;&#160;display .45s allow-discrete;<br>}<br><span class="k">.dossier[open]</span> { opacity: 1; transform: none; }<br><span class="k">@starting-style</span> { .dossier[open] { opacity: 0; } }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Стълбище от филми</h3><p>Всеки плакат е по-ниско от предишния чрез отстъпи с nth-child, така че трите филма слизат по диагонал.</p></div>
+<div class="pt" style="--i:1"><h3>Голяма дума във футъра</h3><p>„Iron Man“ с размер до 21vw, запълнена с градиент, изрязан по текста, и слой за заряд отгоре.</p></div>
+<div class="pt" style="--i:2"><h3>Плавно отваряне на диалог</h3><p>@starting-style казва на браузъра откъде да анимира, така че диалогът се появява и плъзга при отваряне.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>25 / 44</summary><p>Трилогията: топъл градиентен фон, решетка с три колони за филмите, където вторият и третият са избутани надолу с nth-child, огромна контурна година зад всеки и плакати с перспективен transform за накланянето и светъл отблясък, който следва позицията на мишката (--gx, --gy). Футърът: фонова снимка с градиентно избледняване, заключителният ред, огромната дума с градиент, изрязан по текста, и решетка с три колони за марка, връзки и правен текст. Диалогът с досието е центриран, най-много 1120px широк, с размазан фон. Отваря се с анимация чрез @starting-style (началните стойности при появяване) и allow-discrete (за да може display да се анимира). Вътре – решетка с две колони: страната с 3D визуализатора с цветно сияние, цифра и пръстен, и текстовата страна с мета решетка, описание и списък с характеристики, маркирани с малки завъртени квадратчета.</p></details><div class="frame"><div class="stage"><section id="c-responsive">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 1383–1513 · АДАПТИВЕН ДИЗАЙН</p></div>
+<h2 class="title">Една страница, три размера на екрана</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">@media</span> (max-width: 1180px) {<br>&#160;&#160;.film__grid { grid-template-columns: 1fr 1.3fr; }<br>}<br><span class="k">@media</span> (max-width: 960px) {<br>&#160;&#160;.nav__toggle { display: block; }<br>&#160;&#160;.nav__links { position: fixed; inset: 0; }<br>}<br><span class="k">@media</span> (max-width: 720px) {<br>&#160;&#160;.hero { height: 220vh; }<br>&#160;&#160;.node { --r: 38%; font-size: .625rem; }<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Лаптоп: 1180px</h3><p>Оформленията с три колони стават с две, така че текстовите колони никога не стават твърде тесни за четене.</p></div>
+<div class="pt" style="--i:1"><h3>Таблет: 960px</h3><p>Менюто става слой на цял екран зад хамбургера; секциите една до друга се нареждат една под друга.</p></div>
+<div class="pt" style="--i:2"><h3>Телефон: 720px</h3><p>По-малък текст и чипове, по-кратки сцени при скрол, пренасочени снимки и етикетите на схемата, придърпани навътре.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>26 / 44</summary><p>Част 16 са три media заявки, които променят оформлението, когато екранът става по-тесен. Под 1180px: връзките в менюто се сгъстяват, решетката на Film минава на две колони с фактите отдолу, а панелите в Tech се нареждат един под друг. Под 960px: появява се хамбургерът и връзките стават слой на цял екран, където всяка връзка влиза една след друга; бележките, статистиките, хронологията, актьорите, злодеите, трилогията, футърът и досието минават към вертикални оформления; релсата на хронологията се мести до левия ръб. Под 720px: началният екран е по-къс (220vh) без имената на актьорите, с по-малък реактор и вертикален долен блок; интерлюдията е 200vh и е пренасочена към стрелящата длан; картите в арсенала получават ширини за телефон; плакатите се нареждат един под друг; а етикетите в Tech се местят на радиус 38% с по-малък текст, за да се съберат и седемте. Има и правило за ниски екрани, което скрива въведението в началния екран на лаптопи под 760px височина, и правило hover:none за сензорни екрани.</p></details><div class="frame"><div class="stage"><section id="c-extra-motion">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 1514–1654 · ДОПЪЛНИТЕЛНО ДВИЖЕНИЕ И HUD ТЕКСТ</p></div>
+<h2 class="title">Курсор, искри и декодиращи се букви</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.cursor.is-hover</span> {<br>&#160;&#160;width: 66px; border-color: rgba(196,22,28,.9);<br>}<br><span class="k">.hud-ch[data-s="scan"]::before</span> {<br>&#160;&#160;content: attr(data-g);<br>&#160;&#160;color: var(--arc);<br>}<br><span class="k">.hud-print:not(.is-printed)</span> {<br>&#160;&#160;clip-path: inset(0 100% 0 0);<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Собствен курсор</h3><p>Светещ пръстен на реактор следва мишката и става червен над всичко, което се цъка; кликовете пускат ударна вълна.</p></div>
+<div class="pt" style="--i:1"><h3>Букви от данни</h3><p>Докато буквата се разбърква, ::before показва атрибута ѝ data-g (случаен символ) в циан вместо истинската буква.</p></div>
+<div class="pt" style="--i:2"><h3>Отпечатани параграфи</h3><p>Параграфът започва напълно изрязан и се разкрива отляво надясно, докато светеща лента минава по ръба.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>27 / 44</summary><p>Част 17 съдържа допълнителното движение. .cursor е фиксиран пръстен с пунктиран вътрешен пръстен и точка; is-hover го прави по-голям и червен. .shock е разширяващият се пръстен, който се появява при всеки клик. Canvas-ът с искрите в началния екран стои върху фона със screen смесване. Еднократна циан линия за сканиране минава надолу по началния екран, когато той се „включи“, а заглавието примигва с поетапна анимация. Картите на бронята получават отблясък, който следва мишката, а думите в лентата се накланят с --skew. Част 18 е HUD текстът. Всяка буква от заглавие е span .hud-ch със състояние data-s: „off“ е невидима, „scan“ скрива истинската буква и показва случаен циан символ от data-g чрез ::before, а „lock“ пуска кратко проблясване. Параграфите с .hud-print започват напълно изрязани; .is-printed анимира отварянето на изрязването и мести светеща лента за сканиране синхронно, докато текстът изстива от циан.</p></details><div class="frame"><div class="stage"><section id="c-polish-colour">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 1655–1818 · ПОЛИРАНЕ, ЦВЯТ, НАМАЛЕНО ДВИЖЕНИЕ</p></div>
+<h2 class="title">Последни щрихи и начин да се изключат</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.story</span> {<br>&#160;&#160;margin-top: -56px;<br>&#160;&#160;border-radius: 48px 48px 0 0;<br>}<br><span class="k">.player__photo</span> {<br>&#160;&#160;filter: grayscale(1) sepia(1)<br>&#160;&#160;&#160;&#160;hue-rotate(-48deg) saturate(3.4);<br>}<br><span class="k">@media</span> (prefers-reduced-motion: reduce) {<br>&#160;&#160;*, *::before { animation-duration: .001ms !important; }<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Полиране на движението</h3><p>Плакатите се откриват с „wipe“, снимките се увеличават при посочване, бутоните блестят, а Story се плъзга над Film като лист.</p></div>
+<div class="pt" style="--i:1"><h3>Цвят</h3><p>Сияния в златно и червено, цветни контурни думи и верига от филтри, която прави снимките на актьорите в червен дуотон.</p></div>
+<div class="pt" style="--i:2"><h3>Намалено движение</h3><p>Ако устройството на посетителя иска по-малко движение, анимациите приключват мигновено и всичко започва на крайното си място.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>28 / 44</summary><p>Част 19 (полиране на движението): плакатите и кадрите се откриват с clip-path и се наместват от леко увеличение; снимките се увеличават леко при посочване чрез отделното свойство scale, така че никога не се бият с други transform-и; паралакс слоевете получават допълнително място; бутоните получават минаващ светъл отблясък и златна рамка при фокус; стилизира се лентата-индикатор в менюто; секцията Story застъпва Film със заоблен горен ръб и сянка, докато Film потъмнява отзад (--cover); блясък минава надолу по хронологията; и два бледи HUD пръстена плават във фона на Tech. Част 20 (цвят): сияния от радиални градиенти за Story, Armory, Cast и Trilogy; златни и червени контури за думите в заглавията; оцветени значки; червеният дуотон за неактивните снимки на актьорите, направен с верига от филтрите grayscale, sepia, hue-rotate и saturate; по-наситени снимки в историята. Последният блок е prefers-reduced-motion: той кара всяка анимация и преход да приключат мигновено, отменя сцените при скрол, показва целия скрит текст и скрива чисто декоративните ефекти.</p></details><div class="frame"><div class="stage"><section id="d-js" class="divider">
+<p class="big">sait.js</p>
+<p class="sub">Всяко взаимодействие и всяка сцена при скрол. Чист JavaScript без библиотеки, написан като малки функции, всяка за една функционалност.</p>
+<p class="meta">1476 реда · 14 слайда · отгоре надолу</p>
+
+</section>
+</div></div><details><summary>29 / 44</summary><p>Третата част разглежда скрипта поред. Един и същ модел се повтаря навсякъде: init функция намира своите елементи, добавя слушатели на събития и или реагира веднага на кликове и клавиши, или връща update функция, която общият цикъл за скрол извиква веднъж на кадър. JavaScript рядко мести неща сам; обикновено просто задава CSS променлива или добавя клас, а CSS прави анимацията.</p></details><div class="frame"><div class="stage"><section id="j-structure">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 1–132 · СТРУКТУРА И ДАННИ</p></div>
+<h2 class="title">Обхват, помощници и данните за костюмите</h2>
+<div class="split">
+<div class="code"><p class="src">(() =&gt; {<br>&#160;&#160;<span class="s">'use strict'</span>;<br>&#160;&#160;<span class="k">const</span> $ = (sel, ctx = document) =&gt;<br>&#160;&#160;&#160;&#160;ctx.querySelector(sel);<br>&#160;&#160;<span class="k">const</span> clamp = (v, min, max) =&gt;<br>&#160;&#160;&#160;&#160;Math.min(max, Math.max(min, v));<br>&#160;&#160;<span class="k">const</span> ARMORS = [<br>&#160;&#160;&#160;&#160;{ mark: <span class="s">'I'</span>, name: <span class="s">'Mark I'</span>, … },<br>&#160;&#160;];<br>})();</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Обвивка IIFE</h3><p>Целият файл е функция, която се изпълнява сама веднъж. Променливите ѝ остават частни и не се сблъскват с други скриптове.</p></div>
+<div class="pt" style="--i:1"><h3>Малки помощници</h3><p>$ и $$ съкращават querySelector, clamp държи число в граници, а два флага проверяват намалено движение и мишка.</p></div>
+<div class="pt" style="--i:2"><h3>Данни, не код</h3><p>ARMORS изброява 13 костюма, а MODELS – техните 3D файлове. Галерията и диалогът се изграждат от този един списък.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>30 / 44</summary><p>Редове 1 до 5 са коментар в началото. Ред 6 отваря IIFE със стрелкова функция (функция, която се извиква веднага), затваряща се на последния ред, така че нищо не изтича в глобалния обхват. „use strict“ включва по-строга проверка за грешки. root е елементът html. $ връща един елемент, $$ връща масив с всички съвпадения. clamp ограничава стойност между минимум и максимум. reduceMotion и canHover прочитат настройките на посетителя веднъж с matchMedia. heroThrust е общо число, което началният екран задава, а искрите четат. Редове 17 до 111 съдържат WIKI (префиксът на хоста на снимките) и ARMORS: тринадесет обекта с марката, името, прякора, филма, годината, източника на енергия, цветовия тон, пътя до снимката, описанието и четири характеристики на всеки костюм. armorSrc изгражда пълния адрес на снимката. Редове 113 до 132 са MODELS – id-то в Sketchfab, заглавието и автора на всеки 3D модел, прикачени към всяка броня с forEach.</p></details><div class="frame"><div class="stage"><section id="j-boot-nav-reveal">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 133–257 · ЗАРЕЖДАНЕ, МЕНЮ, ПОЯВЯВАНЕ, БРОЯЧИ, БЕЛЕЖКИ</p></div>
+<h2 class="title">Следене на това, което посетителят вижда</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> io = <span class="k">new</span> IntersectionObserver((entries) =&gt; {<br>&#160;&#160;entries.forEach((entry) =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">if</span> (!entry.isIntersecting) <span class="k">return</span>;<br>&#160;&#160;&#160;&#160;el.classList.add(<span class="s">'is-in'</span>);<br>&#160;&#160;&#160;&#160;io.unobserve(entry.target);<br>&#160;&#160;});<br>}, { threshold: 0.15 });</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Зареждане</h3><p>Изчаква снимките и шрифтовете (най-много 2 секунди), маха is-booting и добавя is-ready, за да тръгне началният екран.</p></div>
+<div class="pt" style="--i:1"><h3>IntersectionObserver</h3><p>Браузърът съобщава, когато елемент влезе в екрана. Появяването добавя .is-in веднъж и спира да го следи.</p></div>
+<div class="pt" style="--i:2"><h3>Меню, броячи, бележки</h3><p>Менюто се скрива при скрол надолу и следи текущата секция; броячите стигат плавно до числото си; отваря се една бележка наведнъж.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>31 / 44</summary><p>initBoot изчаква снимките и шрифтовете на началния екран с Promise.race срещу таймер, маха is-booting (скривайки екрана за зареждане) и добавя is-ready към началния екран. initNav отваря и затваря менюто на телефон (също с Esc и при преоразмеряване), използва IntersectionObserver като scroll-spy, за да маркира връзката на текущата секция, и връща update функция, която добавя is-scrolled, скрива менюто при скрол надолу и задава --p за лентата за прогрес. initReveal разрежда групите с --d, после следи всеки елемент с data-reveal (тези с wipe – чрез родителя им, защото напълно изрязан елемент никога не се отчита като видим) и добавя is-in веднъж. initCounters брои всяко число с data-count нагоре за 1,7 секунди с крива на забавяне, когато 60% от него е на екрана. initNotes кара акордеона да отваря по една бележка наведнъж и поддържа aria-expanded точен.</p></details><div class="frame"><div class="stage"><section id="j-hero">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 258–343 · ИЗЛИТАНЕТО В НАЧАЛНИЯ ЕКРАН</p></div>
+<h2 class="title">Позицията на скрола става излитане</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> phase = (p, a, b) =&gt; {<br>&#160;&#160;<span class="k">const</span> t = clamp((p - a) / (b - a), 0, 1);<br>&#160;&#160;<span class="k">return</span> t * t * (3 - 2 * t);<br>};<br><span class="k">const</span> p = clamp(y / travel, 0, 1);<br><span class="k">const</span> ignite = phase(p, 0.04, 0.28);<br><span class="k">const</span> rise = phase(p, 0.2, 0.95);<br><span class="k">const</span> lift = Math.pow(rise, 2.2);<br>suit.style.transform =<br>&#160;&#160;`translate3d(0, ${suitY}px, 0)…`;</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Прогрес p</h3><p>Колко си скролнал през закрепения начален екран – от 0 най-горе до 1, когато той се освободи.</p></div>
+<div class="pt" style="--i:1"><h3>Прозорци с phase()</h3><p>phase превръща част от p в плавно 0→1: запалването е от 4% до 28%, излитането – от 20% до 95%.</p></div>
+<div class="pt" style="--i:2"><h3>Управление на сцената</h3><p>Тези стойности задават позицията на костюма, размера --flame, сиянието по земята, разделянето на заглавието и разклащането.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>32 / 44</summary><p>initHero има две задачи. Първо, дълбочина спрямо курсора: при движение на мишката задава цел от −1 до 1 и всеки кадър плавно доближава --mx и --my до нея, така че слоевете се носят. Второ, излитането при скрол. travel е колко можеш да скролнеш, докато началният екран е закрепен (височината на секцията минус един екран), а p е прогресът ти от 0 до 1. phase(p, a, b) преобразува прозореца от a до b в 0 до 1 с крива smoothstep, така че ефектите започват и свършват меко. ignite управлява двигателите и удара в земята. rise управлява излитането, а lift = rise на степен 2,2 го кара да започне бавно и после да полети. Костюмът леко кляка по време на запалването, после се издига с lift по 1,3 екрана, расте и се накланя. Думите на заглавието се раздалечават с split × 34vw и избледняват. Имената на актьорите, годината и долният текст изчезват първи. Пръстенът на реактора набъбва. Случайно разклащане се прилага по време на запалването. heroThrust казва на искрите да се ускорят.</p></details><div class="frame"><div class="stage"><section id="j-parallax-timeline">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 344–376 · ПАРАЛАКС И ХРОНОЛОГИЯТА</p></div>
+<h2 class="title">Малки функции, които цикълът за скрол вика</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">return function</span> update() {<br>&#160;&#160;<span class="k">const</span> vh = window.innerHeight;<br>&#160;&#160;<span class="k">const</span> r = timeline.getBoundingClientRect();<br>&#160;&#160;<span class="k">const</span> line = vh * 0.6;<br>&#160;&#160;fill.style.setProperty(<span class="s">'--fill'</span>,<br>&#160;&#160;&#160;&#160;clamp((line - r.top) / r.height, 0, 1));<br>&#160;&#160;chapters.forEach((ch) =&gt;<br>&#160;&#160;&#160;&#160;ch.classList.toggle(<span class="s">'is-lit'</span>, …));<br>};</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Връщане на update()</h3><p>Init функциите връщат update функция. Те не слушат скрола сами; общият цикъл ги извиква.</p></div>
+<div class="pt" style="--i:1"><h3>Линия на 60%</h3><p>Релсата се пълни до въображаема линия на 60% от височината на екрана, а точката на всяка глава светва, когато я пресече.</p></div>
+<div class="pt" style="--i:2"><h3>Пропусни невидимото</h3><p>Всяка update първо проверява позицията на елемента и спира рано, когато той е далеч, за да пести работа.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>33 / 44</summary><p>initParallax намира всеки елемент с data-parallax и при всеки кадър на скрола го мести с разстоянието между центъра му и центъра на екрана, умножено по коефициента. Пропуска всичко, което е на повече от 100px извън екрана. (В момента нищо не използва data-parallax, откакто интерлюдията стана закрепена сцена, така че това е безвреден остатък.) initTimeline измерва кутията на хронологията с getBoundingClientRect, изчислява каква част от нея е минала въображаема линия на 60% надолу в прозореца и записва това като --fill (от 0 до 1), което CSS използва, за да мащабира златната релса. Добавя и is-lit към всяка глава, чиято точка е пресякла линията. И двете връщат своята update функция, вместо да добавят собствен слушател за скрол, така че цялата работа по скрола се случва заедно, веднъж на кадър.</p></details><div class="frame"><div class="stage"><section id="j-armory">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 377–523 · ГАЛЕРИЯТА НА АРСЕНАЛА И ДИАЛОГЪТ</p></div>
+<h2 class="title">Изграждане на 13 карти от един списък</h2>
+<div class="split">
+<div class="code"><p class="src">hall.innerHTML = ARMORS.map((a, i) =&gt; `<br>&#160;&#160;&lt;button class=<span class="s">"suit"</span><br>&#160;&#160;&#160;&#160;style=<span class="s">"--tone:${a.tone}"</span><br>&#160;&#160;&#160;&#160;data-index=<span class="s">"${i}"</span>&gt;<br>&#160;&#160;&#160;&#160;&lt;span class=<span class="s">"suit__name"</span>&gt;${a.name}…<br>&#160;&#160;&lt;/button&gt;`).join(<span class="s">''</span>);<br><br>dialog.showModal();<br>fill(i);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Шаблонни низове</h3><p>map() превръща всеки обект-костюм в HTML на бутон, а join() слепва всичките 13 в галерията.</p></div>
+<div class="pt" style="--i:1"><h3>Влачене, стрелки, колелце</h3><p>Влаченето с мишка, бутоните със стрелки и колелцето скролват галерията, а броячът следи къде си.</p></div>
+<div class="pt" style="--i:2"><h3>Един диалог</h3><p>Клик върху карта отваря диалога, после fill() записва данните на костюма. Напред, назад и стрелките сменят костюма.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>34 / 44</summary><p>initArmory изгражда галерията: ARMORS.map създава по един бутон за всеки костюм с неговия тон, цифра, снимка, прякор, име и филм, а join ги слага в залата. update() задава лентата за прогрес, изключва стрелките в двата края и намира коя карта е текущата (центрираната по време на десктоп „возенето“). Стрелките скролват с три четвърти от ширината на залата. Влаченето с мишката променя scrollLeft и при пускане снапва към най-близката карта, а клик веднага след влачене се игнорира. Колелцето на мишката скролва галерията настрани, докато стигне ръб. Клик върху карта извиква open(), която първо показва диалога с showModal() (3D визуализаторът тръгва само във видим диалог), после fill() записва името, прякора, филма, годината, енергията, описанието и характеристиките и зарежда 3D модела. Назад, напред и стрелките сменят костюма; затварянето спира визуализатора и връща фокуса на картата, която си избрал.</p></details><div class="frame"><div class="stage"><section id="j-viewer">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 524–624 · 3D ВИЗУАЛИЗАТОРЪТ</p></div>
+<h2 class="title">Вграждане на истински 3D модел</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> client = <span class="k">new</span> window.Sketchfab(<span class="s">'1.12.1'</span>, frame);<br>client.init(uid, {<br>&#160;&#160;...options,<br>&#160;&#160;success(api) {<br>&#160;&#160;&#160;&#160;api.addEventListener(<span class="s">'viewerready'</span>, () =&gt; {<br>&#160;&#160;&#160;&#160;&#160;&#160;api.focusOnVisibleGeometries(…);<br>&#160;&#160;&#160;&#160;});<br>&#160;&#160;}<br>});</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>API-то на Sketchfab</h3><p>iframe-ът зарежда модела; API-то позволява на страницата да „говори“ с него и да побере целия костюм в кадър.</p></div>
+<div class="pt" style="--i:1"><h3>Зареждане при нужда</h3><p>Моделът се изтегля само когато 3D изгледът е показан, и се освобождава при затваряне на диалога, за да разтовари видеокартата.</p></div>
+<div class="pt" style="--i:2"><h3>Никога не забива</h3><p>Токен отменя остарели зареждания, а таймери гарантират, че индикаторът за зареждане винаги изчезва, дори при бавна връзка.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>35 / 44</summary><p>initViewer управлява 3D панела в диалога за бронята. options включва autostart, прозрачен фон, бавно автоматично въртене и скрива допълнителните бутони на визуализатора (някои от тях действат само за платени акаунти в Sketchfab). loadModel увеличава loadToken, така че модел, който завърши зареждането си, след като вече си сменил костюма, се игнорира. Ако скриптът на Sketchfab API липсва, се преминава към обикновено вграждане с iframe. С API-то, щом визуализаторът е готов, се извиква focusOnVisibleGeometries (или recenterCamera), за да се побере целият модел в кадър, после камерата се приближава с 20% на десктоп или с 5% на тесни телефони. setMode превключва между 3D модела и снимката и зарежда модела само когато е показан 3D изгледът. load() попълва реда с благодарности и надписите на бутоните („3D bust“, „3D helmet“), а stop() освобождава iframe-а при затваряне на диалога.</p></details><div class="frame"><div class="stage"><section id="j-cast-tabs">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 625–684 · АКТЬОРИ, ТАБОВЕ И ЗЛОДЕИ</p></div>
+<h2 class="title">Една система за табове, използвана два пъти</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">function</span> initTabs(tablist, onChange) {<br>&#160;&#160;<span class="k">const</span> select = (tab) =&gt; {<br>&#160;&#160;&#160;&#160;tabs.forEach((t) =&gt; {<br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="k">const</span> on = t === tab;<br>&#160;&#160;&#160;&#160;&#160;&#160;t.setAttribute(<span class="s">'aria-selected'</span>, on);<br>&#160;&#160;&#160;&#160;&#160;&#160;t.tabIndex = on ? 0 : -1;<br>&#160;&#160;&#160;&#160;&#160;&#160;panel.hidden = !on;<br>&#160;&#160;&#160;&#160;});<br>&#160;&#160;&#160;&#160;onChange(tab);<br>&#160;&#160;};</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Панели с актьори</h3><p>Посочване, клик, фокус или Enter правят панел активен. Само един панел има .is-active в даден момент.</p></div>
+<div class="pt" style="--i:1"><h3>Функция за повторна употреба</h3><p>initTabs работи с всеки tablist. Злодеите и схемата в Tech я използват, всеки със свой onChange.</p></div>
+<div class="pt" style="--i:2"><h3>Поддръжка на клавиатура</h3><p>Стрелките местят към следващия или предишния таб, Home и End – към първия и последния, както трябва при табове.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>36 / 44</summary><p>initCast дава на всеки панел с актьор слушатели за pointerenter (само мишка), click, focus и Enter или Space, които всички извикват activate – тя превключва is-active, така че е отворен само един панел. initTabs е общ контролер за табове: select() обновява aria-selected, слага само избрания таб в реда на Tab, показва неговия панел и скрива останалите, после извиква onChange, за да може всяко място, което я ползва, да реагира. Обработчикът на keydown мести със стрелките и Home и End, и скролва хоризонтален списък с табове, за да остане фокусираният таб видим. preloadNear започва да зарежда „мързеливите“ снимки на секция 900px преди тя да влезе в екрана. initVillains прави tablist-а вертикален, използва onChange, за да покаже съответната фонова снимка, и зарежда фоновете предварително, така че превключването никога не показва празен кадър.</p></details><div class="frame"><div class="stage"><section id="j-tech">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 685–863 · STARK TECH</p></div>
+<h2 class="title">Контроли, които управляват реактора</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> setArc = () =&gt; {<br>&#160;&#160;<span class="k">const</span> p = arcSlider.value / 100;<br>&#160;&#160;stage.style.setProperty(<span class="s">'--arc-p'</span>, p);<br>&#160;&#160;setCore(<span class="s">'Core output · GJ/s'</span>,<br>&#160;&#160;&#160;&#160;(p * 3).toFixed(1));<br>};<br>arcSlider.addEventListener(<span class="s">'input'</span>, setArc);<br><br>stage.classList.add(<span class="s">'is-firing'</span>);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Линии, начертани с код</h3><p>drawLines измерва всеки етикет и чертае SVG линия до него от центъра, наново при преоразмеряване.</p></div>
+<div class="pt" style="--i:1"><h3>Променливи и класове</h3><p>Плъзгачите задават --arc-p и --spin; репулсорът задава --charge, после добавя is-firing; HUD добавя is-scanning.</p></div>
+<div class="pt" style="--i:2"><h3>AI отговори, които се пишат</h3><p>J.A.R.V.I.S. и F.R.I.D.A.Y. пишат всеки ред буква по буква, докато лентите на звуковата вълна подскачат.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>37 / 44</summary><p>initTech управлява схемата. drawLines измерва центъра на всеки възел спрямо сцената и записва SVG елементи line от средата (50, 50) до всеки възел; изпълнява се отново при преоразмеряване, при зареждане на шрифтовете и когато сцената влезе в екрана. initTabs се грижи за седемте системи; onChange спира всяко писане, осветява съответната линия и нулира показанието на ядрото. Плъзгачът за реактора задава --arc-p и показанието в GJ/s. AI чатът пише всеки ред от SCRIPTS със закъснение 22ms на буква, докато случайни височини анимират лентите на вълната; typingToken отменя стар отговор, когато цъкнеш отново или смениш. Бутонът на репулсора зарежда --charge за 1,1 секунди, докато е задържан (с курсор или Space/Enter), и при пускане добавя is-firing за ударната вълна, после се изпразва. HUD сканирането добавя is-scanning за радарния лъч и отчита 7 / 7 цели. Бутоните в работилницата сменят текста на станцията и задават aria-pressed. Тягата задава --spin и показанието в Мах и показва предупреждение за заледяване над 85%.</p></details><div class="frame"><div class="stage"><section id="j-loop">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 864–906 · НАКЛОН, НАГОРЕ, ЦИКЪЛЪТ ЗА СКРОЛ</p></div>
+<h2 class="title">Сърцето: един цикъл на кадър</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">function</span> initScrollLoop(updaters) {<br>&#160;&#160;<span class="k">let</span> ticking = <span class="k">false</span>;<br>&#160;&#160;<span class="k">const</span> run = () =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">const</span> y = window.scrollY;<br>&#160;&#160;&#160;&#160;updaters.forEach((fn) =&gt; fn &amp;&amp; fn(y));<br>&#160;&#160;&#160;&#160;ticking = <span class="k">false</span>;<br>&#160;&#160;};<br>&#160;&#160;window.addEventListener(<span class="s">'scroll'</span>, () =&gt; {<br>&#160;&#160;&#160;&#160;<span class="k">if</span> (!ticking) { ticking = <span class="k">true</span>;<br>&#160;&#160;&#160;&#160;&#160;&#160;requestAnimationFrame(run); } });<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Защо един цикъл</h3><p>Събитията за скрол идват много пъти за един кадър. Флагът ticking пуска всички обновявания най-много веднъж на опресняване.</p></div>
+<div class="pt" style="--i:1"><h3>requestAnimationFrame</h3><p>Изпълнява работата точно преди браузърът да рисува, така че всяка сцена при скрол се движи плавно и синхронно.</p></div>
+<div class="pt" style="--i:2"><h3>Наклон и „нагоре“</h3><p>Плакатите се накланят към мишката с --rx и --ry; бутонът в ъгъла се появява след 1,2 екрана скрол.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>38 / 44</summary><p>initTilt (само с мишка, без намалено движение) следи курсора над всеки плакат с data-tilt и задава --ry и --rx за 3D наклон плюс --gx и --gy за позицията на отблясъка; излизането нулира наклона. initToTop връща update, която показва бутона „нагоре“ след 1,2 височини на екрана. initScrollLoop е ядрото на системата за движение. Всяка сцена при скрол му подава функция update(y). При скрол (маркиран като passive, така че браузърът никога не го чака) и при преоразмеряване тя заявява един анимационен кадър, освен ако вече има чакащ; в този кадър прочита scrollY веднъж и извиква всяка update. Така десетина ефекта при скрол не слушат и не прерисуват поотделно, което би накъсвало. Изпълнява се и веднъж веднага, така че всичко започва в правилното състояние. fancyPointer е true само при мишка и без намалено движение.</p></details><div class="frame"><div class="stage"><section id="j-cursor-embers">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 907–1033 · КУРСОР, ИСКРИ, РАЗБЪРКАНИ ЕТИКЕТИ</p></div>
+<h2 class="title">Курсор, частици и декодиращи се етикети</h2>
+<div class="split">
+<div class="code"><p class="src">pos.x += (target.x - pos.x) * 0.18;<br>ring.style.transform =<br>&#160;&#160;`translate3d(${pos.x}px, ${pos.y}px, 0)`;<br><br><span class="k">for</span> (<span class="k">const</span> s <span class="k">of</span> sparks) {<br>&#160;&#160;s.y += s.vy * boost;<br>&#160;&#160;ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);<br>&#160;&#160;ctx.fill();<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Плавен курсор</h3><p>Всеки кадър пръстенът изминава 18% от пътя до мишката, така че следва плавно. Кликът добавя пръстен .shock, който се маха сам.</p></div>
+<div class="pt" style="--i:1"><h3>Искри в canvas</h3><p>До 70 искри се издигат и люлеят; ускоряват се, докато двигателите в началния екран работят, и спират, когато той не се вижда.</p></div>
+<div class="pt" style="--i:2"><h3>Разбъркани етикети</h3><p>Малките етикети въртят случайни символи, после буква по буква застават на истинския текст, щом влязат в екрана.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>39 / 44</summary><p>initCursor (само с мишка) добавя елемент пръстен с точка. pointermove обновява целта и превключва is-hover над връзки, бутони и карти. Всеки кадър пръстенът изминава 18% от оставащото разстояние (просто плавно доближаване), а точката стои точно върху курсора. pointerdown свива пръстена и добавя span .shock в точката на клика, който се маха, когато анимацията му свърши. Пръстенът се скрива, докато диалогът е отворен. initEmbers рисува в canvas-а на началния екран: оразмерява го според плътността на пикселите на екрана, създава от 24 до 70 искри със случаен размер, скорост, люлеене и цвят, и всеки кадър ги мести нагоре, избледнява ги, докато се издигат, рисува меко сияние и ярко ядро с адитивно смесване и създава наново тези, които излязат. heroThrust ускорява движението им. Спира на пауза, когато началният екран не е видим. initScramble обхожда текста на малките етикети и за около 0,9 секунди сменя неразкритите символи със случайни, преди да покаже истинския текст.</p></details><div class="frame"><div class="stage"><section id="j-tilt-ticker">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 1034–1103 · НАКЛОН НА КАРТИ, МАГНИТНИ БУТОНИ, ЛЕНТА</p></div>
+<h2 class="title">Малки реакции на мишката и скрола</h2>
+<div class="split">
+<div class="code"><p class="src">el.addEventListener(<span class="s">'pointermove'</span>, (e) =&gt; {<br>&#160;&#160;<span class="k">const</span> r = el.getBoundingClientRect();<br>&#160;&#160;<span class="k">const</span> x = (e.clientX - (r.left + r.width / 2)) * 0.28;<br>&#160;&#160;el.style.translate = `${x}px ${y}px`;<br>});<br><br><span class="k">const</span> anim = track.getAnimations()[0];<br>anim.playbackRate = clamp(1 + vel * 0.12, -4, 6);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Накланящи се карти</h3><p>Позицията на курсора в картата става малко завъртане и позиция на отблясъка.</p></div>
+<div class="pt" style="--i:1"><h3>Магнитни бутони</h3><p>Бутоните се изместват с 28% към курсора чрез отделното свойство translate, така че ефектите при натискане пак работят.</p></div>
+<div class="pt" style="--i:2"><h3>Лента, която слуша</h3><p>Скоростта на скрола променя playbackRate на лентата: по-бързо при скрол надолу, наобратно при скрол нагоре.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>40 / 44</summary><p>initSuitTilt слуша цялата галерия веднъж (делегиране на събития) и намира картата под курсора с closest('.suit'). Задава --ry и --rx от позицията на курсора за наклон до 14 на 10 градуса, и --gx и --gy за отблясъка; спира по време на влачене и се нулира при излизане. initMagnetic мести бутоните малко към курсора чрез свойството translate и се нулира при излизане. initTickerSpeed прочита CSS анимацията на лентата с getAnimations() и променя нейния playbackRate според изгладената скорост на скрола: до 6 пъти по-бързо при скрол надолу и отрицателно (наобратно) при скрол нагоре. Задава и --skew, така че думите се накланят. Малък цикъл за успокояване плавно връща скоростта към нормалната, когато спреш.</p></details><div class="frame"><div class="stage"><section id="j-scenes">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 1104–1259 · СЦЕНИТЕ ПРИ СКРОЛ</p></div>
+<h2 class="title">Изстрел, арсенал, плакати, заряд във футъра</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> pinProgress = (section, pin) =&gt; {<br>&#160;&#160;<span class="k">const</span> travel =<br>&#160;&#160;&#160;&#160;section.offsetHeight - pin.offsetHeight;<br>&#160;&#160;<span class="k">return</span> clamp(-section.getBoundingClientRect()<br>&#160;&#160;&#160;&#160;.top / travel, 0, 1);<br>};<br><span class="k">const</span> fired = phase(p, 0.58, 0.66);<br><span class="k">const</span> c = phase(p, 0.05, 0.55) * (1 - fired);<br>pin.style.setProperty(<span class="s">'--c'</span>, c);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Същата рецепта</h3><p>Прогрес през закрепена секция, нарязан на прозорци с phase(), записан като CSS променливи. Като в началния екран.</p></div>
+<div class="pt" style="--i:1"><h3>Изстрелът от репулсора</h3><p>Зарядът расте, разклащането се усилва, дланта изстрелва бяла светкавица и пръстени, после редът влита.</p></div>
+<div class="pt" style="--i:2"><h3>Возене, раздаване, заряд</h3><p>Скролът мести арсенала настрани на десктоп, завърта плакатите навътре и запълва думата във футъра.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>41 / 44</summary><p>phase и pinProgress са общи помощници: pinProgress връща колко си напреднал през закрепена секция, от 0 до 1. initBlast нарязва този прогрес на прозорци: заряд от 5% до 55%, HUD на екрана, разклащане, което расте от 30% до 57%, светкавица от 55% до 82%, пръстени, които се разширяват от 57%, и текст, който влита от 64% до 80%. Насочва светкавицата към истинската позиция на дланта на екрана. initArmoryRide (само на десктоп с мишка) обвива арсенала в закрепена рамка, задава височината на секцията на един екран плюс излишъка на галерията, после превръща прогреса в hall.scrollLeft и мащабира и завърта всяка карта според разстоянието ѝ до центъра (cover flow). Бутоните ѝ със стрелки вместо това скролват страницата. initPosterDeal завърта всеки плакат навътре от собствена посока според това колко е влязъл в екрана. initFooterCharge задава --charge от 0 до 1, докато думата във футъра пристига, и добавя is-charged накрая.</p></details><div class="frame"><div class="stage"><section id="j-hud-text">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 1260–1388 · HUD ТЕКСТ</p></div>
+<h2 class="title">Разделяне на заглавията на букви</h2>
+<div class="split">
+<div class="code"><p class="src">[...part].forEach((ch) =&gt; {<br>&#160;&#160;<span class="k">const</span> c = document.createElement(<span class="s">'span'</span>);<br>&#160;&#160;c.className = <span class="s">'hud-ch'</span>;<br>&#160;&#160;c.textContent = ch;<br>&#160;&#160;c.dataset.s = <span class="s">'off'</span>;<br>&#160;&#160;word.appendChild(c);<br>});<br>owner.setAttribute(<span class="s">'aria-label'</span>, label);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Един span на буква</h3><p>Текстът на заглавието се разделя на span-ове за думи (за да се пренася между думите), всеки с по един span на буква.</p></div>
+<div class="pt" style="--i:1"><h3>Състояние за всяка буква</h3><p>Буквите минават от off към scan към lock, разредено отляво надясно; CSS рисува всяко състояние.</p></div>
+<div class="pt" style="--i:2"><h3>Пак четимо</h3><p>Разделените букви са скрити от екранните четци; заглавието пази целия си текст в aria-label или в скрито копие.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>42 / 44</summary><p>initHudText (пропуска се при намалено движение) има две половини. split() обхожда текста в заглавие, заменя всеки текстов възел със span-ове за думи (white-space nowrap, за да не се чупят думите по средата), съдържащи по един span hud-ch за всеки символ, всички маркирани с aria-hidden. Оригиналният текст отива в aria-label на заглавието или в скрито копие .sr-only за обикновени параграфи, където aria-label се пренебрегва. После decode() пуска цикъл по кадри: всяка буква започва след i × кратка стъпка, прекарва 280ms в „scan“ с нов случаен символ (data-g) на всеки 45ms и после става „lock“. Заглавията се декодират веднъж, когато са видими на 40%; заглавията в панелите на злодеите и в Tech се декодират наново всеки път, когато табът им се покаже, чрез MutationObserver, който следи атрибута hidden. Втората половина маркира параграфите като hud-print и добавя is-printed, когато контейнерът им влезе в екрана, като разрежда параграфите в един контейнер.</p></details><div class="frame"><div class="stage"><section id="j-polish-start">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 1389–1476 · ПОЛИРАНЕ НА ДВИЖЕНИЕТО И СТАРТ</p></div>
+<h2 class="title">Последни детайли, после включване на всичко</h2>
+<div class="split">
+<div class="code"><p class="src">initBoot();<br>initReveal();<br>initArmory();<br>initTech();<br>…<br>initNavIndicator();<br>initScrollLoop([<br>&#160;&#160;initNav(), initHero(), initTimeline(),<br>&#160;&#160;initBlast(), initArmoryRide(),<br>&#160;&#160;initPosterDeal(), initFooterCharge(),<br>&#160;&#160;initDepth(), initFilmCover() ]);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Дълбочина и лентата в менюто</h3><p>Снимките се носят срещу скрола, а една светеща лента се плъзга под активната или посочената връзка в менюто.</p></div>
+<div class="pt" style="--i:1"><h3>Листът Story</h3><p>Докато Story се издига, --cover затъмнява и смалява секцията Film зад нея.</p></div>
+<div class="pt" style="--i:2"><h3>Списъкът за старт</h3><p>Последните редове извикват всяка init веднъж. Тези, които връщат update, се подават на цикъла за скрол в един масив.</p></div>
+</div>
+</div>
+
+</section>
+</div></div><details><summary>43 / 44</summary><p>initDepth мести снимките в историята, фона на злодеите и снимката във футъра с малко, ограничено разстояние срещу скрола чрез свойството translate. initNavIndicator добавя една лента към менюто на десктоп и я мести с transform до посочената връзка или, когато нищо не е посочено, до активната; MutationObserver забелязва, когато scroll-spy смени активната връзка. initFilmCover задава --cover на секцията Film, докато горният ръб на Story се издига през екрана. Редове 1457 до 1476 са списъкът за старт: първо се изпълняват обикновените init функции, които само добавят слушатели, после initScrollLoop получава update функциите, върнати от init функциите, управлявани от скрола. Последният ред затваря IIFE-то, отворено на ред 6.</p></details><div class="frame"><div class="stage"><section id="recap" class="cover">
+<p class="eyebrow">ОБОБЩЕНИЕ</p>
+<h2 class="title">Четири идеи държат целия сайт заедно</h2>
+<div class="stats" style="grid-template-columns: repeat(2, 1fr);">
+<div class="stat" style="--i:0"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Токени</p><p class="what" style="font-size:28px; color:#B9B4AA;">Цветовете, шрифтовете и кривите живеят веднъж в :root и се преизползват чрез var().</p></div>
+<div class="stat" style="--i:1"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Класове и променливи</p><p class="what" style="font-size:28px; color:#B9B4AA;">JavaScript задава клас или --променлива; CSS рисува и анимира.</p></div>
+<div class="stat" style="--i:2"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Един цикъл за скрол</p><p class="what" style="font-size:28px; color:#B9B4AA;">Всяка сцена при скрол е update(y), изпълнявана заедно с останалите, веднъж на кадър.</p></div>
+<div class="stat" style="--i:3"><p class="lbl" style="color:#F2EFE8; font-weight:600;">Безопасно по подразбиране</p><p class="what" style="font-size:28px; color:#B9B4AA;">Без JS нищо не се скрива; с намалено движение нищо не се движи; всяка контрола работи с клавиатура.</p></div>
+</div>
+
+</section>
+</div></div><details><summary>44 / 44</summary><p>Ако запомниш четири неща: първо, дизайн токените (CSS променливи в :root) правят вида последователен и лесен за промяна. Второ, разделението на отговорностите: HTML държи съдържанието, CSS – вида и анимацията, а JavaScript най-често само превключва класове и задава CSS променливи. Трето, всички ефекти при скрол споделят един цикъл с requestAnimationFrame, а закрепените сцени използват една и съща рецепта: прогрес, прозорци с phase() и променливи. Четвърто, сайтът деградира плавно: скритите състояния важат само когато има клас js, посетителите с намалено движение получават неподвижна страница, а табовете, диалогът, плъзгачите и бутоните са истински контроли с етикети, които работят с клавиатура и екранен четец.</p></details>
+<script>
+const fit = () => document.body.style.setProperty('--k', Math.min(1, (document.body.clientWidth - 32) / 1920));
+addEventListener('resize', fit); fit();
+</script>
+</body></html>

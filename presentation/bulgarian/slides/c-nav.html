@@ -1,0 +1,13 @@
+<section id="c-nav">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 250–315 · НАВИГАЦИЯ</p></div>
+<h2 class="title">Меню, което реагира на скрола</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.nav</span> {<br>&#160;&#160;position: fixed; top: 0;<br>&#160;&#160;transition: height .4s, background .4s;<br>}<br><span class="k">.nav.is-scrolled</span> {<br>&#160;&#160;background: rgba(5,5,6,.78);<br>&#160;&#160;backdrop-filter: blur(14px);<br>}<br><span class="k">.nav.is-hidden</span> { transform: translateY(-100%); }<br><span class="k">.nav__progress</span> {<br>&#160;&#160;transform: scaleX(var(--p, 0));<br>}</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Три състояния</h3><p>Прозрачно най-горе, матово стъкло след скрол (.is-scrolled) и прибрано, докато скролваш надолу (.is-hidden).</p></div>
+<div class="pt" style="--i:1"><h3>Лента за прогрес</h3><p>JavaScript задава --p от 0 до 1 при скролване; лентата под менюто расте със scaleX.</p></div>
+<div class="pt" style="--i:2"><h3>Бутонът „нагоре“</h3><p>Червен кръг в ъгъла, който се появява плавно след един екран скрол.</p></div>
+</div>
+</div>
+<aside>Менюто е с position: fixed, за да остава най-горе. Височината и фонът му се сменят плавно. Когато JavaScript добави is-scrolled, то получава тъмен полупрозрачен фон с размазване отзад – ефектът на матово стъкло. is-hidden го плъзга нагоре извън екрана, докато скролваш надолу, и то се връща, когато скролваш нагоре. Марката е малкият реактор плюс „Iron Man“, с „Man“ в червено. Връзките са малки етикети с шрифта Stark, които светват при посочване или когато са активни. Лентата за прогрес е градиентна линия, мащабирана хоризонтално с --p. Бутонът за превключване (хамбургерът) е скрит на десктоп; двете му линии се завъртат в X, когато aria-expanded е true. Бутонът „нагоре“ е фиксиран долу вдясно, невидим, докато JavaScript не добави is-visible, и става златен при посочване.</aside>
+</section>

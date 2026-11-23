@@ -1,0 +1,13 @@
+<section id="h-armory-cast">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 344–472 · ARMORY AND CAST</p></div>
+<h2 class="title">An empty gallery and five cast panels</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;div</span> class=<span class="s">"hall"</span> id=<span class="s">"hall"</span> role=<span class="s">"group"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;noscript&gt;</span>…needs JavaScript<br><span class="t">&lt;/div&gt;</span><br><br><span class="t">&lt;article</span> class=<span class="s">"player is-active"</span><br>&#160;&#160;tabindex=<span class="s">"0"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;img</span> class=<span class="s">"player__photo"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h3</span> class=<span class="s">"player__name"</span><span class="t">&gt;</span>…</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Filled by JavaScript</h3><p>The armory gallery starts empty: the 13 suit cards are built from a data list in sait.js, so the HTML stays short.</p></div>
+<div class="pt" style="--i:1"><h3>A noscript fallback</h3><p>If JavaScript is off, a message explains why the gallery is missing instead of leaving a blank gap.</p></div>
+<div class="pt" style="--i:2"><h3>Focusable panels</h3><p>Each cast article has tabindex="0", so keyboard users can tab to it and open it like a mouse user hovering.</p></div>
+</div>
+</div>
+<aside>The Armory section has its heading, the counter (01 / 13) and two arrow buttons with aria-labels, since they only show an icon. The gallery itself, div id "hall", is empty in the HTML: JavaScript builds the thirteen suit cards from the ARMORS data, which avoids repeating thirteen nearly identical blocks of markup. A noscript message covers visitors without JavaScript. Under it are the progress bar and a hint line. The Cast section has five article elements, one per actor. Each holds the actor’s portrait, a number, a vertical name tab, and a body with a film still, the role, the actor’s name as an h3 and a short description. The first one starts with the is-active class. tabindex="0" makes each panel reachable by keyboard, and aria-label gives each panel a clear name.</aside>
+</section>

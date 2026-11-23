@@ -1,0 +1,54 @@
+/* Iron Man code walkthrough: dark, flat backgrounds; Manrope for text, JetBrains Mono for code */
+body { font-family: 'Manrope', Arial, sans-serif; color: #EDEAE3; }
+
+section {
+  background: #181818;
+  padding: 128px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* type scale: 96 / 64 / 36 / 28 / 24 */
+.eyebrow { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 24px; font-weight: 500; letter-spacing: 2px; color: #D7A84A; }
+.title { font-size: 64px; font-weight: 600; line-height: 1.1; color: #F2EFE8; margin-top: 16px; }
+.lede { font-size: 28px; line-height: 1.45; color: #B9B4AA; margin-top: 24px; width: 1100px; }
+
+/* code slides: code on the left, three points on the right */
+.split { display: grid; grid-template-columns: 920px 1fr; gap: 64px; margin-top: 48px; align-items: start; }
+.code { background: #1F1F1F; border: 1px solid #313131; border-radius: 16px; padding: 32px; }
+.code .src { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 24px; line-height: 1.5; color: #D8D4CB; }
+.code .k { color: #9BE8FF; }
+.code .s { color: #F0D08A; }
+.code .c { color: #8C887F; }
+.code .t { color: #F08A6E; }
+.points { display: flex; flex-direction: column; gap: 32px; }
+.pt { border-left: 3px solid #C4161C; padding-left: 24px; animation: rise .6s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--i, 0) * 120ms); }
+.pt h3 { font-size: 36px; font-weight: 600; line-height: 1.15; color: #F2EFE8; }
+.pt p { font-size: 28px; line-height: 1.4; color: #B9B4AA; margin-top: 8px; }
+
+/* file tag next to the eyebrow */
+.tagrow { display: flex; gap: 16px; align-items: center; }
+.tag { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 24px; font-weight: 600; padding: 4px 16px; border-radius: 8px; }
+.tag-html { background: #3A2A12; color: #F0D08A; }
+.tag-css { background: #12303A; color: #9BE8FF; }
+.tag-js { background: #3A1416; color: #F3B4A6; }
+
+/* chapter dividers: the one red statement slide per file */
+section.divider { background: #8F1015; justify-content: center; }
+.divider .big { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 96px; font-weight: 600; color: #FBF6EE; line-height: 1.05; }
+.divider .sub { font-size: 36px; line-height: 1.35; color: #F6DCD4; margin-top: 32px; width: 1300px; }
+.divider .meta { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 28px; color: #FBF6EE; margin-top: 48px; }
+
+/* cover and summary slides */
+section.cover { background: #131313; justify-content: center; }
+.cover .big { font-size: 96px; font-weight: 600; line-height: 1.05; color: #F2EFE8; width: 1100px; }
+.cover .lede { width: 980px; }
+.chips { display: flex; gap: 16px; margin-top: 48px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 56px; }
+.stat { background: #1F1F1F; border: 1px solid #313131; border-radius: 16px; padding: 32px; animation: rise .6s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--i, 0) * 120ms); }
+.stat .num { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 96px; font-weight: 600; color: #F2EFE8; line-height: 1; }
+.stat .lbl { font-size: 28px; color: #B9B4AA; margin-top: 16px; }
+.stat .what { font-size: 24px; color: #8C887F; margin-top: 8px; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } }

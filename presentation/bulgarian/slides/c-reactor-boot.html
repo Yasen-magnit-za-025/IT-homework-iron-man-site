@@ -1,0 +1,13 @@
+<section id="c-reactor-boot">
+<div class="tagrow"><p class="tag tag-css">sait.css</p><p class="eyebrow">РЕДОВЕ 189–249 · ДЪГОВИЯТ РЕАКТОР И ЗАРЕЖДАНЕТО</p></div>
+<h2 class="title">Дъгов реактор, нарисуван само с CSS</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">.reactor</span> {<br>&#160;&#160;--s: 64px;<br>&#160;&#160;width: var(--s); border-radius: 50%;<br>&#160;&#160;background: radial-gradient(…);<br>}<br><span class="k">.reactor::before</span> {<br>&#160;&#160;background: repeating-conic-gradient(…);<br>&#160;&#160;animation: spin 24s linear infinite;<br>}<br><span class="k">.reactor::after</span> { animation: core 3.2s… }</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Един елемент, четири слоя</h3><p>Кръгът, медният пръстен с намотки (::before), пулсиращото ядро (::after) и пунктиран вътрешен пръстен (тагът i).</p></div>
+<div class="pt" style="--i:1"><h3>Размер от една променлива</h3><p>--s задава размера, а сиянието и рамките следват от нея. Същият реактор е логото, екранът за зареждане и ядрото в Tech.</p></div>
+<div class="pt" style="--i:2"><h3>Защита при зареждане</h3><p>Екранът за зареждане се скрива сам след 4 секунди с CSS анимация, дори ако скриптът не завърши.</p></div>
+</div>
+</div>
+<aside>Част 3 изгражда дъговия реактор от един елемент без снимки. Елементът е кръг с радиален градиент за светещия център и box-shadow за външното сияние. ::before е пръстенът от медни намотки: repeating-conic-gradient, маскиран във формата на пръстен и бавно въртящ се. ::after е яркото ядро, пулсиращо с keyframes „core“. Елементът i вътре е пунктираният вътрешен пръстен, който се върти в обратна посока. Всеки размер се изчислява от --s, така че един и същ клас работи с 26px в менюто, 74px на екрана за зареждане и над 200px в секцията Tech. Екранът за зареждане е слой на цял екран с реактора, текст и лента за зареждане. Изчезва, когато JavaScript махне is-booting от елемента html, а като предпазна мрежа анимация го скрива след 4 секунди каквото и да стане.</aside>
+</section>

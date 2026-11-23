@@ -1,0 +1,13 @@
+<section id="h-film">
+<div class="tagrow"><p class="tag tag-html">sait.html</p><p class="eyebrow">LINES 136–217 · THE FILM</p></div>
+<h2 class="title">An editorial page about the 2008 film</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="t">&lt;section</span> class=<span class="s">"film"</span> id=<span class="s">"film"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;h2</span> class=<span class="s">"film__title"</span><span class="t">&gt;</span>Directed by…<br>&#160;&#160;<span class="t">&lt;figure</span> class=<span class="s">"film__poster"</span> <span class="k">data-reveal</span>=<span class="s">"left"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;dl</span> class=<span class="s">"film__facts"</span><span class="t">&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;dt&gt;</span>Release date<span class="t">&lt;/dt&gt;</span><br>&#160;&#160;&#160;&#160;<span class="t">&lt;dd&gt;</span>May 2, 2008<span class="t">&lt;/dd&gt;</span><br>&#160;&#160;<span class="t">&lt;span</span> <span class="k">data-count</span>=<span class="s">"585"</span><span class="t">&gt;</span><br>&#160;&#160;<span class="t">&lt;button</span> aria-expanded=<span class="s">"true"</span><span class="t">&gt;</span></p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Definition lists</h3><p>Facts and cast use dl, dt and dd: the correct tags for a label paired with a value.</p></div>
+<div class="pt" style="--i:1"><h3>data‑ hooks</h3><p>data-reveal tells CSS how something enters; data-count gives JavaScript the number to count up to.</p></div>
+<div class="pt" style="--i:2"><h3>Accordion notes</h3><p>Five production notes are buttons with aria-expanded, so screen readers know which note is open.</p></div>
+</div>
+</div>
+<aside>The Film section (id "film") is the light, paper-coloured section. It opens with an eyebrow label and the big "Directed by Jon Favreau" heading split into two lines, each wrapped in a span so it can slide up. The grid has three parts: the poster in a figure with a caption, the synopsis and cast list, and a facts list. Facts and cast use dl (description list) with dt for the label and dd for the value. The stats row has four numbers; data-count, data-prefix and data-suffix tell the JavaScript what to count up to and how to format it. The production notes are an accordion: each title is a button with aria-expanded and aria-controls pointing at its paragraph, so assistive tech knows what each button opens.</aside>
+</section>

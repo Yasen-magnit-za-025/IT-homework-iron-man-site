@@ -1,0 +1,13 @@
+<section id="j-scenes">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 1104–1259 · СЦЕНИТЕ ПРИ СКРОЛ</p></div>
+<h2 class="title">Изстрел, арсенал, плакати, заряд във футъра</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> pinProgress = (section, pin) =&gt; {<br>&#160;&#160;<span class="k">const</span> travel =<br>&#160;&#160;&#160;&#160;section.offsetHeight - pin.offsetHeight;<br>&#160;&#160;<span class="k">return</span> clamp(-section.getBoundingClientRect()<br>&#160;&#160;&#160;&#160;.top / travel, 0, 1);<br>};<br><span class="k">const</span> fired = phase(p, 0.58, 0.66);<br><span class="k">const</span> c = phase(p, 0.05, 0.55) * (1 - fired);<br>pin.style.setProperty(<span class="s">'--c'</span>, c);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Същата рецепта</h3><p>Прогрес през закрепена секция, нарязан на прозорци с phase(), записан като CSS променливи. Като в началния екран.</p></div>
+<div class="pt" style="--i:1"><h3>Изстрелът от репулсора</h3><p>Зарядът расте, разклащането се усилва, дланта изстрелва бяла светкавица и пръстени, после редът влита.</p></div>
+<div class="pt" style="--i:2"><h3>Возене, раздаване, заряд</h3><p>Скролът мести арсенала настрани на десктоп, завърта плакатите навътре и запълва думата във футъра.</p></div>
+</div>
+</div>
+<aside>phase и pinProgress са общи помощници: pinProgress връща колко си напреднал през закрепена секция, от 0 до 1. initBlast нарязва този прогрес на прозорци: заряд от 5% до 55%, HUD на екрана, разклащане, което расте от 30% до 57%, светкавица от 55% до 82%, пръстени, които се разширяват от 57%, и текст, който влита от 64% до 80%. Насочва светкавицата към истинската позиция на дланта на екрана. initArmoryRide (само на десктоп с мишка) обвива арсенала в закрепена рамка, задава височината на секцията на един екран плюс излишъка на галерията, после превръща прогреса в hall.scrollLeft и мащабира и завърта всяка карта според разстоянието ѝ до центъра (cover flow). Бутоните ѝ със стрелки вместо това скролват страницата. initPosterDeal завърта всеки плакат навътре от собствена посока според това колко е влязъл в екрана. initFooterCharge задава --charge от 0 до 1, докато думата във футъра пристига, и добавя is-charged накрая.</aside>
+</section>

@@ -1,0 +1,13 @@
+<section id="j-cast-tabs">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 625–684 · CAST, TABS AND VILLAINS</p></div>
+<h2 class="title">One tab system, used twice</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">function</span> initTabs(tablist, onChange) {<br>&#160;&#160;<span class="k">const</span> select = (tab) =&gt; {<br>&#160;&#160;&#160;&#160;tabs.forEach((t) =&gt; {<br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="k">const</span> on = t === tab;<br>&#160;&#160;&#160;&#160;&#160;&#160;t.setAttribute(<span class="s">'aria-selected'</span>, on);<br>&#160;&#160;&#160;&#160;&#160;&#160;t.tabIndex = on ? 0 : -1;<br>&#160;&#160;&#160;&#160;&#160;&#160;panel.hidden = !on;<br>&#160;&#160;&#160;&#160;});<br>&#160;&#160;&#160;&#160;onChange(tab);<br>&#160;&#160;};</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Cast panels</h3><p>Hover, click, focus or Enter makes a panel active. Only one panel has .is-active at a time.</p></div>
+<div class="pt" style="--i:1"><h3>A reusable function</h3><p>initTabs works for any tablist. The villains and the tech schematic both use it, each passing its own onChange.</p></div>
+<div class="pt" style="--i:2"><h3>Keyboard support</h3><p>Arrow keys move to the next or previous tab, Home and End jump to the first and last, as tab widgets should.</p></div>
+</div>
+</div>
+<aside>initCast gives each cast panel listeners for pointerenter (mouse only), click, focus and Enter or Space, all calling activate, which toggles is-active so only one panel is open. initTabs is a general tab controller: select() updates aria-selected, puts only the chosen tab in the tab order, shows its panel and hides the rest, then calls onChange so each user can react. The keydown handler moves with arrow keys and Home and End, and scrolls a horizontal tab list to keep the focused tab visible. preloadNear starts loading a section’s lazy images 900px before it scrolls into view. initVillains sets the tablist to vertical, uses onChange to fade in the matching background image, and preloads the backdrops so switching never shows an empty frame.</aside>
+</section>

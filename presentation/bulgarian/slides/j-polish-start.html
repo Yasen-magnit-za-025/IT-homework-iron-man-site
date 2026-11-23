@@ -1,0 +1,13 @@
+<section id="j-polish-start">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">РЕДОВЕ 1389–1476 · ПОЛИРАНЕ НА ДВИЖЕНИЕТО И СТАРТ</p></div>
+<h2 class="title">Последни детайли, после включване на всичко</h2>
+<div class="split">
+<div class="code"><p class="src">initBoot();<br>initReveal();<br>initArmory();<br>initTech();<br>…<br>initNavIndicator();<br>initScrollLoop([<br>&#160;&#160;initNav(), initHero(), initTimeline(),<br>&#160;&#160;initBlast(), initArmoryRide(),<br>&#160;&#160;initPosterDeal(), initFooterCharge(),<br>&#160;&#160;initDepth(), initFilmCover() ]);</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Дълбочина и лентата в менюто</h3><p>Снимките се носят срещу скрола, а една светеща лента се плъзга под активната или посочената връзка в менюто.</p></div>
+<div class="pt" style="--i:1"><h3>Листът Story</h3><p>Докато Story се издига, --cover затъмнява и смалява секцията Film зад нея.</p></div>
+<div class="pt" style="--i:2"><h3>Списъкът за старт</h3><p>Последните редове извикват всяка init веднъж. Тези, които връщат update, се подават на цикъла за скрол в един масив.</p></div>
+</div>
+</div>
+<aside>initDepth мести снимките в историята, фона на злодеите и снимката във футъра с малко, ограничено разстояние срещу скрола чрез свойството translate. initNavIndicator добавя една лента към менюто на десктоп и я мести с transform до посочената връзка или, когато нищо не е посочено, до активната; MutationObserver забелязва, когато scroll-spy смени активната връзка. initFilmCover задава --cover на секцията Film, докато горният ръб на Story се издига през екрана. Редове 1457 до 1476 са списъкът за старт: първо се изпълняват обикновените init функции, които само добавят слушатели, после initScrollLoop получава update функциите, върнати от init функциите, управлявани от скрола. Последният ред затваря IIFE-то, отворено на ред 6.</aside>
+</section>

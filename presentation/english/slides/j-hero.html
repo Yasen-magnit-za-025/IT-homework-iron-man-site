@@ -1,0 +1,13 @@
+<section id="j-hero">
+<div class="tagrow"><p class="tag tag-js">sait.js</p><p class="eyebrow">LINES 258–343 · THE HERO TAKE‑OFF</p></div>
+<h2 class="title">Turning scroll position into a launch</h2>
+<div class="split">
+<div class="code"><p class="src"><span class="k">const</span> phase = (p, a, b) =&gt; {<br>&#160;&#160;<span class="k">const</span> t = clamp((p - a) / (b - a), 0, 1);<br>&#160;&#160;<span class="k">return</span> t * t * (3 - 2 * t);<br>};<br><span class="k">const</span> p = clamp(y / travel, 0, 1);<br><span class="k">const</span> ignite = phase(p, 0.04, 0.28);<br><span class="k">const</span> rise = phase(p, 0.2, 0.95);<br><span class="k">const</span> lift = Math.pow(rise, 2.2);<br>suit.style.transform =<br>&#160;&#160;`translate3d(0, ${suitY}px, 0)…`;</p></div>
+<div class="points">
+<div class="pt" style="--i:0"><h3>Progress p</h3><p>How far you’ve scrolled through the pinned hero, from 0 at the top to 1 when it lets go.</p></div>
+<div class="pt" style="--i:1"><h3>phase() windows</h3><p>phase turns a slice of p into a smooth 0→1: ignition runs from 4% to 28%, lift‑off from 20% to 95%.</p></div>
+<div class="pt" style="--i:2"><h3>Driving the scene</h3><p>Those values set the suit’s position, the --flame size, the ground glow, the title split and a camera shake.</p></div>
+</div>
+</div>
+<aside>initHero has two jobs. First, pointer depth: on mouse move it sets a target from −1 to 1 and eases --mx and --my toward it each frame, so the hero layers drift. Second, the scroll take-off. travel is how far you can scroll while the hero is pinned (section height minus one screen), and p is your progress from 0 to 1. phase(p, a, b) maps the window a to b onto 0 to 1 with a smoothstep curve, so effects start and finish gently. ignite drives the thrusters and ground blast. rise drives the lift-off, and lift = rise to the power 2.2 makes it start slowly then rocket. The suit crouches a little while igniting, then moves up by lift times 1.3 screens, grows and tilts. The title words slide apart by split × 34vw and fade. Cast names, year and bottom copy fade first. The reactor ring swells. A random shake is applied while igniting. heroThrust tells the embers to speed up.</aside>
+</section>
