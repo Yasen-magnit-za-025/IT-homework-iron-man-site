@@ -904,7 +904,7 @@
     };
     const headings = $$([
       '.section-head .display > span', '.film__line > span', '.chapter h3',
-      '.movie h3', '.notes__title', '.footer__closing', '.player__name'
+      '.movie h3', '.notes__title', '.player__name'
     ].join(', ')).filter((el) => !el.closest('.hero'));
     headings.forEach((el) => { el._hudChars = split(el); });
     const io = new IntersectionObserver((entries) => {
@@ -928,7 +928,7 @@
     const paras = $$([
       '.section-head__sub', '.film__lede', '.film__copy > p', '.chapter__copy > p:last-child',
       '.file > p', '.file__link p', '.movie__body > p:last-child',
-      '.player__desc', '.footer__brand p', '.note__body > p'
+      '.player__desc', '.note__body > p'
     ].join(', '));
     paras.forEach((p) => p.classList.add('hud-print'));
     const byParent = new Map();
@@ -950,8 +950,7 @@
     if (reduceMotion) return () => {};
     const layers = [
       ...$$('.chapter__media img').map((el) => ({ el, f: 0.06, max: 18, box: el.parentElement })),
-      { el: $('.rogues__media'), f: 0.08, max: 60, box: $('#villains') },
-      { el: $('.footer__media'), f: 0.12, max: 70, box: $('.footer') }
+      { el: $('.rogues__media'), f: 0.08, max: 60, box: $('#villains') }
     ].filter((l) => l.el);
     return function update() {
       const vh = window.innerHeight;

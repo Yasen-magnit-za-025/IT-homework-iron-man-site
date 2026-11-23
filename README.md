@@ -14,14 +14,14 @@ then visit http://localhost:5510/sait.html.
 
 | File | Lines | What it does |
 |---|---|---|
-| `sait.html` | 633 | Page structure and content |
-| `sait.css` | 1,202 | Look, layout and animation |
-| `sait.js` | 1,019 | Interactions and scroll scenes |
+| `sait.html` | 600 | Page structure and content |
+| `sait.css` | 1,185 | Look, layout and animation |
+| `sait.js` | 1,018 | Interactions and scroll scenes |
 | `fonts/` | | The Stark typeface |
 
 ## Presentation
 
-A 44-slide walkthrough that explains every line of the three files. It describes the earlier, fully commented version of the site from the first commit (including the repulsor-blast scene, the Stark Tech section and the giant footer word, which have since been removed), so its line numbers match that version.
+A 44-slide walkthrough that explains every line of the three files. It describes the earlier, fully commented version of the site from the first commit (including the repulsor-blast scene, the Stark Tech section and the footer, which have since been removed), so its line numbers match that version.
 
 - `presentation/bulgarian.html`: Bulgarian version
 - `presentation/english.html`: English version
