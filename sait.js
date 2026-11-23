@@ -561,162 +561,6 @@
     });
     preloadNear($('#villains'), images);
   }
-  function initTech() {
-    const stage = $('#schematic');
-    const svg = $('.schematic__lines', stage);
-    const nodes = $$('.node', stage);
-    const coreLabel = $('#core-label');
-    const coreValue = $('#core-value');
-    let typingToken = 0;
-    const setCore = (label, value) => { coreLabel.textContent = label; coreValue.textContent = value; };
-    const drawLines = () => {
-      const s = stage.getBoundingClientRect();
-      if (!s.width) return;
-      svg.innerHTML = nodes.map((n) => {
-        const r = n.getBoundingClientRect();
-        const x = ((r.left + r.width / 2 - s.left) / s.width) * 100;
-        const y = ((r.top + r.height / 2 - s.top) / s.height) * 100;
-        return `<line x1="50" y1="50" x2="${x.toFixed(2)}" y2="${y.toFixed(2)}" data-for="${n.id}"${n.getAttribute('aria-selected') === 'true' ? ' class="is-active"' : ''}/>`;
-      }).join('');
-    };
-    window.addEventListener('resize', drawLines);
-    if (document.fonts) document.fonts.ready.then(drawLines);
-    new IntersectionObserver(([e]) => { if (e.isIntersecting) drawLines(); }).observe(stage);
-    drawLines();
-    initTabs($('.schematic__nodes'), (tab) => {
-      typingToken++;
-      $$('line', svg).forEach((l) => l.classList.toggle('is-active', l.dataset.for === tab.id));
-      if (tab.id === 'tab-arc') setArc();
-      else if (tab.id === 'tab-flight') setThrottle();
-      else if (tab.id === 'tab-repulsor') setCore('Repulsor charge', '0%');
-      else setCore('Core output', (arcSlider.value / 100 * 3).toFixed(1));
-    });
-    const arcSlider = $('#arc-power');
-    const setArc = () => {
-      const p = arcSlider.value / 100;
-      stage.style.setProperty('--arc-p', p.toFixed(2));
-      arcSlider.style.setProperty('--v', arcSlider.value + '%');
-      setCore('Core output · GJ/s', (p * 3).toFixed(1));
-    };
-    arcSlider.addEventListener('input', setArc);
-    const SCRIPTS = {
-      jarvis: {
-        idle: ['J.A.R.V.I.S. online. How can I help, sir?'],
-        morning: ['Good morning, sir. Malibu is 72 degrees and clear.', 'Miss Potts has left you four messages. All marked urgent.', 'I have taken the liberty of starting the coffee.'],
-        diagnostics: ['Running full diagnostic on the Mark III…', 'Repulsors nominal. Flight stabilisers calibrated.', 'Gold-titanium alloy holding at altitude. No icing detected.'],
-        status: ['Armor integrity at 100 percent.', 'Arc reactor output stable at 98 percent.', 'Shall I repaint it in hot-rod red again, sir?']
-      },
-      friday: {
-        idle: ['F.R.I.D.A.Y. here, boss. What do you need?'],
-        scan: ['Scanning the area…', 'Six hostiles. Two armed. None of them a problem.', 'Want me to mark them on your display?'],
-        inventory: ['Mark XLV online and fully charged.', 'Hulkbuster on standby. Veronica is in position.', 'Iron Legion drones awaiting orders.'],
-        power: ['Rerouting auxiliary power to thrusters.', 'Life support is going to complain about that.', 'Done. Try not to need it.']
-      }
-    };
-    $$('.ai__wave').forEach((wave) => { wave.innerHTML = '<i></i>'.repeat(32); });
-    const speak = async (ai, cmd) => {
-      const token = ++typingToken;
-      const box = $(`.ai[data-ai="${ai}"]`);
-      const log = $('.ai__log', box);
-      const bars = $$('.ai__wave i', box);
-      log.innerHTML = '';
-      const wave = setInterval(() => bars.forEach((b) => { b.style.height = (6 + Math.random() * 28).toFixed(0) + 'px'; }), 90);
-      for (const line of SCRIPTS[ai][cmd]) {
-        const p = document.createElement('p');
-        p.className = 'caret';
-        log.appendChild(p);
-        for (let i = 1; i <= line.length; i++) {
-          if (token !== typingToken) { clearInterval(wave); return; }
-          p.textContent = line.slice(0, i);
-          await new Promise((r) => setTimeout(r, reduceMotion ? 0 : 22));
-        }
-        p.classList.remove('caret');
-        await new Promise((r) => setTimeout(r, reduceMotion ? 0 : 260));
-      }
-      clearInterval(wave);
-      bars.forEach((b) => { b.style.height = '6px'; });
-    };
-    $$('.ai').forEach((box) => {
-      const p = document.createElement('p');
-      p.textContent = SCRIPTS[box.dataset.ai].idle[0];
-      $('.ai__log', box).appendChild(p);
-    });
-    $$('[data-ai-target]').forEach((btn) => btn.addEventListener('click', () => speak(btn.dataset.aiTarget, btn.dataset.cmd)));
-    const fireBtn = $('#repulsor-fire');
-    let charge = 0, charging = false, raf = 0, last = 0;
-    const paint = () => {
-      stage.style.setProperty('--charge', charge.toFixed(3));
-      setCore('Repulsor charge', Math.round(charge * 100) + '%');
-    };
-    const loop = (now) => {
-      const dt = last ? (now - last) / 1000 : 0;
-      last = now;
-      charge = clamp(charge + dt / 1.1, 0, 1);
-      paint();
-      if (charging) raf = requestAnimationFrame(loop);
-    };
-    const start = () => {
-      if (charging) return;
-      charging = true; last = 0;
-      fireBtn.classList.add('is-charging');
-      raf = requestAnimationFrame(loop);
-    };
-    const release = () => {
-      if (!charging) return;
-      charging = false;
-      cancelAnimationFrame(raf);
-      fireBtn.classList.remove('is-charging');
-      if (charge > 0.12) {
-        stage.classList.remove('is-firing');
-        void stage.offsetWidth;
-        stage.classList.add('is-firing');
-        setTimeout(() => stage.classList.remove('is-firing'), 750);
-      }
-      const drain = () => { charge = Math.max(0, charge - 0.06); paint(); if (charge > 0 && !charging) requestAnimationFrame(drain); };
-      requestAnimationFrame(drain);
-    };
-    fireBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); fireBtn.setPointerCapture(e.pointerId); start(); });
-    fireBtn.addEventListener('pointerup', release);
-    fireBtn.addEventListener('pointercancel', release);
-    fireBtn.addEventListener('lostpointercapture', release);
-    fireBtn.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); start(); } });
-    fireBtn.addEventListener('keyup', (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); release(); } });
-    fireBtn.addEventListener('contextmenu', (e) => e.preventDefault());
-    const scanBtn = $('#hud-scan');
-    scanBtn.addEventListener('click', () => {
-      stage.classList.remove('is-scanning');
-      void stage.offsetWidth;
-      stage.classList.add('is-scanning');
-      setCore('Targets', 'Scanning');
-      setTimeout(() => { stage.classList.remove('is-scanning'); setCore('Targets locked', '7 / 7'); }, 3300);
-    });
-    const STATIONS = {
-      holo: 'A table-sized holographic workspace. Tony pulls designs apart with his hands, tries a part on for size and throws what he doesn’t like in a virtual bin.',
-      bots: 'DUM-E and U: two robotic arms with good intentions and a fire extinguisher each. They hold the camera, fetch tools and occasionally save the day.',
-      gantry: 'Robotic arms fit each armor plate by plate while Tony stands still. Suiting up goes from a struggle to a few seconds.',
-      garage: 'A row of classic sports cars — and the hot-rod paint that inspired the Mark III’s red and gold.'
-    };
-    const stationText = $('#station-text');
-    $$('[data-station]').forEach((btn, _, all) => {
-      btn.setAttribute('aria-pressed', String(btn.classList.contains('is-active')));
-      btn.addEventListener('click', () => {
-        all.forEach((b) => { b.classList.toggle('is-active', b === btn); b.setAttribute('aria-pressed', String(b === btn)); });
-        stationText.textContent = STATIONS[btn.dataset.station];
-      });
-    });
-    const throttle = $('#flight-throttle');
-    const warn = $('#flight-warning');
-    const setThrottle = () => {
-      const t = throttle.value / 100;
-      stage.style.setProperty('--spin', (1 + t * 7).toFixed(2));
-      throttle.style.setProperty('--v', throttle.value + '%');
-      setCore('Airspeed', 'Mach ' + (0.1 + t * 2.7).toFixed(1));
-      warn.hidden = t < 0.85;
-    };
-    throttle.addEventListener('input', setThrottle);
-    throttle.style.setProperty('--v', throttle.value + '%');
-    setArc();
-  }
   function initTilt() {
     if (!canHover || reduceMotion) return;
     $$('[data-tilt]').forEach((card) => {
@@ -760,7 +604,7 @@
     const target = { x: -100, y: -100 };
     const pos = { x: -100, y: -100 };
     let scale = 1, scaleTarget = 1;
-    const interactive = 'a, button, input, label, [role="tab"], .suit, .player, .movie__poster, .node';
+    const interactive = 'a, button, input, label, [role="tab"], .suit, .player, .movie__poster';
     window.addEventListener('pointermove', (e) => {
       if (e.pointerType !== 'mouse') return;
       target.x = e.clientX; target.y = e.clientY;
@@ -841,7 +685,7 @@
   function initScramble() {
     if (reduceMotion) return;
     const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*/<>';
-    const targets = $$('.eyebrow, .chapter__place, .sys__code, .movie__part, .file__meta span:first-child, .band__kicker, .film__studio');
+    const targets = $$('.eyebrow, .chapter__place, .movie__part, .file__meta span:first-child, .film__studio');
     const run = (el) => {
       const nodes = [];
       const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
@@ -921,41 +765,6 @@
     const travel = section.offsetHeight - pin.offsetHeight;
     return travel > 0 ? clamp(-section.getBoundingClientRect().top / travel, 0, 1) : 0;
   };
-  function initBlast() {
-    const band = $('.band');
-    const pin = $('.band__pin', band);
-    const media = $('.band__media', band);
-    const palm = $('.charge--right', band);
-    const flash = $('.band__flash', band);
-    const pct = $('#blast-pct');
-    if (reduceMotion) return () => {};
-    return function update() {
-      const r = band.getBoundingClientRect();
-      if (r.bottom < -100 || r.top > window.innerHeight + 100) return;
-      const p = pinProgress(band, pin);
-      const fired = phase(p, 0.58, 0.66);
-      const c = phase(p, 0.05, 0.55) * (1 - fired);
-      const hud = phase(p, 0.05, 0.2) * (1 - phase(p, 0.56, 0.62));
-      const flashO = phase(p, 0.55, 0.59) * (1 - phase(p, 0.62, 0.82));
-      const ring = phase(p, 0.57, 0.8);
-      const slam = phase(p, 0.64, 0.8);
-      pin.style.setProperty('--c', c.toFixed(3));
-      pin.style.setProperty('--hud', hud.toFixed(3));
-      pin.style.setProperty('--flash', flashO.toFixed(3));
-      pin.style.setProperty('--ring', ring.toFixed(3));
-      pin.style.setProperty('--slam', slam.toFixed(3));
-      pin.style.setProperty('--zoom', (1 + c * 0.14 - ring * 0.04).toFixed(3));
-      const pr = palm.getBoundingClientRect();
-      const pinR = pin.getBoundingClientRect();
-      flash.style.setProperty('--fx', (pr.left + pr.width / 2 - pinR.left).toFixed(0) + 'px');
-      flash.style.setProperty('--fy', (pr.top + pr.height / 2 - pinR.top).toFixed(0) + 'px');
-      const shake = 9 * phase(p, 0.3, 0.57) * (1 - fired) + 14 * flashO;
-      media.style.transform = shake > 0.3
-        ? `translate3d(${((Math.random() - 0.5) * shake).toFixed(1)}px, ${((Math.random() - 0.5) * shake).toFixed(1)}px, 0)`
-        : '';
-      pct.textContent = Math.round(phase(p, 0.05, 0.55) * 100);
-    };
-  }
   function initArmoryRide() {
     const section = $('#armory');
     const hall = $('#hall');
@@ -1022,19 +831,6 @@
         el.style.setProperty('--deal-x', (f.x * t).toFixed(2) + 'vw');
         el.style.setProperty('--deal-o', (1 - t * 0.85).toFixed(3));
       });
-    };
-  }
-  function initFooterCharge() {
-    const footer = $('.footer');
-    const word = $('.footer__word');
-    if (reduceMotion) { word.style.setProperty('--charge', '1'); return () => {}; }
-    return function update() {
-      const vh = window.innerHeight;
-      const r = word.getBoundingClientRect();
-      if (r.top > vh + 50) { word.style.setProperty('--charge', '0'); return; }
-      const t = clamp((vh - r.top) / (vh * 0.55), 0, 1);
-      word.style.setProperty('--charge', t.toFixed(3));
-      footer.classList.toggle('is-charged', t >= 0.999);
     };
   }
   function initHudText() {
@@ -1115,7 +911,7 @@
       entries.forEach((e) => { if (e.isIntersecting) { decode(e.target); io.unobserve(e.target); } });
     }, { threshold: 0.4 });
     headings.forEach((el) => io.observe(el));
-    const panelHeads = $$('.file h3, .sys h3');
+    const panelHeads = $$('.file h3');
     panelHeads.forEach((h) => { h._hudChars = split(h); });
     const mo = new MutationObserver((records) => {
       records.forEach((r) => {
@@ -1131,7 +927,7 @@
     firstVisible.forEach((h) => io2.observe(h));
     const paras = $$([
       '.section-head__sub', '.film__lede', '.film__copy > p', '.chapter__copy > p:last-child',
-      '.file > p', '.file__link p', '.sys > p:not(.sys__code):not(.sys__station):not(.sys__warning)', '.movie__body > p:last-child',
+      '.file > p', '.file__link p', '.movie__body > p:last-child',
       '.player__desc', '.footer__brand p', '.note__body > p'
     ].join(', '));
     paras.forEach((p) => p.classList.add('hud-print'));
@@ -1210,7 +1006,6 @@
   initArmory();
   initCast();
   initVillains();
-  initTech();
   initTilt();
   initCursor();
   initEmbers();
@@ -1220,5 +1015,5 @@
   initHudText();
   initNavIndicator();
   initScrollLoop([initNav(), initHero(), initTimeline(), initToTop(), initTickerSpeed(),
-    initBlast(), initArmoryRide(), initPosterDeal(), initFooterCharge(), initDepth(), initFilmCover()]);
+    initArmoryRide(), initPosterDeal(), initDepth(), initFilmCover()]);
 })();

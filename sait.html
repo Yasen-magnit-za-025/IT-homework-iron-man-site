@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="referrer" content="no-referrer">
-  <meta name="description" content="A cinematic fan tribute to the Iron Man films: the story, the thirteen key armors, the cast, the villains and the technology of Tony Stark.">
+  <meta name="description" content="A cinematic fan tribute to the Iron Man films: the story, the thirteen key armors, the cast and the villains.">
   <meta name="theme-color" content="#050506">
   <title>Iron Man — Enter the World of Tony Stark</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23050506'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%239be8ff' stroke-width='7' stroke-dasharray='10 3.2'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23eafcff'/%3E%3C/svg%3E">
@@ -34,7 +34,6 @@
       <a href="#armory">Armory</a>
       <a href="#cast">Cast</a>
       <a href="#villains">Villains</a>
-      <a href="#tech">Tech</a>
       <a href="#trilogy">Trilogy</a>
     </nav>
     <a class="btn btn--small nav__cta" href="#armory">Suit up
@@ -273,28 +272,6 @@
         </ol>
       </div>
     </section>
-    <section class="band" aria-label="Interlude">
-      <div class="band__pin">
-        <div class="band__media">
-          <div class="band__frame">
-            <img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/7/74/Iron_Man_Armor_Mark_III.png/revision/latest/scale-to-width-down/1920?cb=20250914143356"
-                 alt="Iron Man raises both palms, repulsors glowing" loading="lazy" decoding="async" referrerpolicy="no-referrer">
-            <span class="charge charge--right" aria-hidden="true"><i></i><i></i></span>
-            <span class="charge charge--left" aria-hidden="true"><i></i><i></i></span>
-            <span class="charge charge--chest" aria-hidden="true"><i></i><i></i></span>
-          </div>
-        </div>
-        <div class="band__hud" aria-hidden="true">
-          <span class="band__lock"></span>
-          <p class="band__readout">Repulsor charge <b id="blast-pct">0</b>%</p>
-        </div>
-        <div class="band__flash" aria-hidden="true"><i></i><i></i></div>
-        <div class="wrap band__copy">
-          <p class="band__kicker">Built in a cave</p>
-          <p class="band__line"><span>Perfected in a workshop</span></p>
-        </div>
-      </div>
-    </section>
     <section class="armory section" id="armory" aria-labelledby="armory-title">
       <div class="wrap">
         <header class="section-head">
@@ -502,137 +479,6 @@
         </div>
       </div>
     </section>
-    <section class="lab section" id="tech" aria-labelledby="lab-title">
-      <div class="wrap">
-        <header class="section-head">
-          <p class="eyebrow" data-reveal><b>06</b>Technology</p>
-          <h2 class="display" id="lab-title" data-reveal="mask"><span>Stark <em>tech</em></span></h2>
-          <p class="section-head__sub" data-reveal>Seven systems that turn one man into Iron Man. Select one on the schematic, then try its controls.</p>
-        </header>
-        <div class="schematic" data-reveal>
-          <div class="schematic__stage" id="schematic">
-            <svg class="schematic__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
-            <span class="schematic__ring schematic__ring--outer" aria-hidden="true"></span>
-            <span class="schematic__ring schematic__ring--mid" aria-hidden="true"></span>
-            <span class="schematic__ring schematic__ring--inner" aria-hidden="true"></span>
-            <span class="schematic__sweep" aria-hidden="true"></span>
-            <span class="schematic__shock" aria-hidden="true"></span>
-            <div class="reactor schematic__core" aria-hidden="true"><i></i></div>
-            <p class="schematic__readout" aria-hidden="true"><span id="core-label">Core output</span> <b id="core-value">1.8</b></p>
-            <div class="schematic__nodes" role="tablist" aria-label="Stark systems">
-              <button type="button" class="node" role="tab" id="tab-arc" aria-controls="sys-arc" aria-selected="true" style="--i:0"><span>01</span>Arc Reactor</button>
-              <button type="button" class="node" role="tab" id="tab-jarvis" aria-controls="sys-jarvis" aria-selected="false" tabindex="-1" style="--i:1"><span>02</span>J.A.R.V.I.S.</button>
-              <button type="button" class="node" role="tab" id="tab-friday" aria-controls="sys-friday" aria-selected="false" tabindex="-1" style="--i:2"><span>03</span>F.R.I.D.A.Y.</button>
-              <button type="button" class="node" role="tab" id="tab-repulsor" aria-controls="sys-repulsor" aria-selected="false" tabindex="-1" style="--i:3"><span>04</span>Repulsors</button>
-              <button type="button" class="node" role="tab" id="tab-hud" aria-controls="sys-hud" aria-selected="false" tabindex="-1" style="--i:4"><span>05</span>Suit HUD</button>
-              <button type="button" class="node" role="tab" id="tab-workshop" aria-controls="sys-workshop" aria-selected="false" tabindex="-1" style="--i:5"><span>06</span>Workshop</button>
-              <button type="button" class="node" role="tab" id="tab-flight" aria-controls="sys-flight" aria-selected="false" tabindex="-1" style="--i:6"><span>07</span>Flight</button>
-            </div>
-          </div>
-          <div class="schematic__panels">
-            <article class="sys is-active" id="sys-arc" role="tabpanel" aria-labelledby="tab-arc">
-              <p class="sys__code">SYS-01 · Power</p>
-              <h3>Arc Reactor</h3>
-              <p>A power plant the size of a hockey puck. Tony builds the first one in a cave to keep shrapnel away from his heart; every suit since has been wrapped around its descendants.</p>
-              <ul class="sys__specs">
-                <li><span>Core</span>Palladium, later a new element</li>
-                <li><span>Output</span>Up to 3 gigajoules per second</li>
-                <li><span>Scaled from</span>The Stark Industries reactor</li>
-              </ul>
-              <label class="slider" for="arc-power"><span>Output level · drives the core</span>
-                <input type="range" id="arc-power" min="5" max="100" value="60">
-              </label>
-            </article>
-            <article class="sys" id="sys-jarvis" role="tabpanel" aria-labelledby="tab-jarvis" hidden>
-              <p class="sys__code">SYS-02 · Intelligence</p>
-              <h3>J.A.R.V.I.S.</h3>
-              <p>“Just A Rather Very Intelligent System.” Tony's dry-witted AI runs the house, the workshop and the suit, and is not above commenting on all three.</p>
-              <ul class="sys__specs">
-                <li><span>Voice</span>Paul Bettany</li>
-                <li><span>Runs</span>Mansion, workshop and armor</li>
-                <li><span>Active</span>Iron Man to Age of Ultron</li>
-              </ul>
-              <div class="ai" data-ai="jarvis">
-                <div class="ai__wave" aria-hidden="true"></div>
-                <div class="ai__log" aria-live="polite"></div>
-              </div>
-              <div class="cmds" role="group" aria-label="Ask J.A.R.V.I.S.">
-                <button type="button" class="cmd" data-ai-target="jarvis" data-cmd="morning">Good morning</button>
-                <button type="button" class="cmd" data-ai-target="jarvis" data-cmd="diagnostics">Run diagnostics</button>
-                <button type="button" class="cmd" data-ai-target="jarvis" data-cmd="status">Suit status</button>
-              </div>
-            </article>
-            <article class="sys sys--amber" id="sys-friday" role="tabpanel" aria-labelledby="tab-friday" hidden>
-              <p class="sys__code">SYS-03 · Intelligence</p>
-              <h3>F.R.I.D.A.Y.</h3>
-              <p>When J.A.R.V.I.S. becomes part of the Vision, Tony loads a successor into the Mark XLV. Brisk, Irish-accented and unimpressed, she flies with him to the very end.</p>
-              <ul class="sys__specs">
-                <li><span>Voice</span>Kerry Condon</li>
-                <li><span>First suit</span>Mark XLV</li>
-                <li><span>Active</span>Age of Ultron to Endgame</li>
-              </ul>
-              <div class="ai" data-ai="friday">
-                <div class="ai__wave" aria-hidden="true"></div>
-                <div class="ai__log" aria-live="polite"></div>
-              </div>
-              <div class="cmds" role="group" aria-label="Ask F.R.I.D.A.Y.">
-                <button type="button" class="cmd" data-ai-target="friday" data-cmd="scan">Threat scan</button>
-                <button type="button" class="cmd" data-ai-target="friday" data-cmd="inventory">Armor inventory</button>
-                <button type="button" class="cmd" data-ai-target="friday" data-cmd="power">Reroute power</button>
-              </div>
-            </article>
-            <article class="sys" id="sys-repulsor" role="tabpanel" aria-labelledby="tab-repulsor" hidden>
-              <p class="sys__code">SYS-04 · Propulsion / Weapon</p>
-              <h3>Repulsors</h3>
-              <p>Designed as flight stabilisers and discovered, with a bang, to be weapons. The palm repulsors steer the suit in the air and knock down whatever is in front of it on the ground.</p>
-              <ul class="sys__specs">
-                <li><span>Location</span>Palms and boot soles</li>
-                <li><span>First test</span>The workshop wall</li>
-                <li><span>Chest unit</span>The unibeam</li>
-              </ul>
-              <button type="button" class="btn btn--hold" id="repulsor-fire">Hold to charge · release to fire</button>
-            </article>
-            <article class="sys" id="sys-hud" role="tabpanel" aria-labelledby="tab-hud" hidden>
-              <p class="sys__code">SYS-05 · Interface</p>
-              <h3>Suit HUD</h3>
-              <p>Inside the helmet, the world arrives as layers of light: altitude, power, targets and J.A.R.V.I.S.'s commentary, all tracked by the pilot's eyes.</p>
-              <ul class="sys__specs">
-                <li><span>Display</span>Holographic, eye-tracked</li>
-                <li><span>Shows</span>Flight data, threats, diagnostics</li>
-                <li><span>Introduced</span>Mark II</li>
-              </ul>
-              <button type="button" class="btn btn--hold" id="hud-scan">Run a target scan</button>
-            </article>
-            <article class="sys" id="sys-workshop" role="tabpanel" aria-labelledby="tab-workshop" hidden>
-              <p class="sys__code">SYS-06 · Facility</p>
-              <h3>The Workshop</h3>
-              <p>Under the Malibu house, behind a glass door and a keypad, is the room where everything is made. Choose a station.</p>
-              <div class="cmds" role="group" aria-label="Workshop stations">
-                <button type="button" class="cmd is-active" data-station="holo">Holo-table</button>
-                <button type="button" class="cmd" data-station="bots">DUM-E &amp; U</button>
-                <button type="button" class="cmd" data-station="gantry">Assembly gantry</button>
-                <button type="button" class="cmd" data-station="garage">The garage</button>
-              </div>
-              <p class="sys__station" id="station-text" aria-live="polite">A table-sized holographic workspace. Tony pulls designs apart with his hands, tries a part on for size and throws what he doesn't like in a virtual bin.</p>
-            </article>
-            <article class="sys" id="sys-flight" role="tabpanel" aria-labelledby="tab-flight" hidden>
-              <p class="sys__code">SYS-07 · Propulsion</p>
-              <h3>Flight Systems</h3>
-              <p>Boot thrusters push, palm repulsors steer and a set of flaps trims the ride. The Mark II proved the idea — and found out what thin, freezing air does to an unfinished suit.</p>
-              <ul class="sys__specs">
-                <li><span>Thrust</span>Boot-mounted jets</li>
-                <li><span>Control</span>Palm stabilisers and flaps</li>
-                <li><span>Known flaw</span>Icing at altitude (Mark II)</li>
-              </ul>
-              <label class="slider" for="flight-throttle"><span>Throttle · spins up the rings</span>
-                <input type="range" id="flight-throttle" min="0" max="100" value="40">
-              </label>
-              <p class="sys__warning" id="flight-warning" hidden>Ice build-up detected</p>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
     <section class="trilogy section" id="trilogy" aria-labelledby="trilogy-title">
       <div class="wrap">
         <header class="section-head">
@@ -703,7 +549,6 @@
     </div>
     <div class="wrap footer__inner">
       <p class="footer__closing" data-reveal>Heroes aren't born. <span>They're built.</span></p>
-      <p class="footer__word" aria-hidden="true" data-reveal="mask"><span>Iron Man</span></p>
       <div class="footer__grid">
         <div class="footer__brand">
           <a class="nav__brand" href="#top" aria-label="Iron Man — back to top">
@@ -718,7 +563,6 @@
           <a href="#armory">The armory</a>
           <a href="#cast">The cast</a>
           <a href="#villains">The villains</a>
-          <a href="#tech">Technology</a>
           <a href="#trilogy">The trilogy</a>
         </nav>
         <div class="footer__legal">
